@@ -10,7 +10,7 @@ class ShopCard extends StatelessWidget {
     required this.image,
     required this.name,
     required this.rating,
-    required this.distance,
+    required this.distance, 
     required this.time,
     required this.onTap,
   });
@@ -51,7 +51,10 @@ class ShopCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+
                       name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         fontSize: 16.sp(context),
                         fontWeight: FontWeight.w700,
@@ -97,25 +100,25 @@ class ShopCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            CrashSafeImage(
-                              Assets.icons.truck.path,
-                              height: 16.h(context),
-                              width: 16.w(context),
-                            ),
-                            SizedBox(width: 4.w(context)),
-                            Text(
-                              time,
-                              style: Theme.of(context).textTheme.bodyMedium!
-                                  .copyWith(
-                                    fontSize: 14.sp(context),
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.start,
+                        //   children: [
+                        //     CrashSafeImage(
+                        //       Assets.icons.truck.path,
+                        //       height: 16.h(context),
+                        //       width: 16.w(context),
+                        //     ),
+                        //     SizedBox(width: 4.w(context)),
+                        //     Text(
+                        //       time,
+                        //       style: Theme.of(context).textTheme.bodyMedium!
+                        //           .copyWith(
+                        //             fontSize: 14.sp(context),
+                        //             fontWeight: FontWeight.w400,
+                        //           ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ],

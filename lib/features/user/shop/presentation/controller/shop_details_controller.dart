@@ -1,0 +1,191 @@
+import 'package:get/get.dart';
+import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
+import 'package:hoodz/features/user/shop/data/models/shop_details_model.dart';
+import 'package:hoodz/urls.dart';
+
+class ShopDetailsController extends GetxController {
+  ShopDetailsController();
+
+  final NetworkCaller _networkCaller = Get.find<NetworkCaller>();
+
+  final RxBool isLoading = false.obs;
+  final Rx<ShopDetailsModel?> _shopDetailsModel = Rx<ShopDetailsModel?>(null);
+  final RxString shopIdData = ''.obs;
+  String? _loadedShopId;
+
+  ShopDetailsModel? get shopDetailsModel => _shopDetailsModel.value;
+  Data? get shopData => _shopDetailsModel.value?.data;
+
+  @override
+  void onInit() {
+    super.onInit();
+    final arguments = Get.arguments;
+    initialize(arguments is Map<String, dynamic> ? arguments : null);
+  }
+
+  void initialize(Map<String, dynamic>? arguments) {
+    final rawShopId = arguments?['shopId'] ?? arguments?['reference'];
+    final shopId = _extractShopId(rawShopId);
+
+    if (shopId == null || shopId.isEmpty) {
+      _showShopIdError();
+      return;
+    }
+
+    if (_loadedShopId != shopId) {
+      _loadedShopId = shopId;
+      shopIdData.value = shopId;
+      _shopDetailsModel.value = null;
+    }
+
+    loadShopData(force: true);
+  }
+
+  void _showShopIdError() {
+    Get.snackbar('Shop Load Failed', 'Shop ID not found.');
+  }
+
+  String? _extractShopId(dynamic rawValue) {
+    if (rawValue is! String || rawValue.isEmpty) {
+      return null;
+    }
+
+    final value = rawValue.trim();
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      final uri = Uri.tryParse(value);
+      final segments = uri?.pathSegments.where((segment) => segment.isNotEmpty);
+      if (segments == null || segments.isEmpty) {
+        return null;
+      }
+      return segments.last;
+    }
+
+    return value;
+  }
+
+  Future<void> loadShopData({bool force = false}) async {
+    if (isLoading.value) {
+      return;
+    }
+
+    if (!force && _shopDetailsModel.value != null) {
+      return;
+    }
+
+    if (shopIdData.value.isEmpty) {
+      return;
+    }
+
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      Get.snackbar(
+        'Shop Load Failed',
+        'Access token not found. Please login again.',
+      );
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      final response = await _networkCaller.getRequest(
+        Urls.getShopDetailsUrlById(shopIdData.value),
+        accessToken: accessToken,
+      );
+
+      if (response.isSuccess) {
+        _shopDetailsModel.value = ShopDetailsModel.fromJson(
+          response.responseData,
+        );
+      } else {
+        Get.snackbar('Shop Load Failed', response.errorMessage);
+      }
+    } catch (e) {
+      Get.snackbar('Shop Load Failed', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  String get shopName => shopData?.shop?.name ?? '';
+
+  String get shopDescription => shopData?.shop?.description ?? '';
+
+  String get shopCoverPhoto => shopData?.shop?.coverPhoto ?? '';
+
+  String get shopProfileAvatar => shopData?.shop?.profileAvatar ?? '';
+
+  String get distanceText {
+    final distanceKm = shopData?.distance?.distanceKm;
+    final durationMinutes = shopData?.distance?.durationMinutes;
+
+    final distanceValue = distanceKm?.toString() ?? '0';
+    final durationValue = durationMinutes?.toString() ?? '0';
+    return '$distanceValue km, $durationValue min';
+  }
+
+  String get ratingText => (shopData?.shop?.avgRating ?? 0).toString();
+
+  String get followersText => (shopData?.shop?.followers ?? 0).toString();
+
+  String get deliveryTimeText {
+    final minTime = shopData?.policies?.deliveryMinTime?.time?.toString() ?? '';
+    final minUnit = shopData?.policies?.deliveryMinTime?.unit ?? '';
+    final maxTime = shopData?.policies?.deliveryMaxTime?.time?.toString() ?? '';
+    final maxUnit = shopData?.policies?.deliveryMaxTime?.unit ?? '';
+
+    if (minTime.isEmpty && maxTime.isEmpty) {
+      return '';
+    }
+
+    return '$minTime$minUnit - $maxTime$maxUnit';
+  }
+
+  List<String> get categories =>
+      shopData?.categories
+          .map((category) => category.title ?? '')
+          .where((title) => title.isNotEmpty)
+          .toList() ??
+      const [];
+
+  List<String> get storePolicies {
+    final policies = shopData?.policies;
+    if (policies == null) {
+      return const [];
+    }
+
+    final items = <String>[];
+
+    if (policies.isInstantDeliveryAvailable == true) {
+      items.add('Instant delivery available');
+    }
+
+    final openingTime = _formatTime(policies.openingTime);
+    final closingTime = _formatTime(policies.closingTime);
+    if (openingTime.isNotEmpty || closingTime.isNotEmpty) {
+      items.add('Open $openingTime - $closingTime');
+    }
+
+    if (policies.weekends.isNotEmpty) {
+      items.add('Weekend: ${policies.weekends.join(', ')}');
+    }
+
+    final returnPolicy = _formatTime(
+      policies.returnPolicyTime?.time?.toString(),
+      unit: policies.returnPolicyTime?.unit,
+    );
+    if (returnPolicy.isNotEmpty) {
+      items.add('Return policy: $returnPolicy');
+    }
+
+    return items;
+  }
+
+  String _formatTime(String? value, {String? unit}) {
+    if (value == null || value.isEmpty) {
+      return '';
+    }
+    return unit == null || unit.isEmpty ? value : '$value $unit';
+  }
+}

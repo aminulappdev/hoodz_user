@@ -15,7 +15,7 @@ class CarouselBanner extends StatefulWidget {
 class _CarouselBannerState extends State<CarouselBanner> {
   int currentBannerIndex = 0;
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

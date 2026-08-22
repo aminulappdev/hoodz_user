@@ -1,11 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:hoodz/core/constants/app_strings.dart' show AppStrings;
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 
 class ShopProfileImage extends StatelessWidget {
-  const ShopProfileImage({super.key});
+  const ShopProfileImage({super.key, this.imageUrl = AppStrings.demoImageUrl});
+
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class ShopProfileImage extends StatelessWidget {
         border: Border.all(color: Colors.white, width: 2.w(context)),
       ),
       child: AppCachedNetworkImage(
-        imageUrl: AppStrings.demoImageUrl,
+        imageUrl: imageUrl,
         imageHeight: 90.h(context),
         imageWidth: 90.w(context),
         imageFit: BoxFit.cover,

@@ -6,7 +6,7 @@ import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 import 'package:hoodz/urls.dart';
- 
+
 class HomeScreenController extends GetxController {
   HomeScreenController(this._locationService);
 
@@ -15,9 +15,9 @@ class HomeScreenController extends GetxController {
   final RxInt notificationCount = 3.obs;
   final RxString selectedAddress = 'AQUA Tower, 43 Mohakhali C/A'.obs;
   final RxBool isLoadingCurrentLocation = false.obs;
- 
+
   final List<Map<String, String>> categoryList = [
-    {'image': Assets.icons.egypt.keyName, 'name': 'Local Brand'}, 
+    {'image': Assets.icons.egypt.keyName, 'name': 'Local Brand'},
     {
       'image': Assets.icons.international.keyName,
       'name': 'International Brand',
@@ -111,7 +111,7 @@ class HomeScreenController extends GetxController {
     try {
       final response = await _networkCaller.getRequest(
         Urls.metaUserUrl,
-        accessToken: accessToken, 
+        accessToken: accessToken,
       );
 
       if (response.isSuccess) {

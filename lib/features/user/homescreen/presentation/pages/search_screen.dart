@@ -72,7 +72,7 @@ class SearchScreen extends GetView<SearchScreenController> {
                   fontSize: 18.sp(context),
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF363636),
-                ),
+                ), 
               ),
               SizedBox(height: 16.h(context)),
               SizedBox(

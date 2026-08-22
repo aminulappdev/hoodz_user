@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/arrow_button.dart';
 import 'package:hoodz/features/user/shop/presentation/widgets/shop_meta_item.dart';
 import 'package:hoodz/features/user/shop/presentation/widgets/shop_profile_image.dart';
-import 'package:hoodz/features/user/shop/presentation/widgets/shop_tag.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class ShopHeader extends StatelessWidget {
   const ShopHeader({
     super.key,
-    required this.shopName,
+    required this.coverImageUrl,
+    required this.profileImageUrl,
+    required this.shopName, 
     required this.distance,
     required this.deliveryTime,
     required this.rating,
@@ -20,8 +20,13 @@ class ShopHeader extends StatelessWidget {
     required this.followers,
     required this.description,
     required this.categories,
+    required this.isFollowing,
+    required this.isFollowLoading,
+    required this.onTapFollow,
   });
 
+  final String coverImageUrl;
+  final String profileImageUrl;
   final String shopName;
   final String distance;
   final String deliveryTime;
@@ -30,6 +35,9 @@ class ShopHeader extends StatelessWidget {
   final String followers;
   final String description;
   final List<String> categories;
+  final bool isFollowing;
+  final bool isFollowLoading;
+  final VoidCallback onTapFollow;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +50,7 @@ class ShopHeader extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             AppCachedNetworkImage(
-              imageUrl: AppStrings.demoImageUrl,
+              imageUrl: coverImageUrl,
               imageHeight: 240.h(context),
               imageWidth: screenWidth,
               imageFit: BoxFit.cover,
@@ -70,10 +78,10 @@ class ShopHeader extends StatelessWidget {
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    const Positioned(
+                    Positioned(
                       left: 0,
                       top: 0,
-                      child: ShopProfileImage(),
+                      child: ShopProfileImage(imageUrl: profileImageUrl),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 18.h(context)),
@@ -101,9 +109,11 @@ class ShopHeader extends StatelessWidget {
                                   runSpacing: 6.h(context),
                                   children: [
                                     ShopMetaItem(
-                                      icon: Assets.icons.location02.path,
-                                      label: distance,
+                                      icon: Assets.icons.star.path,
+                                      label: '$rating ($likes)',
+                                      iconColor: const Color(0xffFFC107),
                                     ),
+                                    
                                     ShopMetaItem(
                                       icon: Assets.icons.clock.path,
                                       label: deliveryTime,
@@ -116,14 +126,13 @@ class ShopHeader extends StatelessWidget {
                                   runSpacing: 6.h(context),
                                   children: [
                                     ShopMetaItem(
-                                      icon: Assets.icons.star.path,
-                                      label: '$rating ($likes)',
-                                      iconColor: const Color(0xffFFC107),
+                                      icon: Assets.icons.location02.path,
+                                      label: distance,
                                     ),
                                     ShopMetaItem(
                                       icon: null,
                                       label: followers,
-                                      leadingIcon: Icons.camera_alt_outlined,
+                                      leadingIcon: Icons.group,
                                     ),
                                   ],
                                 ),
@@ -131,9 +140,24 @@ class ShopHeader extends StatelessWidget {
                             ),
                           ),
                           CustomButton(
-                            text: 'Follow',
+                            text: isFollowing ? 'Unfollow' : 'Follow',
                             height: 40.h(context),
-                            width: 82.w(context),
+                            width: 100.w(context),
+                            onPressed: isFollowLoading ? null : onTapFollow,
+                            backgroundColor: isFollowing
+                                ? const Color(0xffFFF4EC)
+                                : const Color(0xffFF6A00),
+                            borderColor: isFollowing
+                                ? const Color(0xffFF6A00)
+                                : Colors.transparent,
+                            textStyle: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: isFollowing
+                                      ? const Color(0xffFF6A00)
+                                      : Colors.white,
+                                  fontSize: 15.sp(context),
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ],
                       ),
@@ -149,26 +173,6 @@ class ShopHeader extends StatelessWidget {
                     color: const Color(0xff787878),
                   ),
                 ),
-                SizedBox(height: 16.h(context)),
-                SizedBox(
-                  height: 40.h(context),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          right: index == categories.length - 1
-                              ? 0
-                              : 10.w(context),
-                        ),
-                        child: ShopTag(category: category),
-                      );
-                    },
-                  ),
-                ),
-                
               ],
             ),
           ),
