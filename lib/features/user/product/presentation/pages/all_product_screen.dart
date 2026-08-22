@@ -9,27 +9,44 @@ import 'package:hoodz/features/user/product/presentation/widgets/all_product_hea
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
 
-class AllProductScreen extends StatelessWidget {
+class AllProductScreen extends StatefulWidget {
   const AllProductScreen({super.key});
 
-  AllTrendingProductController _resolveController(
-    Map<String, dynamic>? arguments,
-  ) {
+  @override
+  State<AllProductScreen> createState() => _AllProductScreenState();
+}
+
+class _AllProductScreenState extends State<AllProductScreen> {
+  Map<String, dynamic>? _routeArguments;
+  dynamic _controller;
+  bool _initialized = false;
+
+  dynamic _resolveController(Map<String, dynamic>? arguments) {
     final source = arguments?['source'] as String? ?? 'trending';
 
     if (source == 'ai') {
       return Get.find<AiRecommendedProductController>();
     }
-
     return Get.find<AllTrendingProductController>();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final routeArguments =
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _routeArguments ??=
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final controller = _resolveController(routeArguments);
-    controller.initialize(routeArguments);
+    _controller ??= _resolveController(_routeArguments);
+
+    if (!_initialized) {
+      _initialized = true;
+      _controller.initialize(_routeArguments);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = _controller;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -75,7 +92,7 @@ class AllProductScreen extends StatelessWidget {
                           },
                           onTapFavourite: () {},
                         );
-                      }, 
+                      },
                     ),
             ),
           ],
@@ -88,7 +105,7 @@ class AllProductScreen extends StatelessWidget {
 class _AllProductScreenHeader extends StatelessWidget {
   const _AllProductScreenHeader({required this.controller});
 
-  final AllTrendingProductController controller;
+  final dynamic controller;
 
   @override
   Widget build(BuildContext context) {

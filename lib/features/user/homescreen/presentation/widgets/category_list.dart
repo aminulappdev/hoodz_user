@@ -8,7 +8,6 @@ class CategoriesList extends StatelessWidget {
   final VoidCallback onTap;
   final bool isSelected;
 
-
   const CategoriesList({
     super.key,
     required this.image,
@@ -24,8 +23,8 @@ class CategoriesList extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Container(
-            height: 80.h(context),
-            width: 80.w(context),
+            height: 70.h(context),
+            width: 70.w(context),
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(image),
@@ -34,20 +33,24 @@ class CategoriesList extends StatelessWidget {
               border: Border.all(
                 color: isSelected
                     ? LightThemeColors.primaryColor
-                    : LightThemeColors.backgroundColor,
-                width: isSelected ? 1 : 0,
+                    : const Color.fromARGB(255, 230, 229, 229),
+                width: isSelected ? 1 : 1,
               ),
               borderRadius: BorderRadius.circular(10.h(context)),
             ),
           ),
         ),
         SizedBox(height: 4.h(context)),
-        Text(
-          name,
-          style: TextStyle(
-            fontSize: 14.sp(context),
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
+        SizedBox(
+          width: 80.w(context),
+          child: Text(
+            name,
+            style: TextStyle(
+              fontSize: 13.sp(context),
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w400,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
       ],

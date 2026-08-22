@@ -17,43 +17,50 @@ class ShopScreen extends GetView<ShopDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( 
-      backgroundColor: Colors.white,
-      body: Obx(
-        () => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ShopHeader(
-              shopName: controller.shopName.value,
-              distance: controller.distance.value,
-              deliveryTime: controller.deliveryTime.value,
-              rating: controller.rating.value.toString(),
-              likes: controller.likes.value,
-              followers: controller.followers.value,
-              description: controller.description.value,
-              categories: controller.categories.toList(),
-            ),
-            Transform.translate(
-              offset: Offset(0, -18.h(context)),
-              child: _ShopTabBar(
-                selectedIndex: controller.selectedTabIndex.value,
-                onTabSelected: controller.changeTab,
-              ),
-            ),
-            SizedBox(height: 0.h(context)),
-            if (controller.selectedTabIndex.value == 0)
-              ProductSection(
-                recommendedItems: controller.productList.take(4).toList(),
-                products: controller.productList,
-              )
-            else
-              AboutSection(
-                shopName: controller.shopName.value,
-                description: controller.description.value,
-                establishedYear: controller.establishedYear.value,
-                location: controller.location.value,
-                ratingSummary: controller.ratingSummary.value,
-                followers: controller.followers.value,
+    final shopProductController = Get.find<ShopProductController>();
+    final connectionController = Get.find<ShoConnectionControoler>(); 
+    final routeArguments = Get.arguments is Map<String, dynamic>
+        ? Get.arguments as Map<String, dynamic>
+        : null;
+    shopProductController.initialize(routeArguments);
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F7F7),
+      body: Obx(() {
+        final shop = controller.shopData?.shop;
+        final featuredProducts = shopProductController.recommendedProducts;
+        final allProducts = shopProductController.allProducts;
+        final isProductsLoading = shopProductController.isProductsLoading.value;
+        final isFollowing = connectionController.isFollowing.value;
+        final isFollowLoading = connectionController.isLoading.value;
+
+        if (controller.isLoading.value && shop == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (shop == null) {
+          return const Center(child: Text('No shop details found'));
+        }
+
+        connectionController.bindShop(
+          shopId: controller.shopIdData.value,
+          initialFollowing: shop.isFollowing ?? false,
+        );
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShopHeader(
+                coverImageUrl: controller.shopCoverPhoto,
+                profileImageUrl: controller.shopProfileAvatar,
+                shopName: controller.shopName,
+                distance: controller.distanceText,
+                deliveryTime: controller.deliveryTimeText,
+                rating: controller.ratingText,
+                likes: shop.ratingCount?.toString() ?? '0',
+                followers: controller.followersText,
+                description: controller.shopDescription,
                 categories: controller.categories.toList(),
                 isFollowing: isFollowing,
                 isFollowLoading: isFollowLoading,
@@ -86,7 +93,7 @@ class ShopScreen extends GetView<ShopDetailsController> {
                           : ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: featuredProducts.length,
-                              separatorBuilder: (_, __) =>
+                              separatorBuilder: (_, _) =>
                                   SizedBox(width: 12.w(context)),
                               itemBuilder: (context, index) {
                                 final product = featuredProducts[index];

@@ -14,6 +14,7 @@ import 'package:hoodz/features/user/homescreen/presentation/controllers/address_
 import 'package:hoodz/features/user/homescreen/presentation/controllers/ai_recommended_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_brand_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_info_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
@@ -80,7 +81,10 @@ class ControllerBinder extends Bindings {
     );
     Get.lazyPut(SearchScreenController.new, fenix: true);
     Get.lazyPut(
-      () => AllBrandController(Get.find<HomeScreenController>()),
+      () => AllBrandController(
+        Get.find<HomeScreenController>(),
+        Get.find<LocationSelectionService>(),
+      ),
       fenix: true,
     );
     Get.lazyPut(
@@ -117,6 +121,7 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(AiAssistantController.new, fenix: true);
     Get.lazyPut(AllTrendingProductController.new, fenix: true);
     Get.lazyPut(AiRecommendedProductController.new, fenix: true);
+    Get.lazyPut(AllProductInfoController.new, fenix: true);
     Get.lazyPut(ProductDetailsController.new, fenix: true);
     Get.lazyPut(ShopDetailsController.new, fenix: true);
     Get.lazyPut(ShopProductController.new, fenix: true);

@@ -4,31 +4,28 @@ import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
-import 'package:hoodz/features/user/homescreen/data/models/all_product_model.dart';
+import 'package:hoodz/features/user/shop/data/models/get_shop_product_model.dart';
 import 'package:hoodz/urls.dart';
 
-class AllTrendingProductController extends GetxController {
+class AllProductInfoController extends GetxController {
+  AllProductInfoController();
+ 
   final NetworkCaller _networkCaller = Get.find<NetworkCaller>();
 
-  final RxBool isLoading = false.obs;  
+  final RxBool isLoading = false.obs;
   final RxBool isLoadingMore = false.obs;
-  final Rx<AllProductModel?> _productModel = Rx<AllProductModel?>(null);
+  final Rx<GetShopProductModel?> _productModel = Rx<GetShopProductModel?>(null);
+
   int _currentPage = 1;
   int _totalPage = 1;
-  AllProductModel? get productModel => _productModel.value;
-  List<AllProductItemModel> get products =>
-      _productModel.value?.data ?? const [];
-  bool get hasMoreDuas => _currentPage < _totalPage;
-  String get apiPath => Urls.trendingProductUrl;
-
-  @override
-  void onInit() {
-    super.onInit();
-    getTrendingProduct();
-  }
+  String? _loadedShopId;
 
   final RxString title = ''.obs;
   final RxString image = ''.obs;
+  final RxString shopId = ''.obs;
+  final RxString category = ''.obs;
+  final RxString brandType = ''.obs;
+
   final RxList<String> selectedColors = <String>[].obs;
   final RxList<String> selectedSizes = <String>[].obs;
   final Rx<RangeValues> selectedPriceRange = const RangeValues(0, 110).obs;
@@ -36,6 +33,14 @@ class AllTrendingProductController extends GetxController {
   final RxList<String> draftColors = <String>[].obs;
   final RxList<String> draftSizes = <String>[].obs;
   final Rx<RangeValues> draftPriceRange = const RangeValues(0, 110).obs;
+
+  GetShopProductModel? get productModel => _productModel.value;
+  List<AllProduct> get recommendedProducts =>
+      _productModel.value?.data?.recommends ?? const [];
+  List<AllProduct> get products =>
+      _productModel.value?.data?.allProducts ?? const [];
+  bool get hasMoreDuas => _currentPage < _totalPage;
+  String get apiPath => Urls.getShopProductsUrlById(shopId.value);
 
   List<String> get categories => const [
     'Men',
@@ -51,10 +56,32 @@ class AllTrendingProductController extends GetxController {
     AppStrings.demoImageUrl,
   ];
 
+  @override
+  void onInit() {
+    super.onInit();
+    final arguments = Get.arguments;
+    initialize(arguments is Map<String, dynamic> ? arguments : null);
+  }
+
   void initialize(Map<String, dynamic>? arguments) {
     title.value = arguments?['title'] as String? ?? 'Men';
     image.value = arguments?['image'] as String? ?? '';
+    shopId.value =
+        _extractShopId(arguments?['shopId'] ?? arguments?['reference']) ?? '';
+    category.value = (arguments?['category'] as String? ?? '').trim();
+    brandType.value = (arguments?['brandType'] as String? ?? '').trim();
     syncDraftWithApplied();
+
+    if (shopId.value.isEmpty) {
+      return;
+    }
+
+    if (_loadedShopId == shopId.value && productModel != null) {
+      return;
+    }
+
+    _loadedShopId = shopId.value;
+    getTrendingProduct();
   }
 
   void syncDraftWithApplied() {
@@ -125,31 +152,48 @@ class AllTrendingProductController extends GetxController {
 
     final page = loadMore ? _currentPage + 1 : 1;
 
-      if (loadMore) {
-        isLoadingMore.value = true;
-      } else {
-        isLoading.value = true;
-      }
+    if (loadMore) {
+      isLoadingMore.value = true;
+    } else {
+      isLoading.value = true;
+    }
 
     try {
+      final queryParams = _buildQueryParams(page);
+
+      if (category.value.trim().isNotEmpty) {
+        queryParams['category'] = category.value.trim();
+      }
+
+      if (brandType.value.trim().isNotEmpty) {
+        queryParams['brandType'] = brandType.value.trim();
+      }
+
       final response = await _networkCaller.getRequest(
         apiPath,
         accessToken: accessToken,
-        queryParams: _buildQueryParams(page),
+        queryParams: queryParams,
       );
 
       if (response.isSuccess) {
-        final model = AllProductModel.fromJson(response.responseData);
-        _currentPage = model.meta?.page ?? page;
-        _totalPage = model.meta?.totalPage ?? _currentPage;
+        final model = GetShopProductModel.fromJson(response.responseData);
+        _currentPage = _toInt(model.meta?.page) ?? page;
+        _totalPage = _toInt(model.meta?.totalPage) ?? _currentPage;
 
         if (loadMore && _productModel.value != null) {
-          _productModel.value = AllProductModel(
+          final currentModel = _productModel.value!;
+          _productModel.value = GetShopProductModel(
             success: model.success,
             statusCode: model.statusCode,
             message: model.message,
             meta: model.meta,
-            data: [..._productModel.value!.data, ...model.data],
+            data: Data(
+              recommends: model.data?.recommends ?? currentModel.data?.recommends ?? const [],
+              allProducts: [
+                ...?currentModel.data?.allProducts,
+                ...?model.data?.allProducts,
+              ],
+            ),
           );
         } else {
           _productModel.value = model;
@@ -171,6 +215,37 @@ class AllTrendingProductController extends GetxController {
     _currentPage = 1;
     _totalPage = 1;
     _productModel.value = null;
+  }
+
+  String? _extractShopId(dynamic rawValue) {
+    if (rawValue is! String || rawValue.isEmpty) {
+      return null;
+    }
+
+    final value = rawValue.trim();
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      final uri = Uri.tryParse(value);
+      final segments = uri?.pathSegments.where((segment) => segment.isNotEmpty);
+      if (segments == null || segments.isEmpty) {
+        return null;
+      }
+      return segments.last;
+    }
+
+    return value;
+  }
+
+  int? _toInt(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is int) {
+      return value;
+    }
+    if (value is double) {
+      return value.toInt();
+    }
+    return int.tryParse(value.toString());
   }
 
   Map<String, dynamic> _buildQueryParams(int page) {

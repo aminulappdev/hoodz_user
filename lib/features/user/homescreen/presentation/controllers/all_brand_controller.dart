@@ -1,124 +1,236 @@
 import 'package:get/get.dart';
-import 'package:hoodz/core/constants/app_strings.dart';
+import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/services/others/location_selection_service.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
-import 'package:flutter/material.dart';
+import 'package:hoodz/features/user/shop/data/models/category_brand_model.dart';
+import 'package:hoodz/urls.dart';
 
-class AllBrandController extends GetxController {
-  AllBrandController(this._homeController);
+class AllBrandController extends AllTrendingProductController {
+  AllBrandController(this._homeController, this._locationService);
 
   final HomeScreenController _homeController;
+  final LocationSelectionService _locationService;
+  final NetworkCaller _networkCaller = Get.find<NetworkCaller>();
+ 
+  final RxBool isBrandTypesLoading = false.obs;
+  final RxBool isCategoryShopsLoading = false.obs;
+  final RxString brandType = 'local'.obs;
+  final RxString selectedCategoryId = ''.obs;
+  final RxString selectedCategoryTitle = ''.obs;
+  final RxString selectedCategoryIcon = ''.obs;
+  final RxList<CategoryBrandItemModel> brandCategories =
+      <CategoryBrandItemModel>[].obs;
+  final RxList<CategoryBrandItemModel> brandShops =
+      <CategoryBrandItemModel>[].obs;
 
-  final RxString title = 'Men'.obs;
-  final RxString image = ''.obs;
-  final RxString selectedBrand = ''.obs;
-  final RxString selectedColor = ''.obs;
-  final RxString selectedSize = ''.obs;
-  final Rx<RangeValues> selectedPriceRange = const RangeValues(0, 100).obs;
+  String? _loadedBrandType;
+  String? _loadedCategoryId;
+  double _latitude = LocationSelectionService.fallbackLocation.latitude;
+  double _longitude = LocationSelectionService.fallbackLocation.longitude;
 
-  final RxString draftBrand = ''.obs;
-  final RxString draftColor = ''.obs;
-  final RxString draftSize = ''.obs;
-  final Rx<RangeValues> draftPriceRange = const RangeValues(0, 100).obs;
+  HomeScreenController get homeController => _homeController;
 
-  List<String> get categories => const [
-    'Men',
-    'Women',
-    'Shoes',
-    'Bag',
-    'Accessories',
-  ];
-  List<String> get colors => const ['Black', 'White', 'Red', 'Blue', 'Green'];
-  List<String> get sizes => const ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  List<String> get headerAvatarImages => const [
-    AppStrings.demoImageUrl,
-    AppStrings.demoImageUrl,
-  ];
+  String get pageTitle => title.value.trim().isEmpty
+      ? _prettyBrandType(brandType.value)
+      : title.value;
+
+  @override
+  void onInit() {
+    final arguments = Get.arguments;
+    initialize(arguments is Map<String, dynamic> ? arguments : null);
+  }
 
   void initialize(Map<String, dynamic>? arguments) {
-    title.value = arguments?['title'] as String? ?? 'Men';
-    image.value = arguments?['image'] as String? ?? '';
-    syncDraftWithApplied();
-  }
+    super.initialize(arguments);
 
-  List<Map<String, String>> get visibleProducts {
-    final selectedCategory = title.value;
+    final resolvedBrandType = _resolveBrandType(
+      arguments?['brandType'] ?? arguments?['value'] ?? title.value,
+    );
+    final resolvedLatitude =
+        _toDouble(arguments?['latitude']) ??
+        _toDouble(arguments?['lat']) ??
+        LocationSelectionService.fallbackLocation.latitude;
+    final resolvedLongitude =
+        _toDouble(arguments?['longitude']) ??
+        _toDouble(arguments?['lng']) ??
+        LocationSelectionService.fallbackLocation.longitude;
 
-    return _homeController.productList.where((product) {
-      final category = product['category'] ?? '';
-      final brand = product['brand'] ?? '';
-      final color = product['color'] ?? '';
-      final size = product['size'] ?? '';
-      final price = _parsePrice(product['price']);
-      final matchesCategory = category == selectedCategory;
-      final matchesBrand =
-          selectedBrand.value.isEmpty || brand == selectedBrand.value;
-      final matchesColor =
-          selectedColor.value.isEmpty || color == selectedColor.value;
-      final matchesSize =
-          selectedSize.value.isEmpty || size == selectedSize.value;
-      final matchesPrice =
-          price >= selectedPriceRange.value.start &&
-          price <= selectedPriceRange.value.end;
-      return matchesCategory &&
-          matchesBrand &&
-          matchesColor &&
-          matchesSize &&
-          matchesPrice;
-    }).toList();
-  }
+    brandType.value = resolvedBrandType;
+    _latitude = resolvedLatitude;
+    _longitude = resolvedLongitude;
 
-  void syncDraftWithApplied() {
-    draftBrand.value = selectedBrand.value;
-    draftColor.value = selectedColor.value;
-    draftSize.value = selectedSize.value;
-    draftPriceRange.value = selectedPriceRange.value;
-  }
-
-  void selectDraftBrand(String value) {
-    draftBrand.value = draftBrand.value == value ? '' : value;
-  }
-
-  void selectDraftColor(String value) {
-    draftColor.value = draftColor.value == value ? '' : value;
-  }
-
-  void selectDraftSize(String value) {
-    draftSize.value = draftSize.value == value ? '' : value;
-  }
-
-  void updateDraftPriceRange(RangeValues values) {
-    draftPriceRange.value = values;
-  }
-
-  void applyFilters() {
-    selectedBrand.value = draftBrand.value;
-    selectedColor.value = draftColor.value;
-    selectedSize.value = draftSize.value;
-    selectedPriceRange.value = draftPriceRange.value;
-  }
-
-  void clearDraftFilters() {
-    draftBrand.value = '';
-    draftColor.value = '';
-    draftSize.value = '';
-    draftPriceRange.value = const RangeValues(0, 100);
-  }
-
-  void clearAppliedFilters() {
-    clearDraftFilters();
-    applyFilters();
-  }
-
-  void toggleBrand(String value) {
-    selectedBrand.value = selectedBrand.value == value ? '' : value;
-  }
-
-  double _parsePrice(String? price) {
-    if (price == null || price.isEmpty) {
-      return 0;
+    if (_loadedBrandType != resolvedBrandType) {
+      _loadedBrandType = resolvedBrandType;
+      _loadedCategoryId = null;
+      selectedCategoryId.value = '';
+      selectedCategoryTitle.value = '';
+      selectedCategoryIcon.value = '';
+      brandCategories.clear();
+      brandShops.clear();
+      loadBrandTypeCategories(force: true);
+      return;
     }
 
-    final clean = price.replaceAll(RegExp(r'[^0-9.]'), '');
-    return double.tryParse(clean) ?? 0;
+    if (brandCategories.isEmpty && !isBrandTypesLoading.value) {
+      loadBrandTypeCategories(force: true);
+    }
+  }
+
+  String _resolveBrandType(dynamic rawValue) {
+    final value = (rawValue ?? '').toString().trim().toLowerCase();
+    if (value.contains('international')) {
+      return 'international';
+    }
+    if (value.contains('trend')) {
+      return 'trending';
+    }
+    if (value.contains('new')) {
+      return 'new';
+    }
+    if (value.contains('local')) {
+      return 'local';
+    }
+    if (value == 'intl') {
+      return 'international';
+    }
+    return value.isEmpty ? 'local' : value;
+  }
+
+  String _prettyBrandType(String value) {
+    switch (value) {
+      case 'international':
+        return 'International Brand';
+      case 'trending':
+        return 'Trending Now';
+      case 'new':
+        return 'New Arrivals';
+      default:
+        return 'Local Brand';
+    }
+  }
+
+  Future<void> loadBrandTypeCategories({bool force = false}) async {
+    if (isBrandTypesLoading.value) {
+      return;
+    }
+
+    if (!force && brandCategories.isNotEmpty) {
+      return;
+    }
+
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      Get.snackbar(
+        'Category Load Failed',
+        'Access token not found. Please login again.',
+      );
+      return;
+    }
+
+    try {
+      isBrandTypesLoading.value = true;
+      final response = await _networkCaller.getRequest(
+        Urls.getBrandTypeCategoriesUrl(brandType.value),
+        accessToken: accessToken,
+      );
+
+      if (response.isSuccess) {
+        final model = CategoryBrandModel.fromJson(response.responseData);
+        brandCategories.assignAll(model.data);
+        return;
+      }
+
+      Get.snackbar('Category Load Failed', response.errorMessage);
+    } catch (e) {
+      Get.snackbar('Category Load Failed', e.toString());
+    } finally {
+      isBrandTypesLoading.value = false;
+    }
+  }
+
+  Future<void> selectCategory(CategoryBrandItemModel category) async {
+    final categoryId = category.id?.trim() ?? '';
+    if (categoryId.isEmpty) {
+      return;
+    }
+
+    selectedCategoryId.value = categoryId;
+    selectedCategoryTitle.value = category.displayTitle;
+    selectedCategoryIcon.value = category.displayImage;
+
+    if (_loadedCategoryId == categoryId && brandShops.isNotEmpty) {
+      return;
+    }
+
+    _loadedCategoryId = categoryId;
+    await loadCategoryShops(
+      categoryId: categoryId,
+      categoryTitle: category.displayTitle,
+      force: true,
+    );
+  }
+
+  Future<void> loadCategoryShops({
+    required String categoryId,
+    required String categoryTitle,
+    bool force = false,
+  }) async {
+    if (isCategoryShopsLoading.value) {
+      return;
+    }
+
+    if (!force && _loadedCategoryId == categoryId && brandShops.isNotEmpty) {
+      return;
+    }
+
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      Get.snackbar(
+        'Shop Load Failed',
+        'Access token not found. Please login again.',
+      );
+      return;
+    }
+
+    try {
+      isCategoryShopsLoading.value = true;
+      final response = await _networkCaller.getRequest(
+        Urls.getCategoryShopsUrl(categoryId),
+        accessToken: accessToken,
+        queryParams: {
+          'brandType': brandType.value,
+          'latitude': _latitude,
+          'longitude': _longitude,
+          'category': categoryTitle,
+        },
+      );
+
+      if (response.isSuccess) {
+        final model = CategoryBrandModel.fromJson(response.responseData);
+        brandShops.assignAll(model.data);
+        return;
+      }
+
+      Get.snackbar('Shop Load Failed', response.errorMessage);
+    } catch (e) {
+      Get.snackbar('Shop Load Failed', e.toString());
+    } finally {
+      isCategoryShopsLoading.value = false;
+    }
+  }
+
+  double? _toDouble(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is double) {
+      return value;
+    }
+    if (value is int) {
+      return value.toDouble();
+    }
+    return double.tryParse(value.toString());
   }
 }

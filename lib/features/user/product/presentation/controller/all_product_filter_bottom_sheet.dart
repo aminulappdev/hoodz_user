@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
-import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/filter_option_chip.dart';
 
 class AllProductFilterBottomSheet extends StatelessWidget {
   const AllProductFilterBottomSheet({super.key, required this.controller});
 
-  final AllTrendingProductController controller;
+  final dynamic controller;
 
   @override
   Widget build(BuildContext context) {
@@ -74,38 +73,22 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                   RangeSlider(
                     values: controller.draftPriceRange.value,
                     min: 0,
-                    max: 100,
+                    max: 110,
                     activeColor: const Color(0xFFFF6B00),
                     inactiveColor: const Color(0xFFEAEAEA),
                     onChanged: controller.updateDraftPriceRange,
                   ),
                   SizedBox(height: 12.h(context)),
-                  _SectionLabel(text: 'Brand'),
-                  SizedBox(height: 10.h(context)),
-                  Wrap(
-                    spacing: 8.w(context),
-                    runSpacing: 10.h(context),
-                    children: controller.categories
-                        .map(
-                          (item) => FilterOptionChip(
-                            label: item,
-                            isSelected: controller.draftBrand.value == item,
-                            onTap: () => controller.selectDraftBrand(item),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                  SizedBox(height: 16.h(context)),
                   _SectionLabel(text: 'Color'),
                   SizedBox(height: 10.h(context)),
                   Wrap(
                     spacing: 8.w(context),
                     runSpacing: 10.h(context),
                     children: controller.colors
-                        .map(
+                        .map<Widget>(
                           (item) => FilterOptionChip(
                             label: item,
-                            isSelected: controller.draftColor.value == item,
+                            isSelected: controller.draftColors.contains(item),
                             onTap: () => controller.selectDraftColor(item),
                           ),
                         )
@@ -118,10 +101,10 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                     spacing: 8.w(context),
                     runSpacing: 10.h(context),
                     children: controller.sizes
-                        .map(
+                        .map<Widget>(
                           (item) => FilterOptionChip(
                             label: item,
-                            isSelected: controller.draftSize.value == item,
+                            isSelected: controller.draftSizes.contains(item),
                             onTap: () => controller.selectDraftSize(item),
                           ),
                         )

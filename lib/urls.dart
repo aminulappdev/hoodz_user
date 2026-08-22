@@ -14,6 +14,13 @@ class Urls {
   static const String trendingProductUrl = '$_baseUrl/products/trending';
   static const String aiRecommendedProductUrl =
       '$_baseUrl/products/ai-recommended';
+  static String getBrandTypeCategoriesUrl(String brandType) {
+    return '$_baseUrl/category/brand-type?brandType=$brandType';
+  }
+
+  static String getCategoryShopsUrl(String categoryId) {
+    return '$_baseUrl/category/$categoryId/shops';
+  }
 
   static String getProductUrlById(String id) {
     return '$_baseUrl/products/$id';

@@ -5,150 +5,166 @@ import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_brand_controller.dart';
-import 'package:hoodz/features/user/product/presentation/widgets/all_product_header.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_card_list.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/category_list.dart';
+import 'package:hoodz/features/user/product/presentation/widgets/all_product_header.dart';
 
-class AllBrandScreen extends StatefulWidget {
+class AllBrandScreen extends GetView<AllBrandController> {
   const AllBrandScreen({super.key});
- 
-  @override
-  State<AllBrandScreen> createState() => _AllBrandScreenState();
-}
-
-class _AllBrandScreenState extends State<AllBrandScreen> {
-  late final AllBrandController controller;
-  bool _isInitialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    controller = Get.find<AllBrandController>();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (_isInitialized) return;
-
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-
-    controller.initialize(arguments);
-
-    _isInitialized = true;
-  }
-
-  @override 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
+      body: Obx(() {
+        final categories = controller.brandCategories;
+        final shops = controller.brandShops;
+        final isCategoriesLoading = controller.isBrandTypesLoading.value;
+        final isShopsLoading = controller.isCategoryShopsLoading.value;
+        final selectedCategoryId = controller.selectedCategoryId.value;
+        final selectedCategoryTitle = controller.selectedCategoryTitle.value;
 
-      body: Column(
-        children: [
-          Obx(
-            () => AllProductHeader(
+        return Column(
+          children: [
+            AllProductHeader(
               isFilter: false,
-              title: controller.title.value,
+              title: controller.pageTitle,
               onTapBack: () => Navigator.pop(context),
               onTapFilter: () {},
             ),
-          ),
+            SizedBox(height: 20.h(context)),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 14.w(context)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'All Categories',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 16.sp(context),
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF3A3A3A),
+                      ),
+                    ),
+                    SizedBox(height: 14.h(context)),
+                    SizedBox(
+                      height: 120.h(context),
+                      child: isCategoriesLoading && categories.isEmpty
+                          ? const Center(child: CircularProgressIndicator())
+                          : categories.isEmpty
+                          ? const Center(child: Text('No category found'))
+                          : ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: categories.length,
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(width: 10.w(context)),
+                              itemBuilder: (context, index) {
+                                final category = categories[index];
+                                final isSelected =
+                                    selectedCategoryId == category.id;
 
-          SizedBox(height: 20.h(context)),
-
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w(context)),
-
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              children: [
-                Text(
-                  'All Categories',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 16.sp(context),
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF3A3A3A),
-                  ),
+                                return CategoriesList(
+                                  image: category.displayImage.isEmpty
+                                      ? AppStrings.demoImageUrl
+                                      : category.displayImage,
+                                  name: category.displayTitle,
+                                  isSelected: isSelected,
+                                  onTap: () {
+                                    controller.selectCategory(category);
+                                  },
+                                );
+                              },
+                            ),
+                    ),
+                    SizedBox(height: 10.h(context)),
+                    Text(
+                      selectedCategoryTitle.isEmpty
+                          ? 'Brands'
+                          : '$selectedCategoryTitle Shops',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 16.sp(context),
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF3A3A3A),
+                      ),
+                    ),
+                    SizedBox(height: 14.h(context)),
+                    if (selectedCategoryId.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 18.h(context),
+                          horizontal: 12.w(context),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r(context)),
+                          border: Border.all(color: const Color(0xFFEFEFEF)),
+                        ),
+                        child: const Text('Select a category to view shops.'),
+                      )
+                    else if (isShopsLoading && shops.isEmpty)
+                      const Center(child: CircularProgressIndicator())
+                    else if (shops.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 18.h(context),
+                          horizontal: 12.w(context),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r(context)),
+                          border: Border.all(color: const Color(0xFFEFEFEF)),
+                        ),
+                        child: const Text('No shop found'),
+                      )
+                    else
+                      ListView.separated(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: shops.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 8.h(context)),
+                        itemBuilder: (context, index) {
+                          final shop = shops[index];
+                          return BrandCardList(
+                            image: shop.displayImage.isEmpty
+                                ? AppStrings.demoImageUrl 
+                                : shop.displayImage,
+                            name: shop.displayTitle,
+                            rating: shop.avgRating?.toStringAsFixed(1) ?? '0.0',
+                            distance: shop.distance == null
+                                ? ''
+                                : '${shop.distance!.toStringAsFixed(1)} km',
+                            time: shop.eta == null ? '' : '${shop.eta} min',
+                            onTap: () {
+                              if ((shop.id ?? '').isNotEmpty) {
+                                PageNavigationService.to(
+                                  context,
+                                  AppRoutes.shopProduct,
+                                  arguments: {
+                                    'shopId': shop.id,
+                                    'title': shop.displayTitle,
+                                    'image': shop.displayImage,
+                                    'category': selectedCategoryTitle,
+                                    'brandType': controller.brandType.value,
+                                  },
+                                );
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    SizedBox(height: 20.h(context)),
+                  ],
                 ),
-
-                SizedBox(height: 14.h(context)),
-
-                SizedBox(
-                  height: 120.h(context),
-
-                  child: Obx(() {
-                    final selectedBrand = controller.selectedBrand.value;
-
-                    return ListView.separated(
-                      scrollDirection: Axis.horizontal,
-
-                      itemCount: controller.categories.length,
-
-                      separatorBuilder: (context, index) =>
-                          SizedBox(width: 10.w(context)),
-
-                      itemBuilder: (context, index) {
-                        final brand = controller.categories[index];
-
-                        return CategoriesList(
-                          image: AppStrings.demoImageUrl,
-
-                          name: brand,
-
-                          isSelected: selectedBrand == brand,
-
-                          onTap: () {
-                            controller.toggleBrand(brand);
-                          },
-                        );
-                      },
-                    );
-                  }),
-                ),
-
-                Text(
-                  'Brands',
-
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 16.sp(context),
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF3A3A3A),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 10.h(context)),
-
-          Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.fromLTRB(
-                14.w(context),
-                0,
-                14.w(context),
-                20.h(context),
               ),
-
-              separatorBuilder: (context, index) =>
-                  SizedBox(height: 8.h(context)),
-
-              itemCount: 50,
-
-              itemBuilder: (context, index) {
-                return BrandCardList(
-                  onTap: () {
-                    PageNavigationService.to(context, AppRoutes.shop);
-                  },
-                );
-              },
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 }

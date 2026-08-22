@@ -14,17 +14,49 @@ class AllProductModel {
   final List<AllProductItemModel> data;
 
   factory AllProductModel.fromJson(Map<String, dynamic> json) {
+    final rawData = json["data"];
+    final productItems = _extractProductItems(rawData);
+
     return AllProductModel(
       success: json["success"],
       statusCode: json["statusCode"],
       message: json["message"],
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
-      data: json["data"] == null
-          ? []
-          : List<AllProductItemModel>.from(
-              json["data"]!.map((x) => AllProductItemModel.fromJson(x)),
-            ),
+      data: productItems,
     );
+  }
+
+  static List<AllProductItemModel> _extractProductItems(dynamic rawData) {
+    if (rawData == null) {
+      return const [];
+    }
+
+    if (rawData is List) {
+      return rawData
+          .whereType<Map>()
+          .map((item) => AllProductItemModel.fromJson(Map<String, dynamic>.from(item)))
+          .toList();
+    }
+
+    if (rawData is Map<String, dynamic>) {
+      final candidates = <dynamic>[
+        rawData['data'],
+        rawData['products'],
+        rawData['allProducts'],
+        rawData['items'],
+        rawData['docs'],
+        rawData['results'],
+      ];
+
+      for (final candidate in candidates) {
+        final extracted = _extractProductItems(candidate);
+        if (extracted.isNotEmpty) {
+          return extracted;
+        }
+      }
+    }
+
+    return const [];
   }
 }
 

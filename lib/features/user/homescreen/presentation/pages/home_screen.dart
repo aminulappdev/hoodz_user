@@ -120,6 +120,9 @@ class HomeScreen extends GetView<HomeScreenController> {
                                     SizedBox(width: 14.w(context)),
                                 itemBuilder: (context, index) {
                                   final category = categories[index];
+                                  final brandType = _resolveBrandType(
+                                    category['name'] ?? '',
+                                  );
                                   return BrandList(
                                     image: category['image'] ?? "",
                                     name: category['name'] ?? "",
@@ -130,6 +133,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                         arguments: {
                                           "title": category["name"],
                                           "image": category["image"],
+                                          "brandType": brandType,
                                         },
                                       );
                                     },
@@ -360,5 +364,19 @@ class HomeScreen extends GetView<HomeScreenController> {
         ),
       );
     });
+  }
+
+  String _resolveBrandType(String value) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized.contains('international')) {
+      return 'international';
+    }
+    if (normalized.contains('trend')) {
+      return 'trending';
+    }
+    if (normalized.contains('new')) {
+      return 'new';
+    }
+    return 'local';
   }
 }
