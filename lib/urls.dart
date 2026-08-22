@@ -1,0 +1,19 @@
+class Urls {
+  static const String _baseUrl = 'http://72.244.153.29:5029/api/v1';
+
+  static const String signUpWithEmailUrl = '$_baseUrl/auth/signup-with-email';
+  static const String loginWithEmailUrl = '$_baseUrl/auth/login-with-email';
+  static const String forgotPasswordUrl = '$_baseUrl/auth/forgot-password';
+  static const String verifyOtpUrl = '$_baseUrl/otp/verify';
+  static const String resetPasswordUrl = '$_baseUrl/auth/reset-password';
+  static const String uploadMultipleUrl = '$_baseUrl/upload/multiple';
+  static const String currentUserUrl = '$_baseUrl/users/me';
+  static const String userLocationUrl = '$_baseUrl/users/location';
+  static const String kycUrl = '$_baseUrl/kyc';
+  static const String metaUserUrl = '$_baseUrl/meta/user';
+  static const String trendingProductUrl = '$_baseUrl/products/trending';
+
+  static String getProductUrlById(String id) {
+    return '$_baseUrl/products/$id';
+  }
+}

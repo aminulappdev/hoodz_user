@@ -1,0 +1,133 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/core/services/others/page_navigation_service.dart';
+import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/validator_services.dart';
+import 'package:hoodz/core/widgets/custom_button.dart';
+import 'package:hoodz/core/widgets/custom_text_field.dart';
+import 'package:hoodz/features/auth/presentation/controllers/sign_in_controller.dart';
+import 'package:hoodz/features/auth/presentation/widgets/auth_background.dart';
+import 'package:hoodz/features/auth/presentation/widgets/have_account.dart';
+import 'package:hoodz/features/auth/presentation/widgets/label_text_widget.dart';
+import 'package:hoodz/features/auth/presentation/widgets/others_auth_widget.dart';
+import 'package:hoodz/features/auth/presentation/widgets/remember_me_widget.dart';
+import 'package:hoodz/gen/assets.gen.dart';
+
+class SignInScreen extends GetView<SignInController> {
+  const SignInScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: AuthBackground( 
+        isBack: true,
+        title: 'Welcome Back',
+        subtitle:
+            'It is quick and easy to log in. Enter your email and password below.',
+        contentColumn: Form(
+          key: controller.formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 40.h(context)),
+                const LabelText(label: 'Email'),
+                SizedBox(height: 8.h(context)), 
+                CustomTextField(
+                  controller: controller.emailController,
+                  hintText: 'Enter your email',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: ValidatorService.validateEmailAddress,
+                ),
+                SizedBox(height: 20.h(context)),
+                const LabelText(label: 'Password'),
+                SizedBox(height: 8.h(context)),
+                Obx(
+                  () => CustomTextField(
+                    controller: controller.passwordController,
+                    hintText: '******',
+                    obscureText: controller.isPasswordHidden.value,
+                    suffixIcon: controller.isPasswordHidden.value
+                        ? Assets.icons.eyeOff.path
+                        : Assets.icons.view.path,
+                    suffixIconOnPressed: controller.togglePasswordVisibility,
+                    validator: ValidatorService.validateSimpleField,
+                  ),
+                ),
+                SizedBox(height: 20.h(context)),
+                Obx(
+                  () => RememberMe(
+                    value: controller.rememberMe.value,
+                    onToggle: controller.toggleRememberMe,
+                    onForgotPassword: () {
+                      PageNavigationService.to(
+                        context,
+                        AppRoutes.forgotPassword,
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 40.h(context)),
+                CustomButton(
+                  text: 'Sign In',
+                  onPressed: () async {
+                    final signInData = await controller.signIn();
+                    if (signInData == null) {
+                      return;
+                    }
+
+                    if (signInData['isPending'] == true) {
+                      await showDialog<void>(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('Request Pending'),
+                          content: Text(
+                            (signInData['message'] ?? '').toString(),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () { 
+                                Navigator.of(dialogContext).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                      return;
+                    }
+
+                    if (signInData['isProfileSetUp'] != true) {
+                      PageNavigationService.offAll(
+                        context,
+                        AppRoutes.profileSetup,
+                        arguments: {'verifiedUser': signInData['user']},
+                      );
+                      return;
+                    }
+
+                    PageNavigationService.offAll(
+                      context,
+                      signInData['targetRoute'] as String,
+                    );
+                  },
+                ),
+                SizedBox(height: 32.h(context)),
+                OthersAuth(onApplePressed: () {}, onGooglePressed: () {}),
+                SizedBox(height: 32.h(context)),
+                HaveAnAccount(
+                  content: 'Don\'t have an account?',
+                  buttonTitle: 'Sign Up',
+                  onPressed: () {
+                    PageNavigationService.to(context, AppRoutes.signUp);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
