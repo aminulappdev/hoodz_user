@@ -25,7 +25,7 @@ class SignInController extends GetxController {
     rememberMe.toggle();
   }
 
-  Future<Map<String, dynamic>?> signIn() async {
+  Future<Map<String, dynamic>?> signIn() async { 
     if (!ValidatorService.validateAndSave(formKey)) {
       return null;
     }

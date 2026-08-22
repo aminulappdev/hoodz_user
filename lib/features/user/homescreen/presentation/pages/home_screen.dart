@@ -276,7 +276,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                           },
                         ),
                       ),
-                      SizedBox(height: 12.h(context)),
+                      SizedBox(height: 12.h(context)), 
                       Text(
                         'Redeem and save',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(

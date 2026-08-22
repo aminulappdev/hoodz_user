@@ -14,7 +14,7 @@ class ShopScreen extends GetView<ShopController> {
     return Scaffold( 
       backgroundColor: Colors.white,
       body: Obx(
-        () => Column(
+        () => Column( 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ShopHeader(
