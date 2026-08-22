@@ -61,8 +61,15 @@ class HomeScreen extends GetView<HomeScreenController> {
     final width = MediaQuery.of(context).size.width;
     final profileController = Get.find<ProfileController>();
 
-    return Obx(
-      () => Scaffold(
+    return Obx(() {
+      final homeData = controller.homeData;
+      final categories = controller.categoryList;
+      final nearbyBrands = homeData?.nearbyBrands ?? const [];
+      final recentlyViewed = homeData?.recentlyViwed ?? const [];
+      final trendingProducts = homeData?.trandingProducts ?? const [];
+      final aiRecommendedProducts = homeData?.aiRecommandedProducts ?? const [];
+
+      return Scaffold(
         body: SizedBox(
           height: height,
           width: width,
@@ -91,26 +98,28 @@ class HomeScreen extends GetView<HomeScreenController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      controller.categoryList.isEmpty
+                      categories.isEmpty
                           ? Container(
                               height: 90.h(context),
                               alignment: Alignment.center,
                               width: double.infinity,
-                              decoration: BoxDecoration(color: Colors.white),
-                              child: Center(child: Text('No category found')),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              child: const Center(
+                                child: Text('No category found'),
+                              ),
                             )
                           : SizedBox(
                               height: 90.h(context),
                               width: double.infinity,
                               child: ListView.separated(
-                                itemCount: controller.categoryList.length,
-
+                                itemCount: categories.length,
                                 scrollDirection: Axis.horizontal,
                                 separatorBuilder: (context, index) =>
                                     SizedBox(width: 14.w(context)),
                                 itemBuilder: (context, index) {
-                                  final category =
-                                      controller.categoryList[index];
+                                  final category = categories[index];
                                   return BrandList(
                                     image: category['image'] ?? "",
                                     name: category['name'] ?? "",
@@ -128,15 +137,13 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 },
                               ),
                             ),
-
-                      Text('First Section'),
+                      const Text('First Section'),
                       SizedBox(height: 16.h(context)),
-                      CarouselBanner(
-                        controller.homeData?.firstSectionBanner ?? [],
-                        (reference) {
-                          PageNavigationService.to(context, AppRoutes.shop);
-                        },
-                      ),
+                      CarouselBanner(homeData?.firstSectionBanner ?? const [], (
+                        reference,
+                      ) {
+                        PageNavigationService.to(context, AppRoutes.shop);
+                      }),
                       SizedBox(height: 12.h(context)),
                       Text(
                         'Near by Brands',
@@ -148,32 +155,32 @@ class HomeScreen extends GetView<HomeScreenController> {
                       SizedBox(height: 8.h(context)),
                       SizedBox(
                         height: 100.h(context),
-                        child: ListView.separated(
-                          itemCount:
-                              controller.homeData?.nearbyBrands.length ?? 0,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(width: 14.w(context)),
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            final brand =
-                                controller.homeData!.nearbyBrands[index];
-                            return GestureDetector(
-                              onTap: () {
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.shop,
-                                );
-                              },
-                              child: CircleAvatar(
-                                radius: 36.r(context),
-                                backgroundImage: NetworkImage(
-                                  brand.profileAvatar ?? "",
-                                ),
-                                //child: CrashSafeImage(brand?.profileAvatar ?? '', fit: BoxFit.cover),
+                        child: nearbyBrands.isEmpty
+                            ? const Center(child: Text('No nearby brands'))
+                            : ListView.separated(
+                                itemCount: nearbyBrands.length,
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(width: 14.w(context)),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  final brand = nearbyBrands[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      PageNavigationService.to(
+                                        context,
+                                        AppRoutes.shop,
+                                        arguments: {'shopId': brand.id},
+                                      );
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 36.r(context),
+                                      backgroundImage: NetworkImage(
+                                        brand.profileAvatar ?? "",
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
                       ),
                       SizedBox(height: 12.h(context)),
                       Text(
@@ -184,7 +191,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                         ),
                       ),
                       SizedBox(height: 8.h(context)),
-                      controller.homeData!.recentlyViwed.isEmpty
+                      recentlyViewed.isEmpty
                           ? Container(
                               height: 100.h(context),
                               alignment: Alignment.center,
@@ -198,24 +205,23 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   color: const Color(0xFFE5E5E5),
                                 ),
                               ),
-                              child: Center(child: Text('No recently viewed')),
+                              child: const Center(
+                                child: Text('No recently viewed'),
+                              ),
                             )
                           : SizedBox(
                               height: 266.h(context),
                               child: ListView.separated(
-                                itemCount:
-                                    controller.homeData?.recentlyViwed.length ??
-                                    0,
+                                itemCount: recentlyViewed.length,
                                 separatorBuilder: (context, index) =>
                                     SizedBox(width: 14.w(context)),
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
-                                  final product =
-                                      controller.homeData!.recentlyViwed[index];
+                                  final product = recentlyViewed[index];
                                   final name = product.title ?? "";
                                   final image = product.image ?? "";
-                                  final price = "\${product.price ?? ''}";
-                                  final rating = "\${product.avgRating ?? ''}";
+                                  final price = "${product.price ?? ''}";
+                                  final rating = "${product.avgRating ?? ''}";
                                   return ProductCard(
                                     name: name,
                                     image: image,
@@ -239,42 +245,45 @@ class HomeScreen extends GetView<HomeScreenController> {
                           PageNavigationService.to(
                             context,
                             AppRoutes.allProduct,
-                            arguments: {'title': 'Trending Now'},
+                            arguments: {
+                              'title': 'Trending Now',
+                              'source': 'trending',
+                            },
                           );
                         },
                       ),
                       SizedBox(height: 8.h(context)),
                       SizedBox(
                         height: 266.h(context),
-                        child: ListView.separated(
-                          itemCount:
-                              controller.homeData?.trandingProducts.length ?? 0,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(width: 14.w(context)),
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            final product =
-                                controller.homeData!.trandingProducts[index];
-                            final name = product.title ?? '';
-                            final image = product.image ?? '';
-                            final price = product.price.toString();
-                            final rating = product.avgRating.toString();
-                            return ProductCard(
-                              name: name,
-                              image: image,
-                              price: price,
-                              rating: rating,
-                              onTap: () {
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.productDetails,
-                                  arguments: {'productId': product.id},
-                                );
-                              },
-                              onTapFavourite: () {},
-                            );
-                          },
-                        ),
+                        child: trendingProducts.isEmpty
+                            ? const Center(child: Text('No trending products'))
+                            : ListView.separated(
+                                itemCount: trendingProducts.length,
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(width: 14.w(context)),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  final product = trendingProducts[index];
+                                  final name = product.title ?? '';
+                                  final image = product.image ?? '';
+                                  final price = product.price.toString();
+                                  final rating = product.avgRating.toString();
+                                  return ProductCard(
+                                    name: name,
+                                    image: image,
+                                    price: price,
+                                    rating: rating,
+                                    onTap: () {
+                                      PageNavigationService.to(
+                                        context,
+                                        AppRoutes.productDetails,
+                                        arguments: {'productId': product.id},
+                                      );
+                                    },
+                                    onTapFavourite: () {},
+                                  );
+                                },
+                              ),
                       ),
                       SizedBox(height: 12.h(context)), 
                       Text(
@@ -288,7 +297,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                       VoucherCardHomeScreen(),
                       SizedBox(height: 16.h(context)),
                       CarouselBanner(
-                        controller.homeData?.secondSectionBanner ?? [],
+                        homeData?.secondSectionBanner ?? const [],
                         (reference) {
                           PageNavigationService.to(context, AppRoutes.shop);
                         },
@@ -300,46 +309,46 @@ class HomeScreen extends GetView<HomeScreenController> {
                           PageNavigationService.to(
                             context,
                             AppRoutes.allProduct,
-                            arguments: {'title': 'AI Recommended for you'},
+                            arguments: {
+                              'title': 'AI Recommended for you',
+                              'source': 'ai',
+                            },
                           );
                         },
                       ),
                       SizedBox(height: 8.h(context)),
                       SizedBox(
                         height: 266.h(context),
-                        child: ListView.separated(
-                          itemCount:
-                              controller
-                                  .homeData
-                                  ?.aiRecommandedProducts
-                                  .length ??
-                              0,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(width: 14.w(context)),
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            final product = controller
-                                .homeData!
-                                .aiRecommandedProducts[index];
-                            final name = product.title ?? '';
-                            final image = product.image ?? '';
-                            final price = product.price.toString();
-                            final rating = product.avgRating.toString();
-                            return ProductCard(
-                              name: name,
-                              image: image,
-                              price: price,
-                              rating: rating,
-                              onTap: () {
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.productDetails,
-                                );
-                              },
-                              onTapFavourite: () {},
-                            );
-                          },
-                        ),
+                        child: aiRecommendedProducts.isEmpty
+                            ? const Center(
+                                child: Text('No recommended products'),
+                              )
+                            : ListView.separated(
+                                itemCount: aiRecommendedProducts.length,
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(width: 14.w(context)),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  final product = aiRecommendedProducts[index];
+                                  final name = product.title ?? '';
+                                  final image = product.image ?? '';
+                                  final price = product.price.toString();
+                                  final rating = product.avgRating.toString();
+                                  return ProductCard(
+                                    name: name,
+                                    image: image,
+                                    price: price,
+                                    rating: rating,
+                                    onTap: () {
+                                      PageNavigationService.to(
+                                        context,
+                                        AppRoutes.productDetails,
+                                      );
+                                    },
+                                    onTapFavourite: () {},
+                                  );
+                                },
+                              ),
                       ),
                       SizedBox(height: 12.h(context)),
                     ],
@@ -349,7 +358,7 @@ class HomeScreen extends GetView<HomeScreenController> {
             ],
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

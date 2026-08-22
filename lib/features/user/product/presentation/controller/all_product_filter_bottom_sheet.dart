@@ -2,22 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
-import 'package:hoodz/features/user/homescreen/presentation/controllers/all_brand_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/filter_option_chip.dart';
 
-class AllProductFilterBottomSheet extends GetView<AllBrandController> {
-  const AllProductFilterBottomSheet({super.key});
+class AllProductFilterBottomSheet extends StatelessWidget {
+  const AllProductFilterBottomSheet({super.key, required this.controller});
+
+  final AllTrendingProductController controller;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r(context))),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(24.r(context)),
+        ),
       ),
       child: SafeArea(
         top: false,
-        child: Padding( 
+        child: Padding(
           padding: EdgeInsets.fromLTRB(
             16.w(context),
             14.h(context),

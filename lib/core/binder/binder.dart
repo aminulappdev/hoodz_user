@@ -11,6 +11,7 @@ import 'package:hoodz/features/auth/presentation/controllers/verify_email_contro
 import 'package:hoodz/features/user/ai_assistant/presentation/controller/ai_assistant_controller.dart';
 import 'package:hoodz/features/user/dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/address_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/ai_recommended_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_brand_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
@@ -23,6 +24,9 @@ import 'package:hoodz/features/user/product/presentation/controller/all_vouchers
 import 'package:hoodz/features/user/orders/presentation/controllers/orders_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/product_controller.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/shop_controller.dart';
+import 'package:hoodz/features/user/shop/presentation/controller/shop_details_controller.dart';
+import 'package:hoodz/features/user/shop/presentation/controller/shop_product_controller.dart';
+import 'package:hoodz/features/user/shop/presentation/controller/sho_connection_controoler.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/add_payment_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/delivery_method_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_details_controller.dart';
@@ -112,6 +116,10 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(ContentController.new, fenix: true);
     Get.lazyPut(AiAssistantController.new, fenix: true);
     Get.lazyPut(AllTrendingProductController.new, fenix: true);
+    Get.lazyPut(AiRecommendedProductController.new, fenix: true);
     Get.lazyPut(ProductDetailsController.new, fenix: true);
+    Get.lazyPut(ShopDetailsController.new, fenix: true);
+    Get.lazyPut(ShopProductController.new, fenix: true);
+    Get.lazyPut(ShoConnectionControoler.new, fenix: true);
   }
 }

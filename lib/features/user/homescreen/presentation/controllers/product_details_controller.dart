@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -15,50 +12,18 @@ class ProductDetailsController extends GetxController {
   final Rx<ProductDetailsModel?> _productDetailsModel =
       Rx<ProductDetailsModel?>(null);
 
-  Rx<ProductDetailsModel?> get productDetailsModel =>
-      _productDetailsModel;
+  Rx<ProductDetailsModel?> get productDetailsModel => _productDetailsModel;
 
-  ProductData? get productData =>
-      _productDetailsModel.value?.data;
+  ProductData? get productData => _productDetailsModel.value?.data;
 
-  final List<String> languages = const [
-    'en',
-    'bn',
-  ];
+  final List<String> languages = const ['en', 'bn'];
 
   final RxString selectedSize = 'XS'.obs;
-
+ 
   final RxInt selectedColorIndex = 1.obs;
 
   final RxString productIdData = ''.obs;
-
-  final List<String> sizes = const [
-    'XS',
-    'S',
-    'M',
-    'L',
-    'XL',
-    'XXL',
-  ];
-
-  final List<Color> colors = const [
-    Colors.black,
-    Color(0xff233F93),
-    Color(0xff7D8595),
-    Color(0xffD7B88F),
-  ];
-
-  final List<Map<String, String>> productList = [
-    {
-      'id': '1',
-      'image':
-          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab',
-      'name': 'Classic Black T-Shirt',
-      'price': '\$45.00',
-      'rating': '4.7',
-      'isFavorite': 'false',
-    },
-  ];
+  String? _loadedProductId;
 
   @override
   void onInit() {
@@ -67,29 +32,30 @@ class ProductDetailsController extends GetxController {
     _getRouteArguments();
   }
 
-  void _getRouteArguments() {
-    final arguments = Get.arguments;
+  void _getRouteArguments() =>
+      initialize(Get.arguments as Map<String, dynamic>?);
 
-    if (arguments is Map<String, dynamic>) {
-      final productId = arguments['productId'];
+  void initialize(Map<String, dynamic>? arguments) {
+    final productId = arguments?['productId'];
 
-      if (productId is String && productId.isNotEmpty) {
+    if (productId is String && productId.isNotEmpty) {
+      if (_loadedProductId != productId) {
+        _loadedProductId = productId;
         productIdData.value = productId;
-
-        loadProductData();
-      } else {
-        _showProductIdError();
+        selectedSize.value = 'XS';
+        selectedColorIndex.value = 1;
+        _productDetailsModel.value = null;
       }
-    } else {
-      _showProductIdError();
+
+      loadProductData(force: true);
+      return;
     }
+
+    _showProductIdError();
   }
 
   void _showProductIdError() {
-    Get.snackbar(
-      'Product Load Failed',
-      'Product ID not found.',
-    );
+    Get.snackbar('Product Load Failed', 'Product ID not found.');
   }
 
   void onSizeSelected(String size) {
@@ -100,9 +66,7 @@ class ProductDetailsController extends GetxController {
     selectedColorIndex.value = index;
   }
 
-  Future<void> loadProductData({
-    bool force = false,
-  }) async {
+  Future<void> loadProductData({bool force = false}) async {
     if (isLoading.value) {
       return;
     }
@@ -129,28 +93,19 @@ class ProductDetailsController extends GetxController {
       isLoading.value = true;
 
       final response = await _networkCaller.getRequest(
-        Urls.getProductUrlById(
-          productIdData.value,
-        ),
+        Urls.getProductUrlById(productIdData.value),
         accessToken: accessToken,
       );
 
       if (response.isSuccess) {
-        _productDetailsModel.value =
-            ProductDetailsModel.fromJson(
+        _productDetailsModel.value = ProductDetailsModel.fromJson(
           response.responseData,
         );
       } else {
-        Get.snackbar(
-          'Product Load Failed',
-          response.errorMessage,
-        );
+        Get.snackbar('Product Load Failed', response.errorMessage);
       }
     } catch (e) {
-      Get.snackbar(
-        'Product Load Failed',
-        e.toString(),
-      );
+      Get.snackbar('Product Load Failed', e.toString());
     } finally {
       isLoading.value = false;
     }

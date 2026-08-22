@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
-import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
@@ -28,10 +27,38 @@ import 'package:hoodz/gen/assets.gen.dart';
 class ProductDetailsScreen extends GetView<ProductDetailsController> {
   const ProductDetailsScreen({super.key});
 
+  Color? _parseColor(dynamic value) {
+    if (value is Color) {
+      return value;
+    }
+
+    if (value is int) {
+      return Color(value);
+    }
+
+    if (value is String) {
+      var hex = value.trim().replaceAll('#', '');
+      if (hex.length == 6) {
+        hex = 'FF$hex';
+      }
+      if (hex.length == 8) {
+        final parsed = int.tryParse(hex, radix: 16);
+        if (parsed != null) {
+          return Color(parsed);
+        }
+      }
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
+    final routeArguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    controller.initialize(routeArguments);
 
     return Scaffold(
       appBar: CustomAppBar(label: 'Product Details'),
@@ -51,7 +78,30 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final product = controller.productData?.product;
+        final productData = controller.productData;
+        final product = productData?.product;
+        final vendor = productData?.vendor;
+        final category = productData?.category;
+        final similarProducts = productData?.similarProducts ?? const [];
+        final vouchers = productData?.vouchers ?? const [];
+        final reviews = productData?.reviews ?? const [];
+        final sizeOptions =
+            product?.sizes
+                .map((size) => size.toString())
+                .where((size) => size.trim().isNotEmpty)
+                .toList() ??
+            [];
+        final colorOptions =
+            product?.colors.map(_parseColor).whereType<Color>().toList() ?? [];
+        final displayPrice = (product?.discountPrice ?? product?.price ?? 0)
+            .toString();
+        final displayRating = (product?.avgRating ?? 0).toString();
+        final displayReviewCount = (product?.ratingCount ?? 0).toString();
+        final productImage = product?.images.isNotEmpty == true
+            ? product!.images.first
+            : '';
+        final displayStoreImage =
+            vendor?.profileAvatar ?? product?.banner ?? productImage;
 
         return SizedBox(
           height: height,
@@ -109,102 +159,133 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 // ================= PRODUCT INFO =================
                 ProductInfo(
-                  price: '42.95',
-                  rating: '4.7',
-                  review: '243',
-                  storeName: product?.brand ?? '',
-                  storeCategory: product?.collectionType ?? '',
-                  storeImageUrl: AppStrings.demoImageUrl,
+                  price: displayPrice,
+                  rating: displayRating,
+                  review: displayReviewCount,
+                  storeName: vendor?.name ?? product?.brand ?? '',
+                  storeCategory:
+                      category?.title ?? product?.collectionType ?? '',
+                  storeImageUrl: displayStoreImage,
                   isInStock: true,
                 ),
 
                 SizedBox(height: 10.h(context)),
 
-                // ================= SIZE =================
-                Text(
-                  'Select Size',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 16.sp(context),
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xff4A4A4A),
+                if (sizeOptions.isNotEmpty) ...[
+                  Text(
+                    'Select Size',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 16.sp(context),
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xff4A4A4A),
+                    ),
                   ),
-                ),
 
-                SizedBox(height: 8.h(context)),
+                  SizedBox(height: 8.h(context)),
 
-                Obx(
-                  () => SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: controller.sizes.map((size) {
+                  Obx(
+                    () => SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: sizeOptions.map((size) {
+                          final bool isSelected =
+                              controller.selectedSize.value == size;
+
+                          return Padding(
+                            padding: EdgeInsets.only(right: 12.w(context)),
+                            child: GestureDetector(
+                              onTap: () {
+                                controller.onSizeSelected(size);
+                              },
+                              child: SizePlate(
+                                size: size,
+                                backgroundColor: isSelected
+                                    ? LightThemeColors.primaryColor
+                                    : Colors.white,
+                                textColor: isSelected
+                                    ? Colors.white
+                                    : const Color(0xff5E5E5E),
+                                borderColor: isSelected
+                                    ? LightThemeColors.primaryColor
+                                    : const Color(0xffE6EAF0),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h(context)),
+                ] else ...[
+                  Container(
+                    height: 60.h(context),
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r(context)),
+                      border: Border.all(color: const Color(0xFFE7E7E7)),
+                    ),
+                    child: const Center(child: Text('No size available')),
+                  ),
+
+                  SizedBox(height: 20.h(context)),
+                ],
+
+                if (colorOptions.isNotEmpty) ...[
+                  Text(
+                    'Select color',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 16.sp(context),
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xff4A4A4A),
+                    ),
+                  ),
+
+                  SizedBox(height: 8.h(context)),
+
+                  Obx(
+                    () => Row(
+                      children: List.generate(colorOptions.length, (index) {
                         final bool isSelected =
-                            controller.selectedSize.value == size;
+                            controller.selectedColorIndex.value == index;
 
                         return Padding(
-                          padding: EdgeInsets.only(right: 12.w(context)),
+                          padding: EdgeInsets.only(right: 14.w(context)),
                           child: GestureDetector(
                             onTap: () {
-                              controller.onSizeSelected(size);
+                              controller.onColorSelected(index);
                             },
-                            child: SizePlate(
-                              size: size,
-                              backgroundColor: isSelected
-                                  ? LightThemeColors.primaryColor
-                                  : Colors.white,
-                              textColor: isSelected
-                                  ? Colors.white
-                                  : const Color(0xff5E5E5E),
+                            child: ColorPlate(
+                              color: colorOptions[index],
                               borderColor: isSelected
                                   ? LightThemeColors.primaryColor
-                                  : const Color(0xffE6EAF0),
+                                  : Colors.transparent,
+                              padding: isSelected ? 2.w(context) : 0,
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ),
                   ),
-                ),
 
-                SizedBox(height: 20.h(context)),
-
-                // ================= COLOR =================
-                Text(
-                  'Select color',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 16.sp(context),
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xff4A4A4A),
+                  SizedBox(height: 16.h(context)),
+                ] else ...[
+                  Container(
+                    height: 60.h(context),
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r(context)),
+                      border: Border.all(color: const Color(0xFFE7E7E7)),
+                    ),
+                    child: const Center(child: Text('No color available')),
                   ),
-                ),
 
-                SizedBox(height: 8.h(context)),
-
-                Obx(
-                  () => Row(
-                    children: List.generate(controller.colors.length, (index) {
-                      final bool isSelected =
-                          controller.selectedColorIndex.value == index;
-
-                      return Padding(
-                        padding: EdgeInsets.only(right: 14.w(context)),
-                        child: GestureDetector(
-                          onTap: () {
-                            controller.onColorSelected(index);
-                          },
-                          child: ColorPlate(
-                            color: controller.colors[index],
-                            borderColor: isSelected
-                                ? LightThemeColors.primaryColor
-                                : Colors.transparent,
-                            padding: isSelected ? 2.w(context) : 0,
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-
-                SizedBox(height: 16.h(context)),
+                  SizedBox(height: 16.h(context)),
+                ],
 
                 // ================= DESCRIPTION =================
                 Text(
@@ -219,7 +300,9 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 SizedBox(height: 10.h(context)),
                 SizedBox(
                   width: width,
-                  child: Html(data: product?.description ?? ''),
+                  child: Html(
+                    data: product?.description ?? 'No description found',
+                  ),
                 ),
 
                 // Text(
@@ -271,36 +354,42 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 SizedBox(
                   height: 266.h(context),
-                  child: ListView.separated(
-                    itemCount: controller.productList.length,
-                    separatorBuilder: (context, index) {
-                      return SizedBox(width: 14.w(context));
-                    },
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final product = controller.productList[index];
+                  child: similarProducts.isEmpty
+                      ? const Center(child: Text('No similar products'))
+                      : ListView.separated(
+                          itemCount: similarProducts.length,
+                          separatorBuilder: (context, index) {
+                            return SizedBox(width: 14.w(context));
+                          },
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            final similarProduct = similarProducts[index];
+                            final name = similarProduct.title ?? '';
+                            final image = similarProduct.banner ?? '';
+                            final price =
+                                (similarProduct.discountPrice ??
+                                        similarProduct.price ??
+                                        0)
+                                    .toString();
+                            final rating = (similarProduct.avgRating ?? 0)
+                                .toString();
 
-                      final name = product['name'] ?? '';
-                      final image = product['image'] ?? '';
-                      final price = product['price'] ?? '';
-                      final rating = product['rating'] ?? '';
-
-                      return ProductCard(
-                        name: name,
-                        image: image,
-                        price: price,
-                        rating: rating,
-                        onTap: () {
-                          PageNavigationService.to(
-                            context,
-                            AppRoutes.productDetails,
-                            arguments: {'productId': product['id']},
-                          );
-                        },
-                        onTapFavourite: () {},
-                      );
-                    },
-                  ),
+                            return ProductCard(
+                              name: name,
+                              image: image,
+                              price: price,
+                              rating: rating,
+                              onTap: () {
+                                PageNavigationService.to(
+                                  context,
+                                  AppRoutes.productDetails,
+                                  arguments: {'productId': similarProduct.id},
+                                );
+                              },
+                              onTapFavourite: () {},
+                            );
+                          },
+                        ),
                 ),
 
                 SizedBox(height: 10.h(context)),
@@ -322,27 +411,49 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: List.generate(5, (index) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          right: index == 4 ? 0 : 10.w(context),
-                        ),
-                        child: SizedBox(
-                          width: 320.w(context),
-                          child: VoucherCardDesign(
-                            isCompact: true,
-                            voucher: Voucher(
-                              title: 'EGP 200 Off',
-                              subtitle:
-                                  'Purchase EGP 1,000 or more and save EGP 200',
-                              code: 'SHOP25K100',
-                              expiryText: 'Expires in 2 days',
-                              status: VoucherStatus.active,
+                    children: vouchers.isEmpty
+                        ? [
+                            SizedBox(
+                              width: 320.w(context),
+                              child: const Text('No vouchers available'),
                             ),
-                          ),
-                        ),
-                      );
-                    }),
+                          ]
+                        : List.generate(vouchers.length, (index) {
+                            final voucherData = vouchers[index];
+                            final discountType =
+                                voucherData.discountType ?? 'Discount';
+                            final discountValue =
+                                voucherData.discountValue?.toString() ?? '0';
+                            final minSpend =
+                                voucherData.minSpend?.toString() ?? '0';
+                            final expiryDate = voucherData.expiryDate;
+                            final expiryText = expiryDate == null
+                                ? 'No expiry date'
+                                : 'Expires on ${expiryDate.toLocal().toString().split(" ").first}';
+
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                right: index == vouchers.length - 1
+                                    ? 0
+                                    : 10.w(context),
+                              ),
+                              child: SizedBox(
+                                width: 320.w(context),
+                                child: VoucherCardDesign(
+                                  isCompact: true,
+                                  voucher: Voucher(
+                                    title:
+                                        '${discountValue} ${discountType} Off',
+                                    subtitle:
+                                        'Purchase ${minSpend} or more and save ${discountValue}',
+                                    code: voucherData.code ?? '',
+                                    expiryText: expiryText,
+                                    status: VoucherStatus.active,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
                   ),
                 ),
 
@@ -362,31 +473,29 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 SizedBox(height: 10.h(context)),
 
-                UserFeedbackSection(
-                  feedbacks: [
-                    UserFeedbackModel(
-                      userName: 'Annisa Azalea',
-                      date: DateTime(2022, 2, 6),
-                      rating: 4,
-                      comment:
-                          'In molestie sed dui nisi, egestas facilisis non. Pharetra, blandit tellus nisl ultrices egestas dui in suspendisse.',
-                    ),
-                    UserFeedbackModel(
-                      userName: 'Joko Rakabuming',
-                      date: DateTime(2022, 2, 6),
-                      rating: 4,
-                      comment:
-                          'In molestie sed dui nisi, egestas facilisis non. Pharetra, blandit tellus nisl ultrices egestas dui in suspendisse.',
-                    ),
-                    UserFeedbackModel(
-                      userName: 'Savannah Nguyen',
-                      date: DateTime(2022, 2, 6),
-                      rating: 4,
-                      comment:
-                          'In molestie sed dui nisi, egestas facilisis non. Pharetra, blandit tellus nisl ultrices egestas dui in suspendisse.',
-                    ),
-                  ],
-                ),
+                reviews.isEmpty
+                    ? Container(
+                        padding: EdgeInsets.all(12.w(context)),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F3F3),
+                          borderRadius: BorderRadius.circular(12.h(context)),
+                          border: Border.all(
+                            color: const Color(0xFFE7E7E7),
+                            width: 1.w(context),
+                          ),
+                        ),
+                        child: const Center(child: Text('No reviews yet')),
+                      )
+                    : UserFeedbackSection(
+                        feedbacks: reviews.map((review) {
+                          return UserFeedbackModel(
+                            userName: review.user?.name ?? 'Anonymous',
+                            date: review.createdAt ?? DateTime.now(),
+                            rating: (review.rating ?? 0).toDouble(),
+                            comment: review.review ?? '',
+                          );
+                        }).toList(),
+                      ),
 
                 SizedBox(height: 20.h(context)),
               ],

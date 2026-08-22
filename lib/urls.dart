@@ -12,8 +12,26 @@ class Urls {
   static const String kycUrl = '$_baseUrl/kyc';
   static const String metaUserUrl = '$_baseUrl/meta/user';
   static const String trendingProductUrl = '$_baseUrl/products/trending';
+  static const String aiRecommendedProductUrl =
+      '$_baseUrl/products/ai-recommended';
 
   static String getProductUrlById(String id) {
     return '$_baseUrl/products/$id';
+  }
+
+  static String getShopDetailsUrlById(String id) {
+    return '$_baseUrl/users/shops/$id/details';
+  }
+
+  static String getShopProductsUrlById(String id) {
+    return '$_baseUrl/products/shop/$id';
+  }
+
+  static String getShopFollowUrlById(String id) {
+    return '$_baseUrl/connections/follow/$id';
+  }
+
+  static String getShopUnfollowUrlById(String id) {
+    return '$_baseUrl/connections/unfollow/$id';
   }
 }

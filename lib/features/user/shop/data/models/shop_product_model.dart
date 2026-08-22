@@ -1,5 +1,5 @@
-class AllProductModel {
-  AllProductModel({
+class ShopProductModel {
+  ShopProductModel({
     required this.success,
     required this.statusCode,
     required this.message,
@@ -8,28 +8,46 @@ class AllProductModel {
   });
 
   final bool? success;
-  final int? statusCode;
+  final dynamic statusCode;
   final String? message;
   final Meta? meta;
-  final List<AllProductItemModel> data;
+  final Data? data;
 
-  factory AllProductModel.fromJson(Map<String, dynamic> json) {
-    return AllProductModel(
+  factory ShopProductModel.fromJson(Map<String, dynamic> json) {
+    return ShopProductModel(
       success: json["success"],
       statusCode: json["statusCode"],
       message: json["message"],
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
-      data: json["data"] == null
+      data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    );
+  }
+}
+
+class Data {
+  Data({required this.recommends, required this.allProducts});
+
+  final List<AllProduct> recommends;
+  final List<AllProduct> allProducts;
+
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data(
+      recommends: json["recommends"] == null
           ? []
-          : List<AllProductItemModel>.from(
-              json["data"]!.map((x) => AllProductItemModel.fromJson(x)),
+          : List<AllProduct>.from(
+              json["recommends"]!.map((x) => AllProduct.fromJson(x)),
+            ),
+      allProducts: json["allProducts"] == null
+          ? []
+          : List<AllProduct>.from(
+              json["allProducts"]!.map((x) => AllProduct.fromJson(x)),
             ),
     );
   }
 }
 
-class AllProductItemModel {
-  AllProductItemModel({
+class AllProduct {
+  AllProduct({
     required this.id,
     required this.category,
     required this.title,
@@ -56,17 +74,17 @@ class AllProductItemModel {
   final String? brand;
   final String? brandType;
   final String? banner;
-  final int? price;
-  final int? discount;
-  final int? discountPrice;
-  final int? stock;
+  final dynamic price;
+  final dynamic discount;
+  final dynamic discountPrice;
+  final dynamic stock;
   final dynamic avgRating;
-  final int? ratingCount;
+  final dynamic ratingCount;
   final bool? inStock;
   final bool? isWishlisted;
 
-  factory AllProductItemModel.fromJson(Map<String, dynamic> json) {
-    return AllProductItemModel(
+  factory AllProduct.fromJson(Map<String, dynamic> json) {
+    return AllProduct(
       id: json["_id"],
       category: json["category"] == null
           ? null

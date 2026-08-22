@@ -15,6 +15,7 @@ import 'package:hoodz/features/user/homescreen/presentation/pages/map_location_p
 import 'package:hoodz/features/user/homescreen/presentation/pages/search_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/cart_screen.dart';
 import 'package:hoodz/features/user/product/presentation/pages/product_details_screen.dart';
+import 'package:hoodz/features/user/shop/presentation/pages/shop_details_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_screen.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/add_payment_screen.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/delivery_method_screen.dart';
@@ -69,6 +70,7 @@ abstract final class AppRoutes {
   static const paymentMethod = '/payment-method';
   static const paymentSuccessfull = '/payment-successfull';
   static const aiAssistant = '/ai-assistant';
+  static const shopDetails = '/shop-details';
 }
 
 Map<String, WidgetBuilder> getAppRoutes() {
@@ -102,6 +104,7 @@ Map<String, WidgetBuilder> getAppRoutes() {
     AppRoutes.paymentMethod: (_) => const PaymentMethodScreen(),
     AppRoutes.paymentSuccessfull: (_) => const PaymentSuccessfullScreen(),
     AppRoutes.aiAssistant: (_) => const AiAssistantScreen(),
+    AppRoutes.shopDetails: (_) => const ShopDetailsScreen(),
   };
 }
 
