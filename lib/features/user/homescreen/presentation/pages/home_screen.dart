@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
-import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
-import 'package:hoodz/features/user/homescreen/presentation/controllers/address_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/carousel_banner.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/home_page_header.dart';
-import 'package:hoodz/features/user/homescreen/presentation/widgets/location_selection_sheet.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_list.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
@@ -18,48 +16,12 @@ import 'package:hoodz/features/user/homescreen/presentation/widgets/voucher_card
 class HomeScreen extends GetView<HomeScreenController> {
   const HomeScreen({super.key});
 
-  Future<void> _showLocationSheet(BuildContext context) async {
-    final addressController = Get.find<AddressController>();
-
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => Obx(
-        () => LocationSelectionSheet(
-          isLoadingCurrentLocation:
-              addressController.isLoadingCurrentLocation.value,
-          onTapCurrentLocation: () async {
-            Navigator.pop(context);
-            try {
-              await addressController.useCurrentLocation();
-            } on LocationServiceException catch (error) {
-              Get.snackbar(
-                'Location unavailable',
-                error.message,
-                snackPosition: SnackPosition.BOTTOM,
-              );
-            }
-          },
-          onTapDifferentLocation: () {
-            Navigator.pop(context);
-            Navigator.pushNamed(context, AppRoutes.mapLocationPicker).then((
-              result,
-            ) async {
-              if (result is LocationAddress) {
-                await addressController.updateAddress(result);
-              }
-            });
-          },
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final profileController = Get.find<ProfileController>();
+    final wishlistController = Get.find<WishListController>();
 
     return Obx(() {
       final homeData = controller.homeData;
@@ -76,16 +38,19 @@ class HomeScreen extends GetView<HomeScreenController> {
           child: Column(
             children: [
               CustomHomePageAppBar(
-                address: profileController.currentAddress.value.trim().isEmpty
-                    ? 'Select your address'
-                    : profileController.currentAddress.value,
+                address: homeData?.profile?.deliveryAddress?.name?.isNotEmpty ==
+                        true
+                    ? homeData!.profile!.deliveryAddress!.name!
+                    : 'No address added',
                 notificationCount: controller.notificationCount.value,
-                onTapEdit: () => _showLocationSheet(context),
-                onTapNotification: () {
+                onTapEdit: () {
                   PageNavigationService.to(
                     context,
-                    AppRoutes.riderNotification,
+                    AppRoutes.shippingInformation,
                   );
+                },
+                onTapNotification: () {
+                  PageNavigationService.to(context, AppRoutes.cart);
                 },
                 onTapSearch: () {
                   PageNavigationService.to(context, AppRoutes.searchScreen);
@@ -226,18 +191,32 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   final image = product.image ?? "";
                                   final price = "${product.price ?? ''}";
                                   final rating = "${product.avgRating ?? ''}";
+                                  final isWishlisted =
+                                      product.isWishlisted ?? false;
                                   return ProductCard(
                                     name: name,
                                     image: image,
                                     price: price,
                                     rating: rating,
+                                    isWishlisted: isWishlisted,
                                     onTap: () {
                                       PageNavigationService.to(
                                         context,
                                         AppRoutes.productDetails,
                                       );
                                     },
-                                    onTapFavourite: () {},
+                                    onTapFavourite: () {
+                                      final productId = product.id;
+                                      if (productId == null ||
+                                          productId.isEmpty) {
+                                        return;
+                                      }
+
+                                      wishlistController.toggleProductWishlist(
+                                        productId: productId,
+                                        currentValue: isWishlisted,
+                                      );
+                                    },
                                   );
                                 },
                               ),
@@ -272,11 +251,14 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   final image = product.image ?? '';
                                   final price = product.price.toString();
                                   final rating = product.avgRating.toString();
+                                  final isWishlisted =
+                                      product.isWishlisted ?? false;
                                   return ProductCard(
                                     name: name,
                                     image: image,
                                     price: price,
                                     rating: rating,
+                                    isWishlisted: isWishlisted,
                                     onTap: () {
                                       PageNavigationService.to(
                                         context,
@@ -284,12 +266,23 @@ class HomeScreen extends GetView<HomeScreenController> {
                                         arguments: {'productId': product.id},
                                       );
                                     },
-                                    onTapFavourite: () {},
+                                    onTapFavourite: () {
+                                      final productId = product.id;
+                                      if (productId == null ||
+                                          productId.isEmpty) {
+                                        return;
+                                      }
+
+                                      wishlistController.toggleProductWishlist(
+                                        productId: productId,
+                                        currentValue: isWishlisted,
+                                      );
+                                    },
                                   );
                                 },
                               ),
                       ),
-                      SizedBox(height: 12.h(context)), 
+                      SizedBox(height: 12.h(context)),
                       Text(
                         'Redeem and save',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -338,18 +331,32 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   final image = product.image ?? '';
                                   final price = product.price.toString();
                                   final rating = product.avgRating.toString();
+                                  final isWishlisted =
+                                      product.isWishlisted ?? false;
                                   return ProductCard(
                                     name: name,
                                     image: image,
                                     price: price,
                                     rating: rating,
+                                    isWishlisted: isWishlisted,
                                     onTap: () {
                                       PageNavigationService.to(
                                         context,
                                         AppRoutes.productDetails,
                                       );
                                     },
-                                    onTapFavourite: () {},
+                                    onTapFavourite: () {
+                                      final productId = product.id;
+                                      if (productId == null ||
+                                          productId.isEmpty) {
+                                        return;
+                                      }
+
+                                      wishlistController.toggleProductWishlist(
+                                        productId: productId,
+                                        currentValue: isWishlisted,
+                                      );
+                                    },
                                   );
                                 },
                               ),

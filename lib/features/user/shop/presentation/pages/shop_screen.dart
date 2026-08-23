@@ -5,6 +5,7 @@ import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/banner_card.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_product_card.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/shop_details_controller.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/shop_product_controller.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/sho_connection_controoler.dart';
@@ -14,11 +15,12 @@ import 'package:hoodz/features/user/shop/presentation/widgets/shop_header_sectio
 
 class ShopScreen extends GetView<ShopDetailsController> {
   const ShopScreen({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
     final shopProductController = Get.find<ShopProductController>();
-    final connectionController = Get.find<ShoConnectionControoler>(); 
+    final connectionController = Get.find<ShoConnectionControoler>();
+    final wishlistController = Get.find<WishListController>();
     final routeArguments = Get.arguments is Map<String, dynamic>
         ? Get.arguments as Map<String, dynamic>
         : null;
@@ -158,6 +160,8 @@ class ShopScreen extends GetView<ShopDetailsController> {
                               final inStock = product.inStock == true;
                               final priceValue =
                                   product.discountPrice ?? product.price ?? 0;
+                              final isWishlisted =
+                                  product.isWishlisted ?? false;
                               final oldPriceValue =
                                   product.discountPrice != null &&
                                       product.price != null &&
@@ -178,6 +182,7 @@ class ShopScreen extends GetView<ShopDetailsController> {
                                 stockLabel: inStock
                                     ? 'In Stock'
                                     : 'Out of Stock',
+                                isWishlisted: isWishlisted,
                                 onTap: () {
                                   PageNavigationService.to(
                                     context,
@@ -185,7 +190,25 @@ class ShopScreen extends GetView<ShopDetailsController> {
                                     arguments: {'productId': product.id},
                                   );
                                 },
-                                onTapFavourite: () {},
+                                onTapFavourite: () async {
+                                  final productId = product.id;
+                                  if (productId == null || productId.isEmpty) {
+                                    return;
+                                  }
+
+                                  final updatedValue = await wishlistController
+                                      .toggleProductWishlist(
+                                        productId: productId,
+                                        currentValue: isWishlisted,
+                                      );
+
+                                  if (updatedValue != null) {
+                                    shopProductController.updateWishlistStatus(
+                                      productId: productId,
+                                      isWishlisted: updatedValue,
+                                    );
+                                  }
+                                },
                               );
                             },
                           ),

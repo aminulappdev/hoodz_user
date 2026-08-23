@@ -16,7 +16,7 @@ class ShopProductController extends GetxController {
   final RxList<AllProduct> _allProducts = <AllProduct>[].obs;
   final RxString shopIdData = ''.obs;
   final RxString selectedCategory = ''.obs;
-  String? _loadedShopId;
+  String? _loadedShopId; 
 
   ShopProductModel? get shopProductModel => _shopProductModel.value;
   Data? get shopProductsData => _shopProductModel.value?.data;
@@ -24,6 +24,37 @@ class ShopProductController extends GetxController {
   List<AllProduct> get recommendedProducts => _recommendedProducts;
 
   List<AllProduct> get allProducts => _allProducts;
+
+  void updateWishlistStatus({
+    required String productId,
+    required bool isWishlisted,
+  }) {
+    List<AllProduct> updateProducts(List<AllProduct> products) {
+      return products
+          .map(
+            (product) => product.id == productId
+                ? product.copyWith(isWishlisted: isWishlisted)
+                : product,
+          )
+          .toList();
+    }
+
+    _recommendedProducts.assignAll(updateProducts(_recommendedProducts));
+    _allProducts.assignAll(updateProducts(_allProducts));
+
+    final currentModel = _shopProductModel.value;
+    final currentData = currentModel?.data;
+    if (currentModel == null || currentData == null) {
+      return;
+    }
+
+    _shopProductModel.value = currentModel.copyWith(
+      data: currentData.copyWith(
+        recommends: updateProducts(currentData.recommends),
+        allProducts: updateProducts(currentData.allProducts),
+      ),
+    );
+  }
 
   @override
   void onInit() {

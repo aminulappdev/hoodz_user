@@ -8,7 +8,7 @@ class HomeDataModel {
 
   final bool? success;
   final int? statusCode;
-  final String? message;
+  final String? message; 
   final Data? data;
 
   factory HomeDataModel.fromJson(Map<String, dynamic> json) {
@@ -17,6 +17,20 @@ class HomeDataModel {
       statusCode: json["statusCode"],
       message: json["message"],
       data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    );
+  }
+
+  HomeDataModel copyWith({
+    bool? success,
+    int? statusCode,
+    String? message,
+    Data? data,
+  }) {
+    return HomeDataModel(
+      success: success ?? this.success,
+      statusCode: statusCode ?? this.statusCode,
+      message: message ?? this.message,
+      data: data ?? this.data,
     );
   }
 }
@@ -94,6 +108,33 @@ class Data {
             ),
     );
   }
+
+  Data copyWith({
+    Profile? profile,
+    int? unreadNotification,
+    List<SectionBanner>? firstSectionBanner,
+    dynamic lastOrder,
+    List<NearbyBrand>? nearbyBrands,
+    List<Product>? recentlyViwed,
+    List<Product>? trandingProducts,
+    List<SectionBanner>? secondSectionBanner,
+    List<Product>? aiRecommandedProducts,
+    List<HomePageCategory>? homePageCategories,
+  }) {
+    return Data(
+      profile: profile ?? this.profile,
+      unreadNotification: unreadNotification ?? this.unreadNotification,
+      firstSectionBanner: firstSectionBanner ?? this.firstSectionBanner,
+      lastOrder: lastOrder ?? this.lastOrder,
+      nearbyBrands: nearbyBrands ?? this.nearbyBrands,
+      recentlyViwed: recentlyViwed ?? this.recentlyViwed,
+      trandingProducts: trandingProducts ?? this.trandingProducts,
+      secondSectionBanner: secondSectionBanner ?? this.secondSectionBanner,
+      aiRecommandedProducts:
+          aiRecommandedProducts ?? this.aiRecommandedProducts,
+      homePageCategories: homePageCategories ?? this.homePageCategories,
+    );
+  }
 }
 
 class HomePageCategory {
@@ -155,6 +196,32 @@ class Product {
       inStock: json["inStock"],
     );
   }
+
+  Product copyWith({
+    String? id,
+    String? title,
+    String? image,
+    String? collectionType,
+    int? price,
+    int? discountPrice,
+    dynamic avgRating,
+    int? ratingCount,
+    bool? isWishlisted,
+    bool? inStock,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      image: image ?? this.image,
+      collectionType: collectionType ?? this.collectionType,
+      price: price ?? this.price,
+      discountPrice: discountPrice ?? this.discountPrice,
+      avgRating: avgRating ?? this.avgRating,
+      ratingCount: ratingCount ?? this.ratingCount,
+      isWishlisted: isWishlisted ?? this.isWishlisted,
+      inStock: inStock ?? this.inStock,
+    );
+  }
 }
 
 class SectionBanner {
@@ -196,16 +263,52 @@ class Profile {
   });
 
   final String? name;
-  final dynamic deliveryAddress;
+  final DeliveryAddress? deliveryAddress;
   final DeliveryLocation? deliveryLocation;
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       name: json["name"],
-      deliveryAddress: json["deliveryAddress"],
+      deliveryAddress: json["deliveryAddress"] == null
+          ? null
+          : DeliveryAddress.fromJson(json["deliveryAddress"]),
       deliveryLocation: json["deliveryLocation"] == null
           ? null
           : DeliveryLocation.fromJson(json["deliveryLocation"]),
+    );
+  }
+}
+
+class DeliveryAddress {
+  DeliveryAddress({
+    required this.name,
+    required this.location,
+    required this.buildingNo,
+    required this.floorNo,
+    required this.apartment,
+    required this.city,
+    required this.country,
+  });
+
+  final String? name;
+  final DeliveryLocation? location;
+  final int? buildingNo;
+  final int? floorNo;
+  final int? apartment;
+  final String? city;
+  final String? country;
+
+  factory DeliveryAddress.fromJson(Map<String, dynamic> json) {
+    return DeliveryAddress(
+      name: json["name"],
+      location: json["location"] == null
+          ? null
+          : DeliveryLocation.fromJson(json["location"]),
+      buildingNo: json["buildingNo"],
+      floorNo: json["floorNo"],
+      apartment: json["apartment"],
+      city: json["city"],
+      country: json["country"],
     );
   }
 }
@@ -214,14 +317,14 @@ class DeliveryLocation {
   DeliveryLocation({required this.type, required this.coordinates});
 
   final String? type;
-  final List<int> coordinates;
+  final List<num> coordinates;
 
   factory DeliveryLocation.fromJson(Map<String, dynamic> json) {
     return DeliveryLocation(
       type: json["type"],
       coordinates: json["coordinates"] == null
           ? []
-          : List<int>.from(json["coordinates"]!.map((x) => x)),
+          : List<num>.from(json["coordinates"]!.map((x) => x)),
     );
   }
 }

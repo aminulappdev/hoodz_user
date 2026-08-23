@@ -7,7 +7,7 @@ import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart'
 import 'package:hoodz/gen/assets.gen.dart';
 import 'package:hoodz/urls.dart';
 
-class HomeScreenController extends GetxController {
+class HomeScreenController extends GetxController { 
   HomeScreenController(this._locationService);
 
   final LocationSelectionService _locationService;
@@ -91,6 +91,36 @@ class HomeScreenController extends GetxController {
 
   HomeDataModel? get homeDataModel => _homeDataModel.value;
   Data? get homeData => _homeDataModel.value?.data;
+
+  void updateWishlistStatus({
+    required String productId,
+    required bool isWishlisted,
+  }) {
+    final currentModel = _homeDataModel.value;
+    final currentData = currentModel?.data;
+
+    if (currentModel == null || currentData == null) {
+      return;
+    }
+
+    List<Product> updateProducts(List<Product> products) {
+      return products
+          .map(
+            (product) => product.id == productId
+                ? product.copyWith(isWishlisted: isWishlisted)
+                : product,
+          )
+          .toList();
+    }
+
+    _homeDataModel.value = currentModel.copyWith(
+      data: currentData.copyWith(
+        recentlyViwed: updateProducts(currentData.recentlyViwed),
+        trandingProducts: updateProducts(currentData.trandingProducts),
+        aiRecommandedProducts: updateProducts(currentData.aiRecommandedProducts),
+      ),
+    );
+  }
 
   Future<void> getUserMeta() async {
     final accessToken = MySharedPref.getAccessToken();

@@ -16,6 +16,7 @@ class BrandProductCard extends StatelessWidget {
     required this.stockLabel,
     required this.onTap,
     required this.onTapFavourite,
+    this.isWishlisted = false,
   });
 
   final String name;
@@ -27,6 +28,7 @@ class BrandProductCard extends StatelessWidget {
   final String stockLabel;
   final VoidCallback onTap;
   final VoidCallback onTapFavourite;
+  final bool isWishlisted;
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +91,14 @@ class BrandProductCard extends StatelessWidget {
                       child: GestureDetector(
                         onTap: onTapFavourite,
                         child: CircleAvatar(
+                          backgroundColor: isWishlisted
+                              ? const Color(0xFFFFF5F5)
+                              : Colors.white,
                           radius: 15.r(context),
-                          backgroundColor: Colors.white,
                           child: CrashSafeImage(
-                            Assets.icons.favourite.path,
+                            isWishlisted
+                                ? Assets.icons.favouriteFill.path
+                                : Assets.icons.favourite.path,
                             height: 15.h(context),
                             width: 15.w(context),
                           ),

@@ -16,6 +16,30 @@ class ProductDetailsController extends GetxController {
 
   ProductData? get productData => _productDetailsModel.value?.data;
 
+  void updateSimilarProductWishlistStatus({
+    required String productId,
+    required bool isWishlisted,
+  }) {
+    final currentModel = _productDetailsModel.value;
+    final currentData = currentModel?.data;
+
+    if (currentModel == null || currentData == null) {
+      return;
+    }
+
+    final updatedSimilarProducts = currentData.similarProducts
+        .map(
+          (product) => product.id == productId
+              ? product.copyWith(isWishlisted: isWishlisted)
+              : product,
+        )
+        .toList();
+
+    _productDetailsModel.value = currentModel.copyWith(
+      data: currentData.copyWith(similarProducts: updatedSimilarProducts),
+    );
+  }
+
   final List<String> languages = const ['en', 'bn'];
 
   final RxString selectedSize = 'XS'.obs;
@@ -39,14 +63,18 @@ class ProductDetailsController extends GetxController {
     final productId = arguments?['productId'];
 
     if (productId is String && productId.isNotEmpty) {
-      if (_loadedProductId != productId) {
-        _loadedProductId = productId;
-        productIdData.value = productId;
-        selectedSize.value = 'XS';
-        selectedColorIndex.value = 1;
-        _productDetailsModel.value = null;
+      if (_loadedProductId == productId) {
+        if (_productDetailsModel.value == null && !isLoading.value) {
+          loadProductData(force: true);
+        }
+        return;
       }
 
+      _loadedProductId = productId;
+      productIdData.value = productId;
+      selectedSize.value = 'XS';
+      selectedColorIndex.value = 1;
+      _productDetailsModel.value = null;
       loadProductData(force: true);
       return;
     }

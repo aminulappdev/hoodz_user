@@ -19,6 +19,20 @@ class ProductDetailsModel {
       data: json["data"] == null ? null : ProductData.fromJson(json["data"]),
     );
   }
+
+  ProductDetailsModel copyWith({
+    bool? success,
+    dynamic statusCode,
+    String? message,
+    ProductData? data,
+  }) {
+    return ProductDetailsModel(
+      success: success ?? this.success,
+      statusCode: statusCode ?? this.statusCode,
+      message: message ?? this.message,
+      data: data ?? this.data,
+    );
+  }
 }
 
 class ProductData {
@@ -74,6 +88,32 @@ class ProductData {
       hasPurchase: json["hasPurchase"],
       hasReviewSubmit: json["hasReviewSubmit"],
       isWishlisted: json["isWishlisted"],
+    );
+  }
+
+  ProductData copyWith({
+    Product? product,
+    Vendor? vendor,
+    Category? category,
+    ShopRules? shopRules,
+    List<SimilarProduct>? similarProducts,
+    List<Voucher>? vouchers,
+    List<Review>? reviews,
+    bool? hasPurchase,
+    bool? hasReviewSubmit,
+    bool? isWishlisted,
+  }) {
+    return ProductData(
+      product: product ?? this.product,
+      vendor: vendor ?? this.vendor,
+      category: category ?? this.category,
+      shopRules: shopRules ?? this.shopRules,
+      similarProducts: similarProducts ?? this.similarProducts,
+      vouchers: vouchers ?? this.vouchers,
+      reviews: reviews ?? this.reviews,
+      hasPurchase: hasPurchase ?? this.hasPurchase,
+      hasReviewSubmit: hasReviewSubmit ?? this.hasReviewSubmit,
+      isWishlisted: isWishlisted ?? this.isWishlisted,
     );
   }
 }
@@ -373,6 +413,44 @@ class SimilarProduct {
       ratingCount: json["ratingCount"],
       inStock: json["inStock"],
       isWishlisted: json["isWishlisted"],
+    );
+  }
+
+  SimilarProduct copyWith({
+    String? id,
+    Category? category,
+    String? title,
+    String? inventoryType,
+    String? collectionType,
+    String? brand,
+    String? brandType,
+    String? banner,
+    dynamic price,
+    dynamic discount,
+    dynamic discountPrice,
+    dynamic stock,
+    dynamic avgRating,
+    dynamic ratingCount,
+    bool? inStock,
+    bool? isWishlisted,
+  }) {
+    return SimilarProduct(
+      id: id ?? this.id,
+      category: category ?? this.category,
+      title: title ?? this.title,
+      inventoryType: inventoryType ?? this.inventoryType,
+      collectionType: collectionType ?? this.collectionType,
+      brand: brand ?? this.brand,
+      brandType: brandType ?? this.brandType,
+      banner: banner ?? this.banner,
+      price: price ?? this.price,
+      discount: discount ?? this.discount,
+      discountPrice: discountPrice ?? this.discountPrice,
+      stock: stock ?? this.stock,
+      avgRating: avgRating ?? this.avgRating,
+      ratingCount: ratingCount ?? this.ratingCount,
+      inStock: inStock ?? this.inStock,
+      isWishlisted: isWishlisted ?? this.isWishlisted,
     );
   }
 }

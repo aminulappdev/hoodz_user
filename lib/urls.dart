@@ -9,6 +9,10 @@ class Urls {
   static const String uploadMultipleUrl = '$_baseUrl/upload/multiple';
   static const String currentUserUrl = '$_baseUrl/users/me';
   static const String userLocationUrl = '$_baseUrl/users/location';
+  static const String deliveryLocationUrl = '$_baseUrl/users/delivery-location';
+  static const String cartUrl = '$_baseUrl/cart';
+  static const String cartAddUrl = '$_baseUrl/cart/add';
+  static const String cartUpdateUrl = '$_baseUrl/cart/update';
   static const String kycUrl = '$_baseUrl/kyc';
   static const String metaUserUrl = '$_baseUrl/meta/user';
   static const String trendingProductUrl = '$_baseUrl/products/trending';
@@ -41,4 +45,14 @@ class Urls {
   static String getShopUnfollowUrlById(String id) {
     return '$_baseUrl/connections/unfollow/$id';
   }
+
+  static String getWishlistToggleUrlById(String id) {
+    return '$_baseUrl/wishlist/toggle/$id';
+  }
+
+  static String getWishlistUrlById(String id) {
+    return '$_baseUrl/wishlist/$id';
+  }
+
+  static const String wishlistUrl = '$_baseUrl/wishlist';
 }

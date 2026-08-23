@@ -73,7 +73,7 @@ class Data {
     final String? countryCode;
     final String? phone;
     final Location? location;
-    final dynamic deliveryAddress;
+    final DeliveryAddress? deliveryAddress;
     final Location? deliveryLocation;
     final String? timeZone;
     final String? role;
@@ -109,7 +109,9 @@ class Data {
             countryCode: json["countryCode"],
             phone: json["phone"],
             location: json["location"] == null ? null : Location.fromJson(json["location"]),
-            deliveryAddress: json["deliveryAddress"],
+            deliveryAddress: json["deliveryAddress"] == null
+                ? null
+                : DeliveryAddress.fromJson(json["deliveryAddress"]),
             deliveryLocation: json["deliveryLocation"] == null ? null : Location.fromJson(json["deliveryLocation"]),
             timeZone: json["timeZone"],
             role: json["role"],
@@ -140,13 +142,47 @@ class Location {
     });
 
     final String? type;
-    final List<dynamic> coordinates;
+    final List<num> coordinates;
 
     factory Location.fromJson(Map<String, dynamic> json){ 
         return Location(
             type: json["type"],
-            coordinates: json["coordinates"] == null ? [] : List<dynamic>.from(json["coordinates"]!),
-        );
+            coordinates: json["coordinates"] == null ? [] : List<num>.from(json["coordinates"]!),
+    );
     }
 
+}
+
+class DeliveryAddress {
+    DeliveryAddress({
+        required this.name,
+        required this.location,
+        required this.buildingNo,
+        required this.floorNo,
+        required this.apartment,
+        required this.city,
+        required this.country,
+    });
+
+    final String? name;
+    final Location? location;
+    final int? buildingNo;
+    final int? floorNo;
+    final int? apartment;
+    final String? city;
+    final String? country;
+
+    factory DeliveryAddress.fromJson(Map<String, dynamic> json) {
+        return DeliveryAddress(
+            name: json["name"],
+            location: json["location"] == null
+                ? null
+                : Location.fromJson(json["location"]),
+            buildingNo: json["buildingNo"],
+            floorNo: json["floorNo"],
+            apartment: json["apartment"],
+            city: json["city"],
+            country: json["country"],
+        );
+    }
 }

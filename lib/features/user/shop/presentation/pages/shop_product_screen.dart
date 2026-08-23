@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/shop_product_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_info_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_product_card.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_filter_bottom_sheet.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/all_product_header.dart';
@@ -12,8 +14,10 @@ import 'package:hoodz/features/user/product/presentation/widgets/product_card.da
 class ShopProductScreen extends GetView<AllProductInfoController> {
   const ShopProductScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
+  @override 
+   Widget build(BuildContext context) {
+    final wishlistController = Get.find<WishListController>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
@@ -56,7 +60,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                     ),
                     SizedBox(height: 12.h(context)),
                     if (isLoading && recommends.isEmpty)
-                      const Center(child: CircularProgressIndicator())
+                      const ShopProductRecommendationShimmer()
                     else if (recommends.isEmpty)
                       _EmptyState(
                         text: 'No recommendation found',
@@ -64,14 +68,17 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                       )
                     else
                       SizedBox(
-                        height: 310.h(context),
+                        height: 270.h(context),
+                        
                         child: ListView.separated(
+                          padding: EdgeInsets.zero,
                           scrollDirection: Axis.horizontal,
                           itemCount: recommends.length,
                           separatorBuilder: (_, __) =>
                               SizedBox(width: 12.w(context)),
                           itemBuilder: (context, index) {
                             final product = recommends[index];
+                            final isWishlisted = product.isWishlisted ?? false;
                             return ProductCard(
                               name: product.title ?? '',
                               image: product.banner ?? '',
@@ -87,6 +94,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                               stockLabel: product.inStock == true
                                   ? 'In Stock'
                                   : 'Out of Stock',
+                              isWishlisted: isWishlisted,
                               onTap: () {
                                 PageNavigationService.to(
                                   context,
@@ -94,7 +102,25 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                                   arguments: {'productId': product.id},
                                 );
                               },
-                              onTapFavourite: () {},
+                              onTapFavourite: () async {
+                                final productId = product.id;
+                                if (productId == null || productId.isEmpty) {
+                                  return;
+                                }
+
+                                final updatedValue = await wishlistController
+                                    .toggleProductWishlist(
+                                      productId: productId,
+                                      currentValue: isWishlisted,
+                                    );
+
+                                if (updatedValue != null) {
+                                  controller.updateWishlistStatus(
+                                    productId: productId,
+                                    isWishlisted: updatedValue,
+                                  );
+                                }
+                              },
                             );
                           },
                         ),
@@ -106,7 +132,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                     ),
                     SizedBox(height: 12.h(context)),
                     if (isLoading && allProducts.isEmpty)
-                      const Center(child: CircularProgressIndicator())
+                      const ShopProductGridShimmer()
                     else if (allProducts.isEmpty)
                       _EmptyState(
                         text: 'No product found',
@@ -114,6 +140,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                       )
                     else
                       GridView.builder(
+                        padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: allProducts.length,
@@ -125,6 +152,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                         ),
                         itemBuilder: (context, index) {
                           final product = allProducts[index];
+                          final isWishlisted = product.isWishlisted ?? false;
                           return BrandProductCard(
                             name: product.title ?? '',
                             subtitle:
@@ -143,6 +171,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                             stockLabel: product.inStock == true
                                 ? 'In Stock'
                                 : 'Out of Stock',
+                            isWishlisted: isWishlisted,
                             onTap: () {
                               PageNavigationService.to(
                                 context,
@@ -150,7 +179,25 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                                 arguments: {'productId': product.id},
                               );
                             },
-                            onTapFavourite: () {},
+                            onTapFavourite: () async {
+                              final productId = product.id;
+                              if (productId == null || productId.isEmpty) {
+                                return;
+                              }
+
+                              final updatedValue = await wishlistController
+                                  .toggleProductWishlist(
+                                    productId: productId,
+                                    currentValue: isWishlisted,
+                                  );
+
+                              if (updatedValue != null) {
+                                controller.updateWishlistStatus(
+                                  productId: productId,
+                                  isWishlisted: updatedValue,
+                                );
+                              }
+                            },
                           );
                         },
                       ),

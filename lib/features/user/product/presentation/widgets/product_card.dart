@@ -18,6 +18,7 @@ class ProductCard extends StatelessWidget {
     this.subtitle = 'T-Shirt',
     this.oldPrice,
     this.stockLabel,
+    this.isWishlisted,
   });
 
   final String name;
@@ -29,6 +30,7 @@ class ProductCard extends StatelessWidget {
   final String subtitle;
   final String? oldPrice;
   final String? stockLabel;
+  final bool? isWishlisted;
 
   @override
   Widget build(BuildContext context) {
@@ -88,26 +90,33 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  Positioned(
-                    top: 8.h(context),
-                    right: 8.w(context),
-                    child: GestureDetector(
-                      onTap: onTapFavourite,
-                      child: CircleAvatar(
-                        backgroundColor: const Color(0xFFF3F3F3),
-                        radius: 17.r(context),
+                  if (isWishlisted != null)
+                    Positioned(
+                      top: 8.h(context),
+                      right: 8.w(context),
+                      child: GestureDetector(
+                        onTap: onTapFavourite,
                         child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 16.r(context),
-                          child: CrashSafeImage(
-                            Assets.icons.favourite.path,
-                            height: 16.h(context),
-                            width: 16.w(context),
+                          backgroundColor: isWishlisted == true
+                              ? const Color(0xFFFFE7E7)
+                              : const Color(0xFFF3F3F3),
+                          radius: 17.r(context),
+                          child: CircleAvatar(
+                            backgroundColor: isWishlisted == true
+                                ? const Color(0xFFFFF5F5)
+                                : Colors.white,
+                            radius: 16.r(context),
+                            child: CrashSafeImage(
+                              isWishlisted == true
+                                  ? Assets.icons.favouriteFill.path
+                                  : Assets.icons.favourite.path,
+                              height: 16.h(context),
+                              width: 16.w(context),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
               SizedBox(height: 8.h(context)),

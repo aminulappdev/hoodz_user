@@ -17,7 +17,7 @@ import 'package:image_picker/image_picker.dart';
 
 class EditProfileController extends GetxController {
   EditProfileController(
-    this._locationService,
+    this._locationService, 
     this._networkCaller,
     this._profileController,
   );

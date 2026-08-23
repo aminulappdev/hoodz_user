@@ -13,8 +13,8 @@ class CustomHomePageAppBar extends StatelessWidget {
     required this.onTapEdit,
     required this.onTapNotification,
     required this.onTapSearch,
-  });
-
+  });  
+ 
   final String address;
   final int notificationCount;
   final VoidCallback onTapEdit;
@@ -104,7 +104,7 @@ class CustomHomePageAppBar extends StatelessWidget {
                         radius: 29.h(context),
                         backgroundColor: Colors.white,
                         child: CrashSafeImage(
-                          Assets.icons.notification.path,
+                          Assets.icons.cart.path,
                           height: 26.h(context),
                           width: 26.w(context),
                         ),

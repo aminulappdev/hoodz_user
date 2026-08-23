@@ -138,6 +138,10 @@ class $AssetsIconsGen {
   AssetGenImage get favourite =>
       const AssetGenImage('assets/icons/favourite.png');
 
+  /// File path: assets/icons/favourite_fill.png
+  AssetGenImage get favouriteFill =>
+      const AssetGenImage('assets/icons/favourite_fill.png');
+
   /// File path: assets/icons/file.png
   AssetGenImage get file => const AssetGenImage('assets/icons/file.png');
 
@@ -295,6 +299,7 @@ class $AssetsIconsGen {
     egypt,
     eyeOff,
     favourite,
+    favouriteFill,
     file,
     filter,
     filter02,

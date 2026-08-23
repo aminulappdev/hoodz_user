@@ -9,7 +9,9 @@ import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/label_container.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/view_all.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/models/voucher_model.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/voucher_screen.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/voucher_card_design.dart';
@@ -52,13 +54,47 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     return null;
   }
 
+  Map<String, String>? _resolveSelectedColorPayload({
+    required List<dynamic> rawColors,
+    required int selectedIndex,
+  }) {
+    if (selectedIndex < 0 || selectedIndex >= rawColors.length) {
+      return null;
+    }
+
+    final selectedColor = rawColors[selectedIndex];
+
+    if (selectedColor is Map<String, dynamic>) {
+      final code = selectedColor['code']?.toString().trim();
+      final name = selectedColor['name']?.toString().trim();
+      if (code != null && code.isNotEmpty && name != null && name.isNotEmpty) {
+        return {'code': code, 'name': name};
+      }
+    }
+
+    if (selectedColor is Map) {
+      final colorMap = Map<String, dynamic>.from(selectedColor);
+      final code = colorMap['code']?.toString().trim();
+      final name = colorMap['name']?.toString().trim();
+      if (code != null && code.isNotEmpty && name != null && name.isNotEmpty) {
+        return {'code': code, 'name': name};
+      }
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
+    final wishlistController = Get.find<WishListController>();
+    final cartController = Get.find<CartController>();
     final routeArguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    controller.initialize(routeArguments);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initialize(routeArguments);
+    });
 
     return Scaffold(
       appBar: CustomAppBar(label: 'Product Details'),
@@ -66,10 +102,38 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(20.w(context)),
         child: CartAndBuy(
-          onTapAddToCart: () {},
+          onTapAddToCart: () async {
+            final product = controller.productData?.product;
+            final productId = product?.id;
+            if (productId == null || productId.isEmpty) {
+              return;
+            }
+
+            final sizeOptions =
+                product?.sizes
+                    .map((size) => size.toString())
+                    .where((size) => size.trim().isNotEmpty)
+                    .toList() ??
+                [];
+            final selectedSize = sizeOptions.isNotEmpty
+                ? controller.selectedSize.value
+                : null;
+            final selectedColor = _resolveSelectedColorPayload(
+              rawColors: product?.colors ?? const [],
+              selectedIndex: controller.selectedColorIndex.value,
+            );
+
+            await cartController.addToCart(
+              productId: productId,
+              size: selectedSize,
+              color: selectedColor,
+              quantity: 1,
+            );
+          },
           onTapBuyNow: () {
             Get.to(() => CheckoutScreen());
           },
+          
         ),
       ),
 
@@ -340,7 +404,6 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                     ),
 
                     const Spacer(),
-
                     LabelContainer(
                       icon: Assets.icons.ai.path,
                       name: 'Ai Suggested',
@@ -373,12 +436,15 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                                     .toString();
                             final rating = (similarProduct.avgRating ?? 0)
                                 .toString();
+                            final isWishlisted =
+                                similarProduct.isWishlisted ?? false;
 
                             return ProductCard(
                               name: name,
                               image: image,
                               price: price,
                               rating: rating,
+                              isWishlisted: isWishlisted,
                               onTap: () {
                                 PageNavigationService.to(
                                   context,
@@ -386,7 +452,25 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                                   arguments: {'productId': similarProduct.id},
                                 );
                               },
-                              onTapFavourite: () {},
+                              onTapFavourite: () async {
+                                final productId = similarProduct.id;
+                                if (productId == null || productId.isEmpty) {
+                                  return;
+                                }
+
+                                final updatedValue = await wishlistController
+                                    .toggleProductWishlist(
+                                      productId: productId,
+                                      currentValue: isWishlisted,
+                                    );
+
+                                if (updatedValue != null) {
+                                  controller.updateSimilarProductWishlistStatus(
+                                    productId: productId,
+                                    isWishlisted: updatedValue,
+                                  );
+                                }
+                              },
                             );
                           },
                         ),

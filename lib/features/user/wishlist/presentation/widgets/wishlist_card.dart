@@ -11,6 +11,7 @@ class WishListCard extends StatelessWidget {
   final String name;
   final String price;
   final VoidCallback onTap;
+  final VoidCallback onTapDelete;
 
   const WishListCard({
     super.key,
@@ -18,12 +19,12 @@ class WishListCard extends StatelessWidget {
     required this.name,
     required this.price,
     required this.onTap,
+    required this.onTapDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final imageHeight = 90.h(context);
     return Container(
       width: width,
       decoration: BoxDecoration(
@@ -33,66 +34,65 @@ class WishListCard extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppCachedNetworkImage(
-                  imageHeight: imageHeight,
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: 96.w(context),
+                child: AppCachedNetworkImage(
+                  imageHeight: double.infinity,
                   imageUrl: imageUrl,
-                  imageWidth: 80.w(context),
+                  imageWidth: 96.w(context),
                   imageFit: BoxFit.cover,
                   radius: 12.r(context),
                 ),
-                SizedBox(width: 12.w(context)),
-                Expanded(
-                  child: SizedBox(
-                    height: imageHeight,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              SizedBox(width: 12.w(context)),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 16.sp(context),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 8.h(context)),
+                    Text(
+                      price,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 14.sp(context),
+                        fontWeight: FontWeight.w600,
+                        color: LightThemeColors.primaryColor,
+                      ),
+                    ),
+                    SizedBox(height: 8.h(context)),
+                    Row(
                       children: [
-                        Text(
-                          name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                fontSize: 16.sp(context),
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                        Text(
-                          price,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                fontSize: 14.sp(context),
-                                fontWeight: FontWeight.w600,
-                                color: LightThemeColors.primaryColor,
-                              ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(child: AddToCartButton(onTap: onTap)),
-                            SizedBox(width: 30.w(context)),
-                            CrashSafeImage(
-                              Assets.icons.delete.path,
-                              height: 18.h(context),
-                              width: 18.w(context),
-                            ),
-                          ],
+                        Expanded(child: AddToCartButton(onTap: onTap)),
+                        SizedBox(width: 16.w(context)),
+                        GestureDetector(
+                          onTap: onTapDelete,
+                          child: CrashSafeImage(
+                            Assets.icons.delete.path,
+                            height: 18.h(context),
+                            width: 18.w(context),
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

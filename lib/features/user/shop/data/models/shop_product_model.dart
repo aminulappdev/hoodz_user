@@ -22,6 +22,22 @@ class ShopProductModel {
       data: json["data"] == null ? null : Data.fromJson(json["data"]),
     );
   }
+
+  ShopProductModel copyWith({
+    bool? success,
+    dynamic statusCode,
+    String? message,
+    Meta? meta,
+    Data? data,
+  }) {
+    return ShopProductModel(
+      success: success ?? this.success,
+      statusCode: statusCode ?? this.statusCode,
+      message: message ?? this.message,
+      meta: meta ?? this.meta,
+      data: data ?? this.data,
+    );
+  }
 }
 
 class Data {
@@ -42,6 +58,16 @@ class Data {
           : List<AllProduct>.from(
               json["allProducts"]!.map((x) => AllProduct.fromJson(x)),
             ),
+    );
+  }
+
+  Data copyWith({
+    List<AllProduct>? recommends,
+    List<AllProduct>? allProducts,
+  }) {
+    return Data(
+      recommends: recommends ?? this.recommends,
+      allProducts: allProducts ?? this.allProducts,
     );
   }
 }
@@ -103,6 +129,44 @@ class AllProduct {
       ratingCount: json["ratingCount"],
       inStock: json["inStock"],
       isWishlisted: json["isWishlisted"],
+    );
+  }
+
+  AllProduct copyWith({
+    String? id,
+    Category? category,
+    String? title,
+    String? inventoryType,
+    String? collectionType,
+    String? brand,
+    String? brandType,
+    String? banner,
+    dynamic price,
+    dynamic discount,
+    dynamic discountPrice,
+    dynamic stock,
+    dynamic avgRating,
+    dynamic ratingCount,
+    bool? inStock,
+    bool? isWishlisted,
+  }) {
+    return AllProduct(
+      id: id ?? this.id,
+      category: category ?? this.category,
+      title: title ?? this.title,
+      inventoryType: inventoryType ?? this.inventoryType,
+      collectionType: collectionType ?? this.collectionType,
+      brand: brand ?? this.brand,
+      brandType: brandType ?? this.brandType,
+      banner: banner ?? this.banner,
+      price: price ?? this.price,
+      discount: discount ?? this.discount,
+      discountPrice: discountPrice ?? this.discountPrice,
+      stock: stock ?? this.stock,
+      avgRating: avgRating ?? this.avgRating,
+      ratingCount: ratingCount ?? this.ratingCount,
+      inStock: inStock ?? this.inStock,
+      isWishlisted: isWishlisted ?? this.isWishlisted,
     );
   }
 }

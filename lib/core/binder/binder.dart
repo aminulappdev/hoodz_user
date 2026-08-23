@@ -18,6 +18,7 @@ import 'package:hoodz/features/user/homescreen/presentation/controllers/all_prod
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
@@ -79,6 +80,7 @@ class ControllerBinder extends Bindings {
       () => HomeScreenController(Get.find<LocationSelectionService>()),
       fenix: true,
     );
+    Get.lazyPut(() => WishListController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(SearchScreenController.new, fenix: true);
     Get.lazyPut(
       () => AllBrandController(
@@ -93,20 +95,23 @@ class ControllerBinder extends Bindings {
     );
     Get.lazyPut(AllProductReviewController.new, fenix: true);
     Get.lazyPut(AllVouchersController.new, fenix: true);
-    Get.lazyPut(CartController.new, fenix: true);
+    Get.lazyPut(() => CartController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(OrderController.new, fenix: true);
     Get.lazyPut(ProductController.new, fenix: true);
     Get.lazyPut(ShopController.new, fenix: true);
     Get.lazyPut(AddPaymentController.new, fenix: true);
     Get.lazyPut(
-      () => ShippingInformationController(Get.find<LocationSelectionService>()),
+      () => ShippingInformationController(
+        Get.find<LocationSelectionService>(),
+        Get.find<NetworkCaller>(),
+      ),
       fenix: true,
     );
     Get.lazyPut(DeliveryMethodController.new, fenix: true);
     Get.lazyPut(PaymentDetailsController.new, fenix: true);
     Get.lazyPut(PaymentMethodController.new, fenix: true);
     Get.lazyPut(PaymentSuccessfullController.new, fenix: true);
-    Get.lazyPut(WishlistController.new, fenix: true);
+    Get.lazyPut(() => WishlistController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(ProfileController.new, fenix: true);
     Get.lazyPut(
       () => EditProfileController(

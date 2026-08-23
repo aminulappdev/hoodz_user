@@ -39,6 +39,36 @@ class AllProductInfoController extends GetxController {
       _productModel.value?.data?.recommends ?? const [];
   List<AllProduct> get products =>
       _productModel.value?.data?.allProducts ?? const [];
+
+  void updateWishlistStatus({
+    required String productId,
+    required bool isWishlisted,
+  }) {
+    final currentModel = _productModel.value;
+    final currentData = currentModel?.data;
+
+    if (currentModel == null || currentData == null) {
+      return;
+    }
+
+    List<AllProduct> updateProducts(List<AllProduct> products) {
+      return products
+          .map(
+            (product) => product.id == productId
+                ? product.copyWith(isWishlisted: isWishlisted)
+                : product,
+          )
+          .toList();
+    }
+
+    _productModel.value = currentModel.copyWith(
+      data: currentData.copyWith(
+        recommends: updateProducts(currentData.recommends),
+        allProducts: updateProducts(currentData.allProducts),
+      ),
+    );
+  }
+
   bool get hasMoreDuas => _currentPage < _totalPage;
   String get apiPath => Urls.getShopProductsUrlById(shopId.value);
 

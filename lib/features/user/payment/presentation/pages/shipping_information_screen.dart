@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
-import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/location_selection_sheet.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
+import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 
 class ShippingInformationScreen extends GetView<ShippingInformationController> {
   const ShippingInformationScreen({super.key});
@@ -23,7 +23,10 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
           onTapCurrentLocation: () async {
             Navigator.pop(context);
             try {
-              await controller.useCurrentLocation();
+              final success = await controller.useCurrentLocation();
+              if (!success) {
+                return;
+              }
             } on LocationServiceException catch (error) {
               Get.snackbar(
                 'Location unavailable',
@@ -32,9 +35,16 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
               );
             }
           },
-          onTapDifferentLocation: () {
+          onTapDifferentLocation: () async {
             Navigator.pop(context);
-            PageNavigationService.to(context, AppRoutes.mapLocationPicker);
+            final result = await Navigator.pushNamed(
+              context,
+              AppRoutes.mapLocationPicker,
+            );
+
+            if (result is LocationAddress) {
+              await controller.applySelectedLocation(result);
+            }
           },
         ),
       ),
@@ -43,22 +53,28 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = Get.find<ProfileController>();
     final dropDownStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
       fontSize: 16.sp(context),
       fontWeight: FontWeight.w500,
       color: const Color(0xff7A7A7A),
     );
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(label: 'Shipping Information'),
-      // bottomNavigationBar: ShipingButtomBar(
-      //   total: controller.price,
-      //   onTap: () {
-      //     PageNavigationService.to(context, AppRoutes.deliveryMethod);
-      //   },
-      // ),
-      body: Obx(
-        () => SingleChildScrollView(
+    return Obx(() {
+      final user = profileController.userProfileModel.value?.data;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.prefillFromProfile(user);
+      });
+
+      return Scaffold( 
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(label: 'Shipping Information'),
+        // bottomNavigationBar: ShipingButtomBar(
+        //   total: controller.price,
+        //   onTap: () {
+        //     PageNavigationService.to(context, AppRoutes.deliveryMethod);
+        //   },
+        // ),
+        body: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
             20.w(context),
             18.h(context),
@@ -83,11 +99,29 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                 keyboardType: TextInputType.phone,
               ),
               SizedBox(height: 18.h(context)),
+              const _FieldLabel('City'),
+              SizedBox(height: 8.h(context)),
+              CustomTextField(
+                hintText: 'Select city',
+                hintStyle: dropDownStyle,
+                value: controller.selectedCity.value,
+                onChanged: controller.changeCity,
+                items: controller.cities
+                    .map(
+                      (city) => DropdownMenuItem<String>(
+                        value: city,
+                        child: Text(city, style: dropDownStyle),
+                      ),
+                    )
+                    .toList(),
+              ),
+              SizedBox(height: 18.h(context)),
               _SectionHeader(
                 title: 'Shipping Address',
                 onChange: () => _showLocationSheet(context),
               ),
               SizedBox(height: 10.h(context)),
+
               _AddressCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,13 +151,6 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                     //     ),
                     //   ],
                     // ),
-                    const _FieldLabel('Country'),
-                    SizedBox(height: 8.h(context)),
-                    CustomTextField(hintText: 'Country'),
-                    SizedBox(height: 18.h(context)),
-                    const _FieldLabel('City'),
-                    SizedBox(height: 8.h(context)),
-                    CustomTextField(hintText: 'City'),
                     SizedBox(height: 18.h(context)),
                     const _FieldLabel('Full Address'),
                     SizedBox(height: 8.h(context)),
@@ -201,8 +228,11 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
               SizedBox(height: 18.h(context)),
               CustomButton(
                 text: 'Save Changes',
-                onPressed: () {
-                  Navigator.pop(context);
+                onPressed: () async {
+                  final success = await controller.updateDeliveryLocation();
+                  if (success && context.mounted) {
+                    Navigator.pop(context);
+                  }
                 },
               ),
               // SizedBox(height: 18.h(context)),
@@ -214,8 +244,8 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
             ],
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
