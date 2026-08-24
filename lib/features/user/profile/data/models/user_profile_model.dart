@@ -45,6 +45,7 @@ class Data {
         required this.registerWith,
         required this.avgRating,
         required this.ratingCount,
+        required this.coins,
         required this.balance,
         required this.walletBalance,
         required this.followers,
@@ -80,6 +81,7 @@ class Data {
     final String? registerWith;
     final int? avgRating;
     final int? ratingCount;
+    final int? coins;
     final int? balance;
     final int? walletBalance;
     final int? followers;
@@ -118,7 +120,8 @@ class Data {
             registerWith: json["registerWith"],
             avgRating: json["avgRating"],
             ratingCount: json["ratingCount"],
-            balance: json["balance"],
+            coins: json["coins"] ?? json["balance"],
+            balance: json["balance"] ?? json["coins"],
             walletBalance: json["walletBalance"],
             followers: json["followers"],
             status: json["status"],

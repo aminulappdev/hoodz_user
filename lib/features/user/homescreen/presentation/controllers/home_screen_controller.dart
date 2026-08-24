@@ -79,7 +79,7 @@ class HomeScreenController extends GetxController {
       isLoadingCurrentLocation.value = false;
     }
   }
-
+ 
   void updateSelectedLocation(LocationAddress location) {
     selectedAddress.value = location.fullAddress;
   }

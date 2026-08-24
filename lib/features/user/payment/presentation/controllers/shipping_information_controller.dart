@@ -19,7 +19,6 @@ class ShippingInformationController extends GetxController {
   final buildingController = TextEditingController();
   final floorController = TextEditingController();
   final apartmentController = TextEditingController();
-  final noteController = TextEditingController();
 
   final LocationSelectionService _locationService;
   final NetworkCaller _networkCaller;
@@ -32,7 +31,6 @@ class ShippingInformationController extends GetxController {
 
   final RxString selectedCountry = 'Bangladesh'.obs;
   final RxString selectedCity = 'Dhaka'.obs;
-  final RxString selectedDeliveryType = 'Instant Delivery'.obs;
   bool _didPrefillProfile = false;
 
   Future<bool> useCurrentLocation() async {
@@ -74,12 +72,6 @@ class ShippingInformationController extends GetxController {
     'Noakhali',
   ];
 
-  final List<String> deliveryTypes = const [
-    'Instant Delivery',
-    'Standard Delivery',
-    'Scheduled Delivery',
-  ];
-
   double get totalCost => price + deliveryCharge;
 
   void changeCountry(String value) {
@@ -88,10 +80,6 @@ class ShippingInformationController extends GetxController {
 
   void changeCity(String value) {
     selectedCity.value = value;
-  }
-
-  void changeDeliveryType(String value) {
-    selectedDeliveryType.value = value;
   }
 
   Future<bool> updateDeliveryLocation() async {
@@ -319,7 +307,6 @@ class ShippingInformationController extends GetxController {
     buildingController.dispose();
     floorController.dispose();
     apartmentController.dispose();
-    noteController.dispose();
     super.onClose();
   }
 }

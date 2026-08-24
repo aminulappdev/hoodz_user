@@ -6,7 +6,9 @@ import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/location_selection_sheet.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 
@@ -18,9 +20,9 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => Obx(
-        () => LocationSelectionSheet(
+        () => LocationSelectionSheet( 
           isLoadingCurrentLocation: controller.isLoadingCurrentLocation.value,
-          onTapCurrentLocation: () async {
+          onTapCurrentLocation: () async { 
             Navigator.pop(context);
             try {
               final success = await controller.useCurrentLocation();
@@ -85,15 +87,17 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _FieldLabel('Full Name'),
-              SizedBox(height: 8.h(context)),
+              SizedBox(height: 8.h(context)), 
               CustomTextField(
-                controller: controller.fullNameController,
+                enabled: false,
+                controller: controller.fullNameController, 
                 hintText: 'Enter full name',
               ),
               SizedBox(height: 18.h(context)),
               const _FieldLabel('Phone Number'),
               SizedBox(height: 8.h(context)),
               CustomTextField(
+                enabled: false,
                 controller: controller.phoneNumberController,
                 hintText: 'Enter phone number',
                 keyboardType: TextInputType.phone,
@@ -201,36 +205,16 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                 ),
               ),
               SizedBox(height: 18.h(context)),
-              const _FieldLabel('Delivery Type'),
-              SizedBox(height: 8.h(context)),
-              CustomTextField(
-                hintText: 'Select',
-                hintStyle: dropDownStyle,
-                value: controller.selectedDeliveryType.value,
-                onChanged: controller.changeDeliveryType,
-                items: controller.deliveryTypes
-                    .map(
-                      (type) => DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type, style: dropDownStyle),
-                      ),
-                    )
-                    .toList(),
-              ),
-              SizedBox(height: 18.h(context)),
-              const _FieldLabel('Note:'),
-              SizedBox(height: 8.h(context)),
-              CustomTextField(
-                controller: controller.noteController,
-                hintText: 'Write.....',
-                maxLines: 5,
-              ),
-              SizedBox(height: 18.h(context)),
               CustomButton(
                 text: 'Save Changes',
                 onPressed: () async {
                   final success = await controller.updateDeliveryLocation();
                   if (success && context.mounted) {
+                    await Get.find<ProfileController>().loadUserProfile(
+                      force: true,
+                    );
+                    await Get.find<HomeScreenController>().getUserMeta();
+                    await Get.find<OrderSummaryController>().refreshOrderSummary();
                     Navigator.pop(context);
                   }
                 },

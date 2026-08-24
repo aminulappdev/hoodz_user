@@ -20,6 +20,8 @@ import 'package:hoodz/features/user/homescreen/presentation/controllers/product_
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/product_order_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_vouchers_controller.dart';
@@ -32,6 +34,7 @@ import 'package:hoodz/features/user/shop/presentation/controller/sho_connection_
 import 'package:hoodz/features/user/payment/presentation/controllers/add_payment_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/delivery_method_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_details_controller.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_method_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_successfull_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
@@ -96,6 +99,8 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(AllProductReviewController.new, fenix: true);
     Get.lazyPut(AllVouchersController.new, fenix: true);
     Get.lazyPut(() => CartController(Get.find<NetworkCaller>()), fenix: true);
+    Get.lazyPut(OrderSummaryController.new, fenix: true);
+    Get.lazyPut(ProductOrderController.new, fenix: true);
     Get.lazyPut(OrderController.new, fenix: true);
     Get.lazyPut(ProductController.new, fenix: true);
     Get.lazyPut(ShopController.new, fenix: true);
@@ -109,6 +114,7 @@ class ControllerBinder extends Bindings {
     );
     Get.lazyPut(DeliveryMethodController.new, fenix: true);
     Get.lazyPut(PaymentDetailsController.new, fenix: true);
+    Get.lazyPut(PaymentInitiateController.new, fenix: true);
     Get.lazyPut(PaymentMethodController.new, fenix: true);
     Get.lazyPut(PaymentSuccessfullController.new, fenix: true);
     Get.lazyPut(() => WishlistController(Get.find<NetworkCaller>()), fenix: true);

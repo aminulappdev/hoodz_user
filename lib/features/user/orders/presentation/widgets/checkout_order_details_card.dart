@@ -5,9 +5,17 @@ class CheckoutOrderDetailsCard extends StatelessWidget {
   const CheckoutOrderDetailsCard({
     super.key,
     required this.onChangeTap,
+    required this.name,
+    required this.phone,
+    required this.deliveryType,
+    required this.address,
   });
 
   final VoidCallback onChangeTap;
+  final String name;
+  final String phone;
+  final String deliveryType;
+  final String address;
 
   @override
   Widget build(BuildContext context) {
@@ -43,18 +51,18 @@ class CheckoutOrderDetailsCard extends StatelessWidget {
           const SizedBox(height: 10),
           const Divider(height: 1, color: Color(0xFFF0F0F0)),
           const SizedBox(height: 8),
-          const CheckoutOrderInfoRow(label: 'Name:', value: 'Abdur Ahmed'),
-          const CheckoutOrderInfoRow(
+          CheckoutOrderInfoRow(label: 'Name:', value: name),
+          CheckoutOrderInfoRow(
             label: 'Phone:',
-            value: '+9524549655',
+            value: phone,
           ),
-          const CheckoutOrderInfoRow(
+          CheckoutOrderInfoRow(
             label: 'Delivery Type:',
-            value: 'Instant Delivery',
+            value: deliveryType,
           ),
-          const CheckoutOrderInfoRow(
+          CheckoutOrderInfoRow(
             label: 'Address:',
-            value: 'House 12, Road 5, Mohakhali, Dhaka',
+            value: address,
             isLast: true,
           ),
         ],

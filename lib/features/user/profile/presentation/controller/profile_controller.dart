@@ -43,7 +43,7 @@ class ProfileController extends GetxController {
         'Access token not found. Please login again.',
       );
       return;
-    }
+    } 
 
     isLoading.value = true; 
 

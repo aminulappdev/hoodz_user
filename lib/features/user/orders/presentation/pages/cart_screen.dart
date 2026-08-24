@@ -6,22 +6,24 @@ import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/circle_icon.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/check_out_screen.dart';
-import 'package:hoodz/features/user/orders/presentation/widgets/add_voucher.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/cart_item.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/cart_item_update_sheet.dart';
-import 'package:hoodz/features/user/orders/presentation/widgets/voucher_card.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/shiping_buttom_bar.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class CartScreen extends GetView<CartController> {
-  const CartScreen({super.key}); 
+  const CartScreen({super.key});
+
+  OrderSummaryController get _orderSummaryController =>
+      Get.find<OrderSummaryController>();
 
   @override 
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return Scaffold(
-      appBar: AppBar( 
+      appBar: AppBar(
         automaticallyImplyLeading: false,
         leadingWidth: 68.w(context),
         leading: Padding(
@@ -30,7 +32,7 @@ class CartScreen extends GetView<CartController> {
             iconPath: Assets.icons.arrow.path,
             onTap: () => PageNavigationService.back(context),
           ),
-        ), 
+        ),
         title: Text(
           'My Cart',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -63,9 +65,18 @@ class CartScreen extends GetView<CartController> {
           deliveryCharge: controller.deliveryCharge,
           total: controller.totalCost,
           buttonText: 'Checkout',
-          onTap: () {
-            Get.to(CheckoutScreen());
-            // PageNavigationService.to(context, AppRoutes.shippingInformation);
+          onTap: () async {
+            final isSuccess = await _orderSummaryController.createOrderSummary(
+              voucherCode: null,
+              redeemCoins: null,
+              onSuccessNavigate: () {
+                Get.to(() => const CheckoutScreen());
+              },
+            );
+
+            if (!isSuccess) {
+              return;
+            }
           },
         ),
       ),
@@ -184,10 +195,10 @@ class CartScreen extends GetView<CartController> {
                   },
                 ),
               ),
-              SizedBox(height: 28.h(context)),
-              AddVoucherRow(onTap: () {}),
-              SizedBox(height: 12.h(context)),
-              VoucherCard(),
+              // SizedBox(height: 28.h(context)),
+              // AddVoucherRow(onTap: () {}),
+              // SizedBox(height: 12.h(context)),
+              // VoucherCard(),
             ],
           ),
         );

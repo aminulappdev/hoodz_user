@@ -35,9 +35,18 @@ class PaymentMethodTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(method.maskedNumber, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  Text(
+                    method.type,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text('Expire ${method.expiry}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    '${method.maskedNumber} • Expire ${method.expiry}',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ],
               ),
             ),

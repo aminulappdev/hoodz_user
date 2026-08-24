@@ -11,7 +11,7 @@ class ShipingButtomBar extends StatelessWidget {
     this.subTotal,
     this.deliveryCharge,
     this.buttonText = 'Pay Now',
-  }); 
+  });
 
   final double? subTotal;
   final double? deliveryCharge;
@@ -44,25 +44,25 @@ class ShipingButtomBar extends StatelessWidget {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(
                     horizontal: 10.w(context),
-                    vertical: 10.h(context),
+                    vertical: 0.h(context),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SummaryRow(
-                        title: 'Sub-total',
-                        value: '\$${subTotal!.toStringAsFixed(2)}',
-                        titleColor: const Color(0xff9A9A9A),
-                      ),
-                      SizedBox(height: 14.h(context)),
-                      SummaryRow(
-                        title: 'Delivery charge',
-                        value: '\$${deliveryCharge!.toStringAsFixed(2)}',
-                        titleColor: const Color(0xff9A9A9A),
-                      ),
-                      SizedBox(height: 14.h(context)),
-                      const Divider(color: Color(0xffEAEAEA), height: 1),
-                      SizedBox(height: 14.h(context)),
+                      // SummaryRow(
+                      //   title: 'Sub-total',
+                      //   value: '\$${subTotal!.toStringAsFixed(2)}',
+                      //   titleColor: const Color(0xff9A9A9A),
+                      // ),
+                      // SizedBox(height: 14.h(context)),
+                      // SummaryRow(
+                      //   title: 'Delivery charge',
+                      //   value: '\$${deliveryCharge!.toStringAsFixed(2)}',
+                      //   titleColor: const Color(0xff9A9A9A),
+                      // ),
+                      // SizedBox(height: 14.h(context)),
+                      // const Divider(color: Color(0xffEAEAEA), height: 1),
+                      
                       SummaryRow(
                         title: 'Total cost',
                         value: '\$${total.toStringAsFixed(2)}',
