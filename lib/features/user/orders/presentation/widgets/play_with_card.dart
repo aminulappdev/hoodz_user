@@ -6,11 +6,13 @@ import 'package:hoodz/features/user/orders/presentation/widgets/payment_title.da
 class PayWithSection extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
+  final String walletLabel;
 
   const PayWithSection({
     super.key,
     required this.selectedIndex,
     required this.onSelect,
+    required this.walletLabel,
   });
 
   @override
@@ -34,7 +36,7 @@ class PayWithSection extends StatelessWidget {
               ),
               PaymentActionTile(
                 icon: Icons.account_balance_wallet_outlined,
-                label: 'Wallet',
+                label: walletLabel,
                 isLast: false,
                 showRadio: true,
                 isSelected: selectedIndex == 1,

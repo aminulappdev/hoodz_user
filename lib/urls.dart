@@ -15,6 +15,8 @@ class Urls {
   static const String cartUpdateUrl = '$_baseUrl/cart/update';
   static const String orderSummaryUrl = '$_baseUrl/orders/summary';
   static const String orderUrl = '$_baseUrl/orders';
+  static const String myOrdersUrl = '$_baseUrl/orders/my-orders';
+  static String getOrderDetailsUrlById(String id) => '$_baseUrl/orders/$id';
   static const String paymentInitiateUrl = '$_baseUrl/payments/initiate';
   static const String kycUrl = '$_baseUrl/kyc';
   static const String metaUserUrl = '$_baseUrl/meta/user';

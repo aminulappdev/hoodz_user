@@ -1,15 +1,20 @@
 import 'package:get/get.dart';
 
 class PaymentSuccessfullController extends GetxController {
-  final List<OrderTimelineItem> timelineItems = const [
+  PaymentSuccessfullController()
+      : orderConfirmedLabel = _formatCurrentDate();
+
+  final String orderConfirmedLabel;
+
+  final List<OrderTimelineItem> timelineItems = [
     OrderTimelineItem(
       title: 'Order Confirmed',
-      timeLabel: '2:30 PM',
+      timeLabel: '',
       state: OrderTimelineState.completed,
     ),
     OrderTimelineItem(
       title: 'Order Prepared',
-      timeLabel: 'Upcoming',
+      timeLabel: 'Upcoming', 
       state: OrderTimelineState.upcoming,
     ),
     OrderTimelineItem(
@@ -33,6 +38,27 @@ class PaymentSuccessfullController extends GetxController {
       state: OrderTimelineState.upcoming,
     ),
   ];
+
+  static String _formatCurrentDate() {
+    final now = DateTime.now();
+    const monthNames = <String>[
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    final month = monthNames[now.month - 1];
+    return '${now.day.toString().padLeft(2, '0')} $month ${now.year}';
+  }
 }
 
 class OrderTimelineItem {

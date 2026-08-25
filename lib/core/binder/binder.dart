@@ -20,8 +20,10 @@ import 'package:hoodz/features/user/homescreen/presentation/controllers/product_
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/product_order_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/my_orders_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_vouchers_controller.dart';
@@ -101,6 +103,8 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(() => CartController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(OrderSummaryController.new, fenix: true);
     Get.lazyPut(ProductOrderController.new, fenix: true);
+    Get.lazyPut(OrderDetailsController.new, fenix: true);
+    Get.lazyPut(MyOrdersController.new, fenix: true);
     Get.lazyPut(OrderController.new, fenix: true);
     Get.lazyPut(ProductController.new, fenix: true);
     Get.lazyPut(ShopController.new, fenix: true);

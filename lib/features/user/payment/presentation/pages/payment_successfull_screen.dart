@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_successfull_controller.dart';
-import 'package:hoodz/features/user/payment/presentation/widgets/estimated_delivery_card.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/order_timeline_tile.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/success_card.dart';
 
@@ -18,7 +20,7 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(
+          padding: EdgeInsets.fromLTRB( 
             14.w(context),
             8.h(context),
             14.w(context),
@@ -32,9 +34,9 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
                     children: [
                       SizedBox(height: 18.h(context)),
                       SuccessCard(),
-                      SizedBox(height: 18.h(context)),
-                      const EstimatedDeliveryCard(),
-                      SizedBox(height: 22.h(context)),
+                      SizedBox(height: 50.h(context)),
+                      // const EstimatedDeliveryCard(),
+                      // SizedBox(height: 22.h(context)),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -47,16 +49,19 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
                               ),
                         ),
                       ),
-                      SizedBox(height: 14.h(context)),
+                      SizedBox(height: 30.h(context)),
                       ...List.generate(controller.timelineItems.length, (
                         index,
                       ) {
                         final item = controller.timelineItems[index];
+                        final timeLabel = index == 0
+                            ? controller.orderConfirmedLabel
+                            : item.timeLabel;
                         return Padding(
-                          padding: EdgeInsets.only(bottom: 12.h(context)),
+                          padding: EdgeInsets.only(bottom: 4.h(context)),
                           child: OrderTimelineTile(
                             title: item.title,
-                            timeLabel: item.timeLabel,
+                            timeLabel: timeLabel,
                             state: item.state,
                             showConnector:
                                 index != controller.timelineItems.length - 1,
@@ -70,14 +75,38 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
               SizedBox(height: 12.h(context)),
               CustomButton(
                 text: 'Order Details',
-                onPressed: () {
-                  PageNavigationService.to(context, AppRoutes.paymentDetails);
+                onPressed: () async {
+                  final paymentController =
+                      Get.find<PaymentInitiateController>();
+                  final orderDetailsController =
+                      Get.find<OrderDetailsController>();
+                  final orderId =
+                      paymentController.cardPaymentData?.payments.first.order?.id ??
+                      paymentController.codPaymentData?.payments.first.order?.id;
+
+                  if (orderId == null || orderId.isEmpty) {
+                    showAppToast(
+                      message: 'Order id not found.',
+                      isError: true, 
+                    );
+                    return;
+                  }
+
+                  orderDetailsController.setPendingOrderId(orderId);
+                  PageNavigationService.to(
+                    context,
+                    AppRoutes.paymentDetails,
+                    arguments: {'orderId': orderId},
+                  );
                 },
               ),
               SizedBox(height: 10.h(context)),
-              TextButton(
+              TextButton( 
                 onPressed: () {
-                  PageNavigationService.offAll(context, AppRoutes.userDashboard);
+                  PageNavigationService.offAll(
+                    context,
+                    AppRoutes.userDashboard,
+                  );
                 },
                 child: Text(
                   'Back to Homepage',

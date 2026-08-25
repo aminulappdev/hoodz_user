@@ -13,7 +13,10 @@ class UserDashboardScreen extends GetView<UserDashboardController> {
     return Obx(
       () => Scaffold(
         backgroundColor: const Color(0xFFF9F9F9),
-        body: controller.pages[controller.selectedIndex.value],
+        body: IndexedStack(
+          index: controller.selectedIndex.value,
+          children: controller.pages,
+        ),
         bottomNavigationBar: UserDashboardBottomNavBar(
           currentIndex: controller.selectedIndex.value,
           onTap: controller.changeTab,

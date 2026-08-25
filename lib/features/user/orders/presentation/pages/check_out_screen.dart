@@ -17,7 +17,6 @@ import 'package:hoodz/features/user/orders/presentation/widgets/checkout_order_d
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_voucher_points_card.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/payment_summary_card.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/play_with_card.dart';
-import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 
@@ -37,7 +36,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       Get.find<ProductOrderController>();
   final PaymentInitiateController _paymentInitiateController =
       Get.find<PaymentInitiateController>();
-  final ProfileController _profileController = Get.find<ProfileController>();
   final PaymentWebViewService _paymentWebViewService =
       const PaymentWebViewService();
   final TextEditingController _voucherController = TextEditingController();
@@ -173,9 +171,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   int get _availablePoints =>
-      _profileController.userData?.coins ??
-      _profileController.userData?.balance ??
-      0;
+      _orderSummaryController.orderSummaryData?.pointBalance ?? 0;
+
+  int get _walletBalance =>
+      _orderSummaryController.orderSummaryData?.walletBalance ?? 0;
 
   String get _orderName {
     final billing = _orderSummaryController.orderSummaryData?.billingDetails;
@@ -198,14 +197,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final billing = _orderSummaryController.orderSummaryData?.billingDetails;
     final pieces =
         <String>[?billing?.address, ?billing?.city, ?billing?.country]
-            .where((part) => part != null && part!.trim().isNotEmpty)
-            .map((part) => part!.trim())
+            .where((part) => part.trim().isNotEmpty)
+            .map((part) => part.trim())
             .toList();
 
     return pieces.isEmpty ? 'N/A' : pieces.join(', ');
   }
 
   String get _availablePointsLabel => 'Available points: $_availablePoints';
+  String get _walletLabel => 'Wallet ($_walletBalance)';
 
   String get _selectedPaymentMethodValue {
     switch (_selectedPaymentIndex) {
@@ -227,36 +227,39 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   List<OrderItem> _buildPopupItems(order_summary.Data data) {
     final items = data.orders.expand((order) => order.items).toList();
 
-    return items.map((item) {
-      final product = item.product;
-      final name = product?.title?.trim().isNotEmpty == true
-          ? product!.title!
-          : (item.productId ?? 'Item');
-      final imageUrl = product?.banner?.trim().isNotEmpty == true
-          ? product!.banner
-          : null;
-      final price = item.unitPrice ?? item.totalPrice ?? 0;
+    return items
+        .map((item) {
+          final product = item.product;
+          final name = product?.title?.trim().isNotEmpty == true
+              ? product!.title!
+              : (item.productId ?? 'Item');
+          final imageUrl = product?.banner?.trim().isNotEmpty == true
+              ? product!.banner
+              : null;
+          final price = item.unitPrice ?? item.totalPrice ?? 0;
 
-      return OrderItem(
-        name: name,
-        size: item.size ?? 'N/A',
-        quantity: item.quantity ?? 1,
-        price: price.toDouble(),
-        imageUrl: imageUrl,
-      );
-    }).toList(growable: false);
+          return OrderItem(
+            name: name,
+            size: item.size ?? 'N/A',
+            quantity: item.quantity ?? 1,
+            price: price.toDouble(),
+            imageUrl: imageUrl,
+          );
+        })
+        .toList(growable: false);
   }
 
   String _buildDeliveryAddress(order_summary.Data data) {
     final billing = data.billingDetails;
-    final parts = <String>[
-      billing?.address ?? '',
-      billing?.city ?? '',
-      billing?.country ?? '',
-    ]
-        .where((part) => part.trim().isNotEmpty)
-        .map((part) => part.trim())
-        .toList();
+    final parts =
+        <String>[
+              billing?.address ?? '',
+              billing?.city ?? '',
+              billing?.country ?? '',
+            ]
+            .where((part) => part.trim().isNotEmpty)
+            .map((part) => part.trim())
+            .toList();
 
     if (parts.isNotEmpty) {
       return parts.join(', ');
@@ -330,8 +333,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ? 'Regular Delivery'
                         : 'Instant Delivery',
                     onChanged: (value) async {
-                      final nextDeliveryType =
-                          value == 'Instant Delivery' ? 'instant' : 'regular';
+                      final nextDeliveryType = value == 'Instant Delivery'
+                          ? 'instant'
+                          : 'regular';
 
                       setState(() {
                         _selectedDeliveryType = nextDeliveryType;
@@ -370,6 +374,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   selectedIndex: _selectedPaymentIndex,
                   onSelect: (index) =>
                       setState(() => _selectedPaymentIndex = index),
+                  walletLabel: _walletLabel,
                 ),
                 const SizedBox(height: 10),
                 _CheckoutSection(

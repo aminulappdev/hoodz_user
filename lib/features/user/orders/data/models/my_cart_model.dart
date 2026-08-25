@@ -13,9 +13,9 @@ class MyCartModel {
 
     factory MyCartModel.fromJson(Map<String, dynamic> json){ 
         return MyCartModel(
-            success: json["success"],
-            statusCode: json["statusCode"],
-            message: json["message"],
+            success: _toBool(json["success"]),
+            statusCode: _toInt(json["statusCode"]),
+            message: json["message"]?.toString(),
             data: json["data"] == null ? null : Data.fromJson(json["data"]),
         );
     }
@@ -38,8 +38,8 @@ class Data {
     factory Data.fromJson(Map<String, dynamic> json){ 
         return Data(
             items: json["items"] == null ? [] : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
-            totalItems: json["totalItems"],
-            subTotal: json["subTotal"],
+            totalItems: _toInt(json["totalItems"]),
+            subTotal: _toInt(json["subTotal"]),
             recommendedProducts: json["recommendedProducts"] == null ? [] : List<RecommendedProduct>.from(json["recommendedProducts"]!.map((x) => RecommendedProduct.fromJson(x))),
         );
     }
@@ -67,13 +67,13 @@ class Item {
 
     factory Item.fromJson(Map<String, dynamic> json){ 
         return Item(
-            productId: json["productId"],
-            size: json["size"],
+            productId: json["productId"]?.toString(),
+            size: json["size"]?.toString(),
             color: json["color"] == null ? null : Color.fromJson(json["color"]),
-            quantity: json["quantity"],
+            quantity: _toInt(json["quantity"]),
             product: json["product"] == null ? null : Product.fromJson(json["product"]),
-            unitPrice: json["unitPrice"],
-            totalPrice: json["totalPrice"],
+            unitPrice: _toInt(json["unitPrice"]),
+            totalPrice: _toInt(json["totalPrice"]),
         );
     }
 
@@ -90,8 +90,8 @@ class Color {
 
     factory Color.fromJson(Map<String, dynamic> json){ 
         return Color(
-            code: json["code"],
-            name: json["name"],
+            code: json["code"]?.toString(),
+            name: json["name"]?.toString(),
         );
     }
 
@@ -124,11 +124,11 @@ class Product {
 
     factory Product.fromJson(Map<String, dynamic> json){ 
         return Product(
-            id: json["_id"],
-            vendor: json["vendor"],
-            title: json["title"],
-            banner: json["banner"],
-            inventoryType: json["inventoryType"],
+            id: json["_id"]?.toString(),
+            vendor: json["vendor"]?.toString(),
+            title: json["title"]?.toString(),
+            banner: json["banner"]?.toString(),
+            inventoryType: json["inventoryType"]?.toString(),
             colors: json["colors"] == null
                 ? []
                 : List<Color>.from(
@@ -142,8 +142,8 @@ class Product {
                 : List<Variant>.from(
                     json["variants"]!.map((x) => Variant.fromJson(x)),
                   ),
-            price: json["price"],
-            discountPrice: json["discountPrice"],
+            price: _toInt(json["price"]),
+            discountPrice: _toInt(json["discountPrice"]),
         );
     }
 
@@ -172,23 +172,23 @@ class RecommendedProduct {
     final int? price;
     final int? discount;
     final int? discountPrice;
-    final int? avgRating;
+    final double? avgRating;
     final int? ratingCount;
     final bool? inStock;
 
     factory RecommendedProduct.fromJson(Map<String, dynamic> json){ 
         return RecommendedProduct(
-            id: json["_id"],
+            id: json["_id"]?.toString(),
             category: json["category"] == null ? null : Category.fromJson(json["category"]),
-            title: json["title"],
-            collectionType: json["collectionType"],
-            banner: json["banner"],
-            price: json["price"],
-            discount: json["discount"],
-            discountPrice: json["discountPrice"],
-            avgRating: json["avgRating"],
-            ratingCount: json["ratingCount"],
-            inStock: json["inStock"],
+            title: json["title"]?.toString(),
+            collectionType: json["collectionType"]?.toString(),
+            banner: json["banner"]?.toString(),
+            price: _toInt(json["price"]),
+            discount: _toInt(json["discount"]),
+            discountPrice: _toInt(json["discountPrice"]),
+            avgRating: _toDouble(json["avgRating"]),
+            ratingCount: _toInt(json["ratingCount"]),
+            inStock: _toBool(json["inStock"]),
         );
     }
 
@@ -205,8 +205,8 @@ class Category {
 
     factory Category.fromJson(Map<String, dynamic> json){ 
         return Category(
-            id: json["_id"],
-            title: json["title"],
+            id: json["_id"]?.toString(),
+            title: json["title"]?.toString(),
         );
     }
 
@@ -227,10 +227,34 @@ class Variant {
 
     factory Variant.fromJson(Map<String, dynamic> json) {
         return Variant(
-            id: json["_id"],
-            size: json["size"],
+            id: json["_id"]?.toString(),
+            size: json["size"]?.toString(),
             color: json["color"] == null ? null : Color.fromJson(json["color"]),
-            quantity: json["quantity"],
+            quantity: _toInt(json["quantity"]),
         );
     }
+}
+
+int? _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+}
+
+double? _toDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
+}
+
+bool? _toBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is String) {
+        final lower = value.toLowerCase();
+        if (lower == 'true') return true;
+        if (lower == 'false') return false;
+    }
+    return null;
 }

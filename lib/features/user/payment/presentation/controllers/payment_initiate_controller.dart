@@ -23,6 +23,24 @@ class PaymentInitiateController extends GetxController {
 
   card_success.Data? get cardPaymentData => cardPaymentSuccessModel.value?.data;
   cod_success.Data? get codPaymentData => codPaymentSuccessModel.value?.data;
+  String? get currentPaymentMethod =>
+      cardPaymentData?.paymentMethod ?? codPaymentData?.paymentMethod;
+
+  String? get firstOrderId {
+    final cardPayments = cardPaymentData?.payments ?? [];
+    final cardOrder = cardPayments.isNotEmpty ? cardPayments.first.order?.id : null;
+    if (cardOrder != null && cardOrder.isNotEmpty) {
+      return cardOrder;
+    }
+
+    final codPayments = codPaymentData?.payments ?? [];
+    final codOrder = codPayments.isNotEmpty ? codPayments.first.order?.id : null;
+    if (codOrder != null && codOrder.isNotEmpty) {
+      return codOrder;
+    }
+
+    return null;
+  }
 
   Future<bool> initiatePayment({
     required List<String> orderIds,

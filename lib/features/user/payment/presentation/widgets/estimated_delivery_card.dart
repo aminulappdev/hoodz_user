@@ -15,7 +15,7 @@ class EstimatedDeliveryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFFFFCFA),
         borderRadius: BorderRadius.circular(14.r(context)),
-        border: Border.all(color: const Color(0xFFF6E6DB)),
+        border: Border.all(color: const Color(0xFFF6E6DB)), 
       ),
       child: Column(
         children: [

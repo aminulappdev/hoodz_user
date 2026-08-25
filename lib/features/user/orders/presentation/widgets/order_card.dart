@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
-import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
@@ -34,11 +32,12 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
+
     return Container(
       width: width,
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xffF1F1F1)),
+        border: Border.all(color: const Color(0xffF1F1F1)),
         borderRadius: BorderRadius.circular(20.r(context)),
         color: Colors.white,
       ),
@@ -49,7 +48,6 @@ class OrderCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppCachedNetworkImage(
@@ -63,54 +61,36 @@ class OrderCard extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            name,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  fontSize: 16.sp(context),
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          Expanded(
+                            child: Text(
+                              name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontSize: 16.sp(context),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
                           ),
-                          type == 'Processing'
-                              ? LabelContainer(
-                                  icon: Assets.icons.box01.path,
-                                  name: 'Processing',
-                                  contentColor: LightThemeColors.primaryColor,
-                                  backgroundColor:
-                                      LightThemeColors.primaryColor,
-                                )
-                              : type == 'Completed'
-                              ? LabelContainer(
-                                  icon: Assets.icons.checkMark.path,
-                                  name: 'Delivered',
-                                  contentColor: Color(0xff12B76A),
-                                  backgroundColor: Color(0xff12B76A),
-                                )
-                              : LabelContainer(
-                                  icon: Assets.icons.cross.path,
-                                  name: 'Cancelled',
-                                  contentColor: LightThemeColors.primaryColor,
-                                  backgroundColor:
-                                      LightThemeColors.primaryColor,
-                                ),
+                          SizedBox(width: 8.w(context)),
+                          _StatusLabel(type: type),
                         ],
                       ),
                       Text(
                         date,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 12.sp(context),
-                        ),
+                              fontSize: 12.sp(context),
+                            ),
                       ),
                       Text(
                         '$item items',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 12.sp(context),
-                        ),
+                              fontSize: 12.sp(context),
+                            ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,19 +119,12 @@ class OrderCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16.h(context)),
-
-            // ---------- ACTION BUTTONS ----------
-            // Design অনুযায়ী প্রতিটা status-এর জন্য আলাদা button combination:
-            //  - Processing: Track Your Order (filled) -> Help
-            //  - Completed:  Reorder (outline) -> Review (filled) -> Help
-            //  - Cancelled:  Order Again (filled) -> Help
             if (type == 'Processing')
               Row(
                 children: [
-                  // 👇 আগে ছিল Support, এখন Track Your Order প্রথমে (order swap)
                   Expanded(
                     child: CustomButton(
-                      text: 'Track Your Order',
+                      text: 'View Order',
                       onPressed: onTap,
                     ),
                   ),
@@ -171,20 +144,12 @@ class OrderCard extends StatelessWidget {
                       text: 'Reorder',
                       textStyle: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(color: LightThemeColors.primaryColor),
-                      onPressed: onTap,
-                    ),
-                  ),
-                  SizedBox(width: 8.w(context)),
-                  Expanded(
-                    child: CustomButton(
-                      text: 'Review',
                       onPressed: optionalOnTap,
                     ),
                   ),
-                  SizedBox(width: 8.w(context)),
-                  // 👇 নতুন যোগ করা হলো — এখানে আগে Help বাটন ছিলই না
+                  SizedBox(width: 12.w(context)),
                   Expanded(
-                    child: _HelpButton(onTap: () {}),
+                    child: _HelpButton(onTap: optionalOnTap),
                   ),
                 ],
               )
@@ -192,12 +157,14 @@ class OrderCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CustomButton(text: 'Order Again', onPressed: onTap),
+                    child: CustomButton(
+                      text: 'Order Again',
+                      onPressed: onTap,
+                    ),
                   ),
                   SizedBox(width: 12.w(context)),
-                  // 👇 নতুন যোগ করা হলো
                   Expanded(
-                    child: _HelpButton(onTap: () {}),
+                    child: _HelpButton(onTap: optionalOnTap),
                   ),
                 ],
               ),
@@ -208,14 +175,40 @@ class OrderCard extends StatelessWidget {
   }
 }
 
-/// একটা ছোট, reusable "Help" বাটন — headphone icon + text।
-/// Private widget (নামের আগে _) কারণ এটা শুধু এই ফাইলের ভেতরেই দরকার,
-/// বাইরে থেকে import করে ব্যবহারের প্রয়োজন নেই।
-///
-/// কেন CustomButton ব্যবহার করলাম না?
-/// কারণ CustomButton icon সাপোর্ট করে কিনা নিশ্চিত না, আর design-এ
-/// icon + text দুটোই লাগবে। তাই এখানে ছোট নিজস্ব widget বানানো হলো —
-/// একবার লিখে, তিন জায়গায় reuse করা হচ্ছে (DRY principle)।
+class _StatusLabel extends StatelessWidget {
+  const _StatusLabel({required this.type});
+
+  final String type;
+
+  @override
+  Widget build(BuildContext context) {
+    if (type == 'Processing') {
+      return LabelContainer(
+        icon: Assets.icons.box01.path,
+        name: 'Processing',
+        contentColor: LightThemeColors.primaryColor,
+        backgroundColor: LightThemeColors.primaryColor,
+      );
+    }
+
+    if (type == 'Completed') {
+      return LabelContainer(
+        icon: Assets.icons.checkMark.path,
+        name: 'Delivered',
+        contentColor: const Color(0xff12B76A),
+        backgroundColor: const Color(0xff12B76A),
+      );
+    }
+
+    return LabelContainer(
+      icon: Assets.icons.cross.path,
+      name: 'Cancelled',
+      contentColor: LightThemeColors.primaryColor,
+      backgroundColor: LightThemeColors.primaryColor,
+    );
+  }
+}
+
 class _HelpButton extends StatelessWidget {
   final VoidCallback onTap;
 
@@ -224,22 +217,11 @@ class _HelpButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        PageNavigationService.to(
-          context,
-          AppRoutes.aiAssistant,
-          arguments: {
-            'isShowBackButton': true,
-            'title': 'Customer support',
-            'subtitle': 'Online',
-          },
-        );
-      },
+      onTap: onTap,
       borderRadius: BorderRadius.circular(12.r(context)),
       child: Container(
         height: 50.h(context),
         decoration: BoxDecoration(
-          // হালকা পিংক/অরেঞ্জ tint background — design-এর মতোই
           color: LightThemeColors.primaryColor.withOpacity(0.08),
           borderRadius: BorderRadius.circular(30.r(context)),
         ),
@@ -247,7 +229,7 @@ class _HelpButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.headset_mic_outlined, // TODO: Assets.icons.headphone.path থাকলে সেটা ব্যবহার করো
+              Icons.headset_mic_outlined,
               size: 16.sp(context),
               color: LightThemeColors.primaryColor,
             ),

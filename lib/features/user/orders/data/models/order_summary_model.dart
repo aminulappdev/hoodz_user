@@ -32,6 +32,8 @@ class Data {
         required this.coinDiscount,
         required this.deliveryCharge,
         required this.totalAmount,
+        required this.walletBalance,
+        required this.pointBalance,
         required this.deliveryType,
         required this.city,
         required this.billingDetails,
@@ -46,6 +48,8 @@ class Data {
     final int? coinDiscount;
     final int? deliveryCharge;
     final int? totalAmount;
+    final int? walletBalance;
+    final int? pointBalance;
     final String? deliveryType;
     final String? city;
     final BillingDetails? billingDetails;
@@ -61,6 +65,8 @@ class Data {
             coinDiscount: json["coinDiscount"],
             deliveryCharge: json["deliveryCharge"],
             totalAmount: json["totalAmount"],
+            walletBalance: json["walletBalance"],
+            pointBalance: json["pointBalance"],
             deliveryType: json["deliveryType"],
             city: json["city"],
             billingDetails: json["billingDetails"] == null ? null : BillingDetails.fromJson(json["billingDetails"]),

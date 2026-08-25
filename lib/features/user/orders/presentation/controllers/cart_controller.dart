@@ -39,7 +39,7 @@ class CartController extends GetxController {
 
   Future<bool> addToCart({
     required String productId,
-    String? size,
+    String? size, 
     Map<String, String>? color,
     int quantity = 1,
   }) async {
@@ -149,7 +149,7 @@ class CartController extends GetxController {
             'name': colorName,
           };
         }
-
+ 
         final response = await _networkCaller.putRequest(
           Urls.cartUpdateUrl,
           accessToken: accessToken,
