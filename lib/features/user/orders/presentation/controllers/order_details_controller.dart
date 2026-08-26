@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -95,38 +96,44 @@ class OrderDetailsController extends GetxController {
   String get addressNote =>
       orderDetailsData?.billingDetails?.note?.toString() ?? 'N/A';
 
-  final List<tracking.TrackingTimelineItem> timelineItems = [
-    const tracking.TrackingTimelineItem(
-      title: 'Order Confirmed',
-      trailingText: 'Today',
-      state: tracking.TrackingTimelineState.completed,
-    ),
-    const tracking.TrackingTimelineItem(
-      title: 'Order Prepared',
-      trailingText: 'Upcoming',
-      state: tracking.TrackingTimelineState.pending,
-    ),
-    const tracking.TrackingTimelineItem(
-      title: 'Rider Assigned',
-      trailingText: 'Upcoming',
-      state: tracking.TrackingTimelineState.pending,
-    ),
-    const tracking.TrackingTimelineItem(
-      title: 'On the Way',
-      trailingText: 'Upcoming',
-      state: tracking.TrackingTimelineState.pending,
-    ),
-    const tracking.TrackingTimelineItem(
-      title: 'Nearby',
-      trailingText: 'Upcoming',
-      state: tracking.TrackingTimelineState.pending,
-    ),
-    const tracking.TrackingTimelineItem(
-      title: 'Delivered',
-      trailingText: 'Upcoming',
-      state: tracking.TrackingTimelineState.pending,
-    ),
-  ];
+  List<tracking.TrackingTimelineItem> get timelineItems {
+    final data = orderDetailsData;
+    final steps = <_TimelineStep>[
+      _TimelineStep('Order Confirmed', _toDateTime(data?.confirmedAt)),
+      _TimelineStep('Order Prepared', _toDateTime(data?.processedAt)),
+      _TimelineStep('Rider Assigned', _toDateTime(data?.riderAssignedAt)),
+      _TimelineStep('Picked Up', _toDateTime(data?.pickedUpAt)),
+      _TimelineStep('On the Way', _toDateTime(data?.onTheWayAt)),
+      _TimelineStep('Delivered', _toDateTime(data?.deliveredAt)),
+    ];
+
+    final cancelledAt = _toDateTime(data?.cancelledAt);
+    if (cancelledAt != null) {
+      steps.add(_TimelineStep('Order Cancelled', cancelledAt));
+    }
+
+    final activeIndex = steps.lastIndexWhere((step) => step.date != null);
+
+    return steps.asMap().entries.map((entry) {
+      final index = entry.key;
+      final step = entry.value;
+      final hasDate = step.date != null;
+
+      final state = activeIndex == -1
+          ? tracking.TrackingTimelineState.pending
+          : index == activeIndex
+              ? tracking.TrackingTimelineState.active
+              : index < activeIndex && hasDate
+                  ? tracking.TrackingTimelineState.completed
+                  : tracking.TrackingTimelineState.pending;
+
+      return tracking.TrackingTimelineItem(
+        title: step.title,
+        trailingText: hasDate ? _formatDateTime(step.date) : 'Upcoming',
+        state: state,
+      );
+    }).toList();
+  }
 
   void setPendingOrderId(String? orderId) {
     _pendingOrderId = orderId;
@@ -193,4 +200,31 @@ class OrderDetailsController extends GetxController {
     _orderDetailsModel.value = null;
     _loadedOrderId = null;
   }
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'Upcoming';
+    }
+
+    return DateFormat('d MMM, y - h:mm a').format(dateTime.toLocal());
+  }
+
+  DateTime? _toDateTime(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    if (value is DateTime) {
+      return value;
+    }
+
+    return DateTime.tryParse(value.toString());
+  }
+}
+
+class _TimelineStep {
+  const _TimelineStep(this.title, this.date);
+
+  final String title;
+  final DateTime? date;
 }

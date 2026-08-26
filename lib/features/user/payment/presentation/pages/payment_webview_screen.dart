@@ -38,30 +38,83 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
             if (mounted) {
               setState(() => _isLoading = false);
             }
+            _checkForCompletion();
+          },
+          onUrlChange: (change) {
+            final url = change.url;
+            if (url != null && url.isNotEmpty) {
+              _tryCompleteFromUrl(url);
+            }
           },
           onNavigationRequest: (request) {
-            final returnUrl = widget.returnUrl;
-            if (returnUrl != null &&
-                returnUrl.isNotEmpty &&
-                request.url.startsWith(returnUrl) &&
-                !_handledCompletion) {
-              _handledCompletion = true;
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (!mounted) {
-                  return;
-                }
-
-                Navigator.of(context).pop();
-                widget.onPaymentCompleted?.call();
-              });
-              return NavigationDecision.prevent;
-            }
-
+            _tryCompleteFromUrl(request.url);
             return NavigationDecision.navigate;
           },
         ),
       )
       ..loadRequest(Uri.parse(widget.paymentUrl));
+  }
+
+  Future<void> _checkForCompletion() async {
+    final currentUrl = await _controller.currentUrl();
+    if (currentUrl != null && currentUrl.isNotEmpty) {
+      _tryCompleteFromUrl(currentUrl);
+    }
+  }
+
+  void _tryCompleteFromUrl(String url) {
+    if (_handledCompletion) {
+      return;
+    }
+
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      return;
+    }
+
+    final isReturnPage = _matchesReturnUrl(uri);
+    final isSuccess = _isSuccessfulReturn(uri);
+
+    if (!isReturnPage || !isSuccess) {
+      return;
+    }
+
+    _handledCompletion = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.of(context).pop();
+      widget.onPaymentCompleted?.call();
+    });
+  }
+
+  bool _matchesReturnUrl(Uri uri) {
+    final returnUrl = widget.returnUrl;
+    if (returnUrl == null || returnUrl.isEmpty) {
+      return uri.path.contains('/payments/paymob/return');
+    }
+
+    final normalizedReturn = _normalizeUrl(returnUrl);
+    final normalizedCurrent = _normalizeUrl(uri.toString());
+
+    return normalizedCurrent.startsWith(normalizedReturn) ||
+        uri.path.contains('/payments/paymob/return');
+  }
+
+  bool _isSuccessfulReturn(Uri uri) {
+    final success = uri.queryParameters['success']?.toLowerCase() == 'true';
+    final txnApproved =
+        uri.queryParameters['txn_response_code']?.toUpperCase() == 'APPROVED';
+    final messageApproved =
+        uri.queryParameters['data.message']?.toLowerCase() == 'approved';
+
+    return success || txnApproved || messageApproved;
+  }
+
+  String _normalizeUrl(String url) {
+    return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
   }
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
+import 'package:hoodz/core/services/others/app_route_observer.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/circle_icon.dart';
@@ -14,13 +15,52 @@ import 'package:hoodz/features/user/payment/presentation/widgets/shiping_buttom_
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
-class CartScreen extends GetView<CartController> {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> with RouteAware {
+  late final CartController _controller;
+  bool _isRouteSubscribed = false;
   OrderSummaryController get _orderSummaryController =>
       Get.find<OrderSummaryController>();
 
-  @override 
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.find<CartController>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.getCartData();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (!_isRouteSubscribed && route is PageRoute) {
+      appRouteObserver.subscribe(this, route);
+      _isRouteSubscribed = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_isRouteSubscribed) {
+      appRouteObserver.unsubscribe(this);
+    }
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _controller.getCartData();
+  }
+
+  @override
   Widget build(BuildContext context) { 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +87,7 @@ class CartScreen extends GetView<CartController> {
               padding: EdgeInsets.only(right: 22.w(context)),
               child: Center(
                 child: Text(
-                  controller.itemLabel,
+                  _controller.itemLabel,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 16.sp(context),
                     fontWeight: FontWeight.w500,
@@ -61,9 +101,9 @@ class CartScreen extends GetView<CartController> {
       ),
       bottomNavigationBar: Obx(
         () => ShipingButtomBar(
-          subTotal: controller.subTotal,
-          deliveryCharge: controller.deliveryCharge,
-          total: controller.totalCost,
+          subTotal: _controller.subTotal,
+          deliveryCharge: _controller.deliveryCharge,
+          total: _controller.totalCost,
           buttonText: 'Checkout',
           onTap: () async {
             final isSuccess = await _orderSummaryController.createOrderSummary(
@@ -81,11 +121,11 @@ class CartScreen extends GetView<CartController> {
         ),
       ),
       body: Obx(() {
-        if (controller.isLoading.value && controller.cartItems.isEmpty) {
+        if (_controller.isLoading.value && _controller.cartItems.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final cartItems = controller.cartItems.toList(growable: false);
+        final cartItems = _controller.cartItems.toList(growable: false);
         final visibleItemCount = cartItems.length >= 2 ? 2 : cartItems.length;
         final cartListHeight = visibleItemCount == 0
             ? 0.0
@@ -119,14 +159,14 @@ class CartScreen extends GetView<CartController> {
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
                       return CartItemCard(
-                        imageUrl: controller.cartItemImage(item),
-                        name: controller.cartItemName(item),
-                        size: controller.cartItemSize(item),
-                        color: controller.cartItemColor(item),
-                        price: controller.cartItemPrice(item),
+                        imageUrl: _controller.cartItemImage(item),
+                        name: _controller.cartItemName(item),
+                        size: _controller.cartItemSize(item),
+                        color: _controller.cartItemColor(item),
+                        price: _controller.cartItemPrice(item),
                         quantity: item.quantity ?? 1,
-                        onIncrease: () => controller.increaseQuantity(index),
-                        onDecrease: () => controller.decreaseQuantity(index),
+                        onIncrease: () => _controller.increaseQuantity(index),
+                        onDecrease: () => _controller.decreaseQuantity(index),
                         onEdit: () {
                           final productId =
                               item.productId ?? item.product?.id ?? '';
@@ -140,11 +180,11 @@ class CartScreen extends GetView<CartController> {
                             backgroundColor: Colors.transparent,
                             builder: (_) => CartItemUpdateSheet(
                               item: item,
-                              controller: controller,
+                              controller: _controller,
                             ),
                           );
                         },
-                        onRemove: () => controller.removeItem(index),
+                        onRemove: () => _controller.removeItem(index),
                       );
                     },
                   ),
@@ -163,14 +203,14 @@ class CartScreen extends GetView<CartController> {
                 height: 260.h(context),
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemCount: controller.recommendedItems.length,
+                  itemCount: _controller.recommendedItems.length,
                   separatorBuilder: (context, index) =>
                       SizedBox(width: 12.w(context)),
                   itemBuilder: (context, index) {
-                    final item = controller.recommendedItems[index];
+                    final item = _controller.recommendedItems[index];
                     return ProductCard(
-                      name: controller.recommendedName(item),
-                      image: controller.recommendedImage(item),
+                      name: _controller.recommendedName(item),
+                      image: _controller.recommendedImage(item),
                       price: '\$${item.discountPrice ?? item.price ?? 0}',
                       rating: (item.avgRating ?? 0).toString(),
                       subtitle: item.collectionType ?? '',

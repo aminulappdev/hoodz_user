@@ -39,6 +39,9 @@ import 'package:hoodz/features/user/payment/presentation/controllers/payment_det
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_method_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_successfull_controller.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/payment_transaction_controller.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/wallet_top_up_controller.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/wallet_transaction_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/change_password_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/content_controller.dart';
@@ -121,6 +124,9 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(PaymentInitiateController.new, fenix: true);
     Get.lazyPut(PaymentMethodController.new, fenix: true);
     Get.lazyPut(PaymentSuccessfullController.new, fenix: true);
+    Get.lazyPut(PaymentTransactionController.new, fenix: true);
+    Get.lazyPut(WalletTopUpController.new, fenix: true);
+    Get.lazyPut(WalletTransactionController.new, fenix: true);
     Get.lazyPut(() => WishlistController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(ProfileController.new, fenix: true);
     Get.lazyPut(

@@ -67,7 +67,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     return null;
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 import '../core/binder/binder.dart';
+import '../core/services/others/app_route_observer.dart';
 import '../core/utils/share_preference.dart';
 import 'routes/app_routes.dart';
 import 'theme/my_theme.dart';
@@ -26,6 +27,7 @@ class HoodzApp extends StatelessWidget {
             : ThemeMode.dark,
         initialRoute: initialRoute,
         routes: getAppRoutes(),
+        navigatorObservers: [appRouteObserver],
         locale: MySharedPref.getLocale(),
         fallbackLocale: LocalizationService.defaultLanguage,
         translations: LocalizationService.getInstance(),

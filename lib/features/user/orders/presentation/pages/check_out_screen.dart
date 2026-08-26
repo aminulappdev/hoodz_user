@@ -116,7 +116,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         paymentUrl: paymentUrl,
         returnUrl: returnUrl,
         onPaymentCompleted: () {
-          PageNavigationService.to(context, AppRoutes.paymentSuccessfull);
+          Get.offAllNamed(AppRoutes.paymentSuccessfull);
         },
       );
       return;

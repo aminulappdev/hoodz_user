@@ -18,6 +18,10 @@ class Urls {
   static const String myOrdersUrl = '$_baseUrl/orders/my-orders';
   static String getOrderDetailsUrlById(String id) => '$_baseUrl/orders/$id';
   static const String paymentInitiateUrl = '$_baseUrl/payments/initiate';
+  static const String paymentTransactionsUrl =
+      '$_baseUrl/payments/user/transctions';
+  static const String walletTopUpUrl = '$_baseUrl/top-up/add-wallet-money';
+  static const String walletTransactionsUrl = '$_baseUrl/wallet-transactions';
   static const String kycUrl = '$_baseUrl/kyc';
   static const String metaUserUrl = '$_baseUrl/meta/user';
   static const String trendingProductUrl = '$_baseUrl/products/trending';
