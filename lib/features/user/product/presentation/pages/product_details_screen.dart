@@ -96,7 +96,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
       controller.initialize(routeArguments);
     });
 
-    return Scaffold(
+    return Scaffold( 
       appBar: CustomAppBar(label: 'Product Details'),
 
       bottomNavigationBar: Padding(

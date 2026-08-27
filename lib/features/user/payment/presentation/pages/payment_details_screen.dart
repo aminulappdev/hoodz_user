@@ -65,10 +65,10 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     }
 
     return null;
-  }
+  } 
 
   @override 
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
       appBar: CustomAppBar(label: 'Live Tracking'),
