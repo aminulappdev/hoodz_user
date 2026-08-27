@@ -28,6 +28,7 @@ import 'package:hoodz/features/user/payment/presentation/pages/shipping_informat
 import 'package:hoodz/features/user/profile/presentation/pages/change_password_screen.dart';
 import 'package:hoodz/features/user/profile/presentation/pages/content_screen.dart';
 import 'package:hoodz/features/user/profile/presentation/pages/edit_profile_screen.dart';
+import 'package:hoodz/features/user/orders/presentation/pages/points_screen.dart';
 import 'package:hoodz/features/user/wishlist/presentation/pages/wishlist_screen.dart';
 
 import '../../features/auth/presentation/pages/splash_screen.dart';
@@ -69,5 +70,6 @@ abstract final class AppPages {
     AppRoutes.paymentSuccessfull: (_) => const PaymentSuccessfullScreen(),
     AppRoutes.aiAssistant: (_) => const AiAssistantScreen(),
     AppRoutes.shopDetails: (_) => const ShopDetailsScreen(),
+    AppRoutes.points: (_) => const PointsScreen(),
   };
 }

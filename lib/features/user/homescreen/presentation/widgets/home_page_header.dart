@@ -8,14 +8,14 @@ import 'package:hoodz/gen/assets.gen.dart';
 class CustomHomePageAppBar extends StatelessWidget {
   const CustomHomePageAppBar({
     super.key,
-    required this.address, 
+    required this.address,
     required this.notificationCount,
     required this.onTapEdit,
     required this.onTapNotification,
     required this.onTapSearch,
-  });  
- 
-  final String address;
+  });
+
+  final String address; 
   final int notificationCount;
   final VoidCallback onTapEdit;
   final VoidCallback onTapNotification;
@@ -23,9 +23,8 @@ class CustomHomePageAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    return  Container(
+    return Container(
       width: width,
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -110,30 +109,6 @@ class CustomHomePageAppBar extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (notificationCount > 0)
-                      Positioned(
-                        right: 2.w(context),
-                        top: 1.h(context),
-                        child: Container(
-                          height: 14.h(context),
-                          width: 14.w(context),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFF3B30),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              '$notificationCount',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 8.sp(context),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ],

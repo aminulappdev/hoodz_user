@@ -12,7 +12,7 @@ import 'package:hoodz/urls.dart';
 
 class CartController extends GetxController {
   CartController(this._networkCaller);
- 
+  
   final NetworkCaller _networkCaller;
   final double deliveryCharge = 1.00;
   final RxBool isLoading = false.obs;
@@ -202,18 +202,15 @@ class CartController extends GetxController {
         response.responseData,
       );
       final product = productDetails.data?.product;
-      final sizes =
-          product?.sizes
-              .map((size) => size.toString().trim())
-              .where((size) => size.isNotEmpty)
-              .toList() ??
-          const <String>[];
-      final colors =
-          product?.colors
-              .map(CartColorOption.fromDynamic)
-              .where((item) => item.code.isNotEmpty && item.name.isNotEmpty)
-              .toList() ??
-          const <CartColorOption>[];
+      final inventoryType = _normalizeString(product?.inventoryType)?.toLowerCase();
+      final variants = product?.variants ?? const <dynamic>[];
+
+      final sizes = inventoryType == 'size_color'
+          ? _extractUniqueSizes(variants)
+          : const <String>[];
+      final colors = inventoryType == 'single'
+          ? const <CartColorOption>[]
+          : _extractUniqueColors(variants);
 
       return CartItemUpdateOptions(sizes: sizes, colors: colors);
     } catch (e) {
@@ -294,15 +291,92 @@ class CartController extends GetxController {
           : {
               'code': item.color?.code ?? '',
               'name': item.color?.name ?? '',
-            },
+      },
       quantity: currentQuantity - 1,
     );
   }
 
-  void removeItem(int index) {
+  Future<bool> removeCartItem({
+    required String productId,
+    String? size,
+    Map<String, String>? color,
+  }) async {
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      showAppToast(
+        message: 'Access token not found. Please login again.',
+        isError: true,
+      );
+      return false;
+    }
+
+    if (productId.isEmpty) {
+      showAppToast(message: 'Product ID not found.', isError: true);
+      return false;
+    }
+
+    bool isSuccess = false;
+
+    await showLoadingOverLay(
+      msg: 'Removing item...',
+      asyncFunction: () async {
+        final body = <String, dynamic>{
+          'productId': productId,
+        };
+
+        final normalizedSize = size?.trim();
+        if (normalizedSize != null && normalizedSize.isNotEmpty) {
+          body['size'] = normalizedSize;
+        }
+
+        final colorCode = color?['code']?.trim();
+        final colorName = color?['name']?.trim();
+        if (colorCode != null &&
+            colorCode.isNotEmpty &&
+            colorName != null &&
+            colorName.isNotEmpty) {
+          body['color'] = {
+            'code': colorCode,
+            'name': colorName,
+          };
+        }
+
+        final response = await _networkCaller.deleteRequest(
+          Urls.cartRemoveUrl,
+          accessToken: accessToken,
+          body: body,
+        );
+
+        if (!response.isSuccess) {
+          showAppToast(message: response.errorMessage, isError: true);
+          return;
+        }
+
+        await getCartData();
+        showAppToast(message: 'Item removed from cart');
+        isSuccess = true;
+      },
+    );
+
+    return isSuccess;
+  }
+
+  Future<void> removeItem(int index) async {
     if (index < 0 || index >= cartItems.length) {
       return;
     }
+
+    final item = cartItems[index];
+    await removeCartItem(
+      productId: item.productId ?? item.product?.id ?? '',
+      size: item.size,
+      color: item.color == null
+          ? null
+          : {
+              'code': item.color?.code ?? '',
+              'name': item.color?.name ?? '',
+            },
+    );
   }
 
   String cartItemImage(Item item) {
@@ -333,5 +407,44 @@ class CartController extends GetxController {
 
   String recommendedName(RecommendedProduct item) {
     return item.title ?? 'Unnamed product';
+  }
+
+  List<String> _extractUniqueSizes(List<dynamic> variants) {
+    final sizes = <String>[];
+    for (final variant in variants) {
+      final size = variant?.size?.toString().trim();
+      if (size != null && size.isNotEmpty && !sizes.contains(size)) {
+        sizes.add(size);
+      }
+    }
+    return sizes;
+  }
+
+  List<CartColorOption> _extractUniqueColors(
+    List<dynamic> variants,
+  ) {
+    final colors = <CartColorOption>[];
+    final seen = <String>{};
+
+    for (final variant in variants) {
+      final color = variant?.color;
+      final code = color?.code?.toString().trim() ?? '';
+      final name = color?.name?.toString().trim() ?? '';
+      if (code.isEmpty || name.isEmpty) {
+        continue;
+      }
+
+      final key = '$code|$name';
+      if (seen.add(key)) {
+        colors.add(CartColorOption(code: code, name: name));
+      }
+    }
+
+    return colors;
+  }
+
+  String? _normalizeString(dynamic value) {
+    final normalized = value?.toString().trim();
+    return (normalized == null || normalized.isEmpty) ? null : normalized;
   }
 }

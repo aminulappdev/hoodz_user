@@ -18,7 +18,6 @@ import 'package:hoodz/features/user/homescreen/presentation/controllers/all_prod
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
-import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
@@ -88,7 +87,6 @@ class ControllerBinder extends Bindings {
       () => HomeScreenController(Get.find<LocationSelectionService>()),
       fenix: true,
     );
-    Get.lazyPut(() => WishListController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(SearchScreenController.new, fenix: true);
     Get.lazyPut(
       () => AllBrandController(

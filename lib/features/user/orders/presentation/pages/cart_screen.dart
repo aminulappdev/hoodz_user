@@ -6,6 +6,8 @@ import 'package:hoodz/core/services/others/app_route_observer.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/circle_icon.dart';
+import 'package:hoodz/features/user/orders/data/models/my_cart_model.dart'
+    as cart_model;
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/check_out_screen.dart';
@@ -58,6 +60,53 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
   @override
   void didPopNext() {
     _controller.getCartData();
+  }
+
+  Future<void> _confirmRemoveItem(cart_model.Item item) async {
+    final productId = item.productId ?? item.product?.id ?? '';
+    if (productId.isEmpty) {
+      return;
+    }
+
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Remove item?'),
+          content: Text(
+            'Do you want to remove "${item.product?.title ?? 'this item'}" from cart?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete != true) {
+      return;
+    }
+
+    await _controller.removeCartItem(
+      productId: productId,
+      size: item.size,
+      color: item.color == null
+          ? null
+          : {
+              'code': item.color?.code ?? '',
+              'name': item.color?.name ?? '',
+            },
+    );
   }
 
   @override
@@ -184,7 +233,7 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
                             ),
                           );
                         },
-                        onRemove: () => _controller.removeItem(index),
+                        onRemove: () => _confirmRemoveItem(item),
                       );
                     },
                   ),

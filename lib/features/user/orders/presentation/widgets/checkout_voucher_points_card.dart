@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
+import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_section_card.dart';
 
@@ -8,14 +10,18 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
     super.key,
     required this.voucherController,
     required this.isPointsEnabled,
+    required this.isPointsToggleEnabled,
     required this.onPointsChanged,
+    required this.onInvalidPointsAttempt,
     required this.onApplyVoucher,
     required this.availablePointsLabel,
   });
- 
+
   final TextEditingController voucherController;
   final bool isPointsEnabled;
+  final bool isPointsToggleEnabled;
   final ValueChanged<bool> onPointsChanged;
+  final VoidCallback onInvalidPointsAttempt;
   final VoidCallback onApplyVoucher;
   final String availablePointsLabel;
 
@@ -39,8 +45,8 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: onApplyVoucher,
-                child:  Text(
-                  'Apply',
+                child: Text(
+                  'Voucher Apply',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -90,7 +96,13 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => onPointsChanged(!isPointsEnabled),
+                onTap: () {
+                  if (!isPointsToggleEnabled) {
+                    onInvalidPointsAttempt();
+                    return;
+                  }
+                  onPointsChanged(!isPointsEnabled);
+                },
                 child: SizedBox(
                   height: 40,
                   width: 72,
@@ -98,7 +110,9 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Switch.adaptive(
                       value: isPointsEnabled,
-                      onChanged: onPointsChanged,
+                      onChanged: isPointsToggleEnabled
+                          ? onPointsChanged
+                          : (_) => onInvalidPointsAttempt(),
                       inactiveThumbColor: Colors.black45,
                       inactiveTrackColor: Colors.grey.shade300,
                       activeColor: const Color(0xFFE8622C),
@@ -107,6 +121,23 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
                 ),
               ),
             ],
+          ), 
+          const SizedBox(height: 4),
+          GestureDetector(
+            onTap: () => PageNavigationService.to(
+              context,
+              AppRoutes.points,
+            ),
+            child: Text(
+              'About coin rules',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFFE8622C),
+                decorationColor: const Color(0xFFE8622C),
+                decoration: TextDecoration.underline,
+              ),
+            ),
           ),
         ],
       ),

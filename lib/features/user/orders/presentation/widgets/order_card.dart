@@ -16,6 +16,7 @@ class OrderCard extends StatelessWidget {
   final String type;
   final VoidCallback onTap;
   final VoidCallback optionalOnTap;
+  final VoidCallback? onReorder;
 
   const OrderCard({
     super.key,
@@ -28,6 +29,7 @@ class OrderCard extends StatelessWidget {
     required this.onTap,
     required this.optionalOnTap,
     required this.item,
+    this.onReorder,
   });
 
   @override
@@ -144,7 +146,7 @@ class OrderCard extends StatelessWidget {
                       text: 'Reorder',
                       textStyle: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(color: LightThemeColors.primaryColor),
-                      onPressed: optionalOnTap,
+                      onPressed: onReorder ?? optionalOnTap,
                     ),
                   ),
                   SizedBox(width: 12.w(context)),

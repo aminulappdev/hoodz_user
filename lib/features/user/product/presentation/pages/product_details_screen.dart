@@ -5,13 +5,14 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/label_container.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
-import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/view_all.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/models/voucher_model.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/voucher_screen.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/voucher_card_design.dart';
@@ -24,6 +25,7 @@ import 'package:hoodz/features/user/orders/presentation/widgets/color_plate.dart
 import 'package:hoodz/features/user/product/presentation/widgets/product_policy_section.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_info.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/size_plate.dart';
+import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class ProductDetailsScreen extends GetView<ProductDetailsController> {
@@ -82,13 +84,165 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     }
 
     return null;
+  } 
+
+  String? _normalizeString(dynamic value) {
+    final normalized = value?.toString().trim();
+    return (normalized == null || normalized.isEmpty) ? null : normalized;
+  }
+
+  String? _extractVariantSize(dynamic variant) {
+    if (variant is Map) {
+      return _normalizeString(Map<String, dynamic>.from(variant)['size']);
+    }
+
+    return null;
+  }
+
+  Map<String, String>? _extractVariantColor(dynamic variant) {
+    if (variant is! Map) {
+      return null;
+    }
+
+    final colorValue = Map<String, dynamic>.from(variant)['color'];
+    if (colorValue is Map<String, dynamic>) {
+      final code = _normalizeString(colorValue['code']);
+      final name = _normalizeString(colorValue['name']);
+      if (code != null && name != null) {
+        return {'code': code, 'name': name};
+      }
+    }
+
+    if (colorValue is Map) {
+      final colorMap = Map<String, dynamic>.from(colorValue);
+      final code = _normalizeString(colorMap['code']);
+      final name = _normalizeString(colorMap['name']);
+      if (code != null && name != null) {
+        return {'code': code, 'name': name};
+      }
+    }
+
+    return null;
+  }
+
+  bool _variantMatchesSelection({
+    required dynamic variant,
+    required String? selectedSize,
+    required Map<String, String>? selectedColor,
+  }) {
+    final variantSize = _extractVariantSize(variant);
+    final variantColor = _extractVariantColor(variant);
+
+    if (selectedSize != null) {
+      if (variantSize == null || variantSize != selectedSize) {
+        return false;
+      }
+    }
+
+    if (selectedColor != null) {
+      if (variantColor == null) {
+        return false;
+      }
+
+      if (variantColor['code'] != selectedColor['code'] ||
+          variantColor['name'] != selectedColor['name']) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  _ResolvedProductSelection _resolveProductSelection({
+    required dynamic product,
+    required List<String> sizeOptions,
+    required List<dynamic> rawColors,
+    required String selectedSize,
+    required int selectedColorIndex,
+  }) {
+    final inventoryType = _normalizeString(product?.inventoryType)?.toLowerCase();
+    if (inventoryType == 'single') {
+      return const _ResolvedProductSelection();
+    }
+
+    final normalizedSize =
+        sizeOptions.isNotEmpty ? _normalizeString(selectedSize) : null;
+    final selectedColor = _resolveSelectedColorPayload(
+      rawColors: rawColors,
+      selectedIndex: selectedColorIndex,
+    );
+    final variants = (product?.variants as List<dynamic>? ?? const <dynamic>[])
+        .where((variant) => variant is Map)
+        .toList(growable: false);
+
+    if (variants.isNotEmpty) {
+      dynamic matchedVariant;
+      for (final variant in variants) {
+        if (_variantMatchesSelection(
+          variant: variant,
+          selectedSize: normalizedSize,
+          selectedColor: selectedColor,
+        )) {
+          matchedVariant = variant;
+          break;
+        }
+      }
+
+      matchedVariant ??= variants.first;
+
+      final resolvedSize = _extractVariantSize(matchedVariant) ??
+          normalizedSize ??
+          (sizeOptions.isNotEmpty ? sizeOptions.first : null);
+      final resolvedColor = _extractVariantColor(matchedVariant) ??
+          selectedColor ??
+          (rawColors.isNotEmpty
+              ? _resolveSelectedColorPayload(rawColors: rawColors, selectedIndex: 0)
+              : null);
+
+      return _ResolvedProductSelection(
+        size: resolvedSize,
+        color: resolvedColor,
+      );
+    }
+
+    final fallbackSize =
+        normalizedSize ?? (sizeOptions.isNotEmpty ? sizeOptions.first : null);
+    final fallbackColor = selectedColor ??
+        (rawColors.isNotEmpty
+            ? _resolveSelectedColorPayload(rawColors: rawColors, selectedIndex: 0)
+            : null);
+
+    return _ResolvedProductSelection(
+      size: fallbackSize,
+      color: fallbackColor,
+    );
+  }
+
+  List<Map<String, dynamic>> _buildBuyNowItems({
+    required String productId,
+    required _ResolvedProductSelection selection,
+  }) {
+    final item = <String, dynamic>{
+      'product': productId,
+      'quantity': 1,
+    };
+
+    if (selection.size != null && selection.size!.trim().isNotEmpty) {
+      item['size'] = selection.size!.trim();
+    }
+
+    if (selection.color != null) {
+      item['color'] = selection.color;
+    }
+
+    return [item];
   }
 
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
-    final wishlistController = Get.find<WishListController>();
+    final wishlistController = Get.find<WishlistController>();
     final cartController = Get.find<CartController>();
     final routeArguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
@@ -99,41 +253,75 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     return Scaffold( 
       appBar: CustomAppBar(label: 'Product Details'),
 
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(20.w(context)),
-        child: CartAndBuy(
-          onTapAddToCart: () async {
-            final product = controller.productData?.product;
-            final productId = product?.id;
-            if (productId == null || productId.isEmpty) {
-              return;
-            }
+      bottomNavigationBar: Obx(
+        () => Padding(
+          padding: EdgeInsets.all(20.w(context)),
+          child: CartAndBuy(
+            isAddToCartEnabled: controller.isCurrentSelectionInStock,
+            isBuyNowEnabled: controller.isCurrentSelectionInStock,
+            onTapAddToCart: () async {
+              if (!controller.isCurrentSelectionInStock) {
+                showAppToast(
+                  message: 'Selected variant is not available.',
+                  isError: true,
+                );
+                return;
+              }
 
-            final sizeOptions =
-                product?.sizes
-                    .map((size) => size.toString())
-                    .where((size) => size.trim().isNotEmpty)
-                    .toList() ??
-                [];
-            final selectedSize = sizeOptions.isNotEmpty
-                ? controller.selectedSize.value
-                : null;
-            final selectedColor = _resolveSelectedColorPayload(
-              rawColors: product?.colors ?? const [],
-              selectedIndex: controller.selectedColorIndex.value,
-            );
+              final product = controller.productData?.product;
+              final productId = product?.id;
+              if (productId == null || productId.isEmpty) {
+                return;
+              }
 
-            await cartController.addToCart(
-              productId: productId,
-              size: selectedSize,
-              color: selectedColor,
-              quantity: 1,
-            );
-          },
-          onTapBuyNow: () {
-            Get.to(() => CheckoutScreen());
-          },
-          
+              final selection = _ResolvedProductSelection(
+                size: controller.currentSelectedSizePayload,
+                color: controller.currentSelectedColorPayload,
+              );
+
+              await cartController.addToCart(
+                productId: productId,
+                size: selection.size,
+                color: selection.color,
+                quantity: 1,
+              );
+            },
+            onTapBuyNow: () async {
+              if (!controller.isCurrentSelectionInStock) {
+                showAppToast(
+                  message: 'Selected variant is not available.',
+                  isError: true,
+                );
+                return;
+              }
+
+              final product = controller.productData?.product;
+              final productId = product?.id;
+              if (productId == null || productId.isEmpty) {
+                return;
+              }
+
+              final selection = _ResolvedProductSelection(
+                size: controller.currentSelectedSizePayload,
+                color: controller.currentSelectedColorPayload,
+              );
+              final orderSummaryController = Get.find<OrderSummaryController>();
+
+              final isSuccess = await orderSummaryController.createOrderSummary(
+                itemsOverride: _buildBuyNowItems(
+                  productId: productId,
+                  selection: selection,
+                ),
+                onSuccessNavigate: () {
+                  Get.to(() => const CheckoutScreen());
+                },
+              );
+
+              if (!isSuccess) {
+                return;
+              }
+            },
+          ),
         ),
       ),
 
@@ -149,14 +337,13 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
         final similarProducts = productData?.similarProducts ?? const [];
         final vouchers = productData?.vouchers ?? const [];
         final reviews = productData?.reviews ?? const [];
-        final sizeOptions =
-            product?.sizes
-                .map((size) => size.toString())
-                .where((size) => size.trim().isNotEmpty)
-                .toList() ??
-            [];
-        final colorOptions =
-            product?.colors.map(_parseColor).whereType<Color>().toList() ?? [];
+        final inventoryType = controller.inventoryType;
+        final sizeOptions = controller.availableSizes;
+        final colorPayloadOptions = controller.availableColors;
+        final colorOptions = colorPayloadOptions
+            .map((item) => _parseColor(item['code']))
+            .whereType<Color>()
+            .toList();
         final displayPrice = (product?.discountPrice ?? product?.price ?? 0)
             .toString();
         final displayRating = (product?.avgRating ?? 0).toString();
@@ -230,12 +417,12 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                   storeCategory:
                       category?.title ?? product?.collectionType ?? '',
                   storeImageUrl: displayStoreImage,
-                  isInStock: true,
+                  isInStock: controller.isCurrentSelectionInStock,
                 ),
 
                 SizedBox(height: 10.h(context)),
 
-                if (sizeOptions.isNotEmpty) ...[
+                if (inventoryType == 'size_color' && sizeOptions.isNotEmpty) ...[
                   Text(
                     'Select Size',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -253,7 +440,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                       child: Row(
                         children: sizeOptions.map((size) {
                           final bool isSelected =
-                              controller.selectedSize.value == size;
+                              controller.currentSelectedSize == size;
 
                           return Padding(
                             padding: EdgeInsets.only(right: 12.w(context)),
@@ -589,4 +776,11 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
       }),
     );
   }
+}
+
+class _ResolvedProductSelection {
+  const _ResolvedProductSelection({this.size, this.color});
+
+  final String? size;
+  final Map<String, String>? color;
 }

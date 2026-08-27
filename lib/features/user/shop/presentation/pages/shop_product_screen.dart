@@ -5,18 +5,18 @@ import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/shimmer/shop_product_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_info_controller.dart';
-import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_product_card.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_filter_bottom_sheet.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/all_product_header.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
+import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 
 class ShopProductScreen extends GetView<AllProductInfoController> {
   const ShopProductScreen({super.key});
 
   @override 
    Widget build(BuildContext context) {
-    final wishlistController = Get.find<WishListController>();
+    final wishlistController = Get.find<WishlistController>();
 
     return Scaffold(
       backgroundColor: Colors.white,

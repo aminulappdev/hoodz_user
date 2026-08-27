@@ -10,12 +10,14 @@ class CustomButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? borderColor;
   final VoidCallback? onPressed;
+  final bool enabled;
 
   const CustomButton({
     super.key,
     this.height,
     this.width,
     this.onPressed,
+    this.enabled = true,
     required this.text,
     this.textStyle,
     this.backgroundColor,
@@ -24,27 +26,40 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: width ?? double.infinity,
-        height: height ?? 50.h(context),
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor ?? Colors.transparent),
-          color: backgroundColor ?? LightThemeColors.primaryColor,
-          borderRadius: BorderRadius.circular(30.r(context)),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style:
-                textStyle ??
-                Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                  fontFamily: 'Geist',
-                  fontSize: 16.sp(context),
-                  fontWeight: FontWeight.w500,
-                ),
+    final Color effectiveBackgroundColor = enabled
+        ? (backgroundColor ?? LightThemeColors.primaryColor)
+        : const Color(0xFFE5E7EB);
+    final Color effectiveBorderColor = enabled
+        ? (borderColor ?? Colors.transparent)
+        : const Color(0xFFD1D5DB);
+    final Color effectiveTextColor = enabled
+        ? (textStyle?.color ?? Colors.white)
+        : const Color(0xFF9CA3AF);
+
+    return Opacity(
+      opacity: enabled ? 1 : 0.65,
+      child: GestureDetector(
+        onTap: enabled ? onPressed : null,
+        child: Container(
+          width: width ?? double.infinity,
+          height: height ?? 50.h(context),
+          decoration: BoxDecoration(
+            border: Border.all(color: effectiveBorderColor),
+            color: effectiveBackgroundColor,
+            borderRadius: BorderRadius.circular(30.r(context)),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style:
+                  textStyle?.copyWith(color: effectiveTextColor) ??
+                  Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: effectiveTextColor,
+                    fontFamily: 'Geist',
+                    fontSize: 16.sp(context),
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
           ),
         ),
       ),

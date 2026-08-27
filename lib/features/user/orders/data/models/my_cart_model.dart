@@ -11,7 +11,7 @@ class MyCartModel {
     final String? message;
     final Data? data;
 
-    factory MyCartModel.fromJson(Map<String, dynamic> json){ 
+    factory MyCartModel.fromJson(Map<String, dynamic> json){  
         return MyCartModel(
             success: _toBool(json["success"]),
             statusCode: _toInt(json["statusCode"]),

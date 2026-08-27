@@ -3,13 +3,81 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/features/user/orders/data/models/my_order_model.dart'
+    as order_model;
+import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/my_orders_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/pages/check_out_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/order_card.dart';
 
 class OrderScreen extends GetView<MyOrdersController> {
   const OrderScreen({super.key});
 
-  @override
+  List<Map<String, dynamic>> _buildReorderItemsPayload(order_model.Datum order) {
+    final items = <Map<String, dynamic>>[];
+
+    for (final item in order.items) {
+      final productId = item.product?.id?.trim();
+      if (productId == null || productId.isEmpty) {
+        continue;
+      }
+
+      final payload = <String, dynamic>{
+        'product': productId,
+        'quantity': item.quantity ?? 1,
+      };
+
+      final size = item.size?.trim();
+      if (size != null && size.isNotEmpty) {
+        payload['size'] = size;
+      }
+
+      final colorCode = item.color?.code?.trim();
+      final colorName = item.color?.name?.trim();
+      if (colorCode != null &&
+          colorCode.isNotEmpty &&
+          colorName != null &&
+          colorName.isNotEmpty) {
+        payload['color'] = {
+          'code': colorCode,
+          'name': colorName,
+        };
+      }
+
+      items.add(payload);
+    }
+
+    return items;
+  }
+
+  Future<void> _handleReorder(
+    BuildContext context,
+    order_model.Datum order,
+  ) async {
+    final items = _buildReorderItemsPayload(order);
+    if (items.isEmpty) {
+      showAppToast(
+        message: 'Reorder items not found for this order.',
+        isError: true,
+      );
+      return;
+    }
+
+    final orderSummaryController = Get.find<OrderSummaryController>();
+    final isSuccess = await orderSummaryController.createOrderSummary(
+      itemsOverride: items,
+      onSuccessNavigate: () {
+        Get.to(() => const CheckoutScreen());
+      },
+    );
+
+    if (!isSuccess) {
+      return;
+    }
+  }
+
+  @override 
   Widget build(BuildContext context) {
     return GetBuilder<MyOrdersController>(
       builder: (controller) => Scaffold(
@@ -120,6 +188,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                                 arguments: {'orderId': orderId},
                               );
                             },
+                            onReorder: () => _handleReorder(context, order),
                             optionalOnTap: () {
                               PageNavigationService.to(
                                 context,

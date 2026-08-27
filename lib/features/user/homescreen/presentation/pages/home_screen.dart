@@ -4,7 +4,6 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
-import 'package:hoodz/features/user/homescreen/presentation/controllers/wishlist_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/carousel_banner.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/home_page_header.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
@@ -12,16 +11,17 @@ import 'package:hoodz/features/user/product/presentation/widgets/product_list.da
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/view_all.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/voucher_card.dart';
+import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 
 class HomeScreen extends GetView<HomeScreenController> {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height; 
     final width = MediaQuery.of(context).size.width;
-    final profileController = Get.find<ProfileController>();
-    final wishlistController = Get.find<WishListController>();
+    final profileController = Get.find<ProfileController>(); 
+    final wishlistController = Get.find<WishlistController>();
 
     return Obx(() {
       final homeData = controller.homeData;
@@ -194,11 +194,11 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   final isWishlisted =
                                       product.isWishlisted ?? false;
                                   return ProductCard(
-                                    name: name,
+                                    name: name, 
                                     image: image,
                                     price: price,
                                     rating: rating,
-                                    isWishlisted: isWishlisted,
+                                    isWishlisted: isWishlisted, 
                                     onTap: () {
                                       PageNavigationService.to(
                                         context,

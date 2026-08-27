@@ -10,9 +10,11 @@ class Urls {
   static const String currentUserUrl = '$_baseUrl/users/me';
   static const String userLocationUrl = '$_baseUrl/users/location';
   static const String deliveryLocationUrl = '$_baseUrl/users/delivery-location';
+  static const String settingsUrl = '$_baseUrl/settings';
   static const String cartUrl = '$_baseUrl/cart';
   static const String cartAddUrl = '$_baseUrl/cart/add';
   static const String cartUpdateUrl = '$_baseUrl/cart/update';
+  static const String cartRemoveUrl = '$_baseUrl/cart/remove';
   static const String orderSummaryUrl = '$_baseUrl/orders/summary';
   static const String orderUrl = '$_baseUrl/orders';
   static const String myOrdersUrl = '$_baseUrl/orders/my-orders';

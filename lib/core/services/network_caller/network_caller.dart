@@ -169,6 +169,7 @@ class NetworkCaller {
     String url, {
     Map<String, dynamic>? queryParams,
     Map<String, String>? headers,
+    Map<String, dynamic>? body,
     String? accessToken,
   }) async {
     return _handleRequest(
@@ -176,6 +177,7 @@ class NetworkCaller {
       url: url,
       queryParams: queryParams,
       headers: headers,
+      body: body,
       accessToken: accessToken,
     );
   }
@@ -317,7 +319,14 @@ class NetworkCaller {
             );
             break;
           case 'DELETE':
-            response = await http.delete(uri, headers: defaultHeaders);
+            response = await http.delete(
+              uri,
+              headers: {
+                ...defaultHeaders,
+                'Content-Type': 'application/json',
+              },
+              body: body != null ? jsonEncode(body) : null,
+            );
             break;
         }
       }

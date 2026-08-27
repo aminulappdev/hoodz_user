@@ -21,44 +21,112 @@ class CartItemUpdateSheet extends StatefulWidget {
 }
 
 class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
-  late final List<String> _sizes;
-  late final List<cart_model.Color> _colors;
+  String _inventoryType = '';
+  List<String> _sizes = [];
+  List<cart_model.Color> _colors = [];
   String? _selectedSize;
   int? _selectedColorIndex;
 
   @override
   void initState() {
     super.initState();
-    _sizes = widget.item.product?.sizes
-            .map((size) => size.trim())
-            .where((size) => size.isNotEmpty)
-            .toList() ??
-        const <String>[];
-    _colors = widget.item.product?.colors
-            .where((color) {
-              final code = color.code?.trim() ?? '';
-              final name = color.name?.trim() ?? '';
-              return code.isNotEmpty && name.isNotEmpty;
-            })
-            .toList() ??
-        const <cart_model.Color>[];
-    _selectedSize = _resolveSelectedSize(_sizes);
+    _inventoryType = _normalizeString(widget.item.product?.inventoryType)
+            ?.toLowerCase() ??
+        '';
+    _sizes = _buildAvailableSizes();
+    _selectedSize = _resolveInitialSelectedSize();
+    _colors = _buildAvailableColors(sizeFilter: _selectedSize);
     _selectedColorIndex = _resolveSelectedColorIndex(_colors);
   }
 
-  String? _resolveSelectedSize(List<String> sizes) {
-    final currentSize = widget.item.size?.trim();
-    if (currentSize != null && currentSize.isNotEmpty) {
-      if (sizes.contains(currentSize)) {
-        return currentSize;
+  String? _normalizeString(dynamic value) {
+    final normalized = value?.toString().trim();
+    return (normalized == null || normalized.isEmpty) ? null : normalized;
+  }
+
+  List<cart_model.Variant> _variants() {
+    return widget.item.product?.variants ?? const <cart_model.Variant>[];
+  }
+
+  String? _variantSize(cart_model.Variant variant) {
+    return _normalizeString(variant.size);
+  }
+
+  cart_model.Color? _variantColor(cart_model.Variant variant) {
+    final code = _normalizeString(variant.color?.code);
+    final name = _normalizeString(variant.color?.name);
+    if (code == null || name == null) {
+      return null;
+    }
+
+    return cart_model.Color(code: code, name: name);
+  }
+
+  List<String> _buildAvailableSizes() {
+    if (_inventoryType != 'size_color') {
+      return const <String>[];
+    }
+
+    final sizes = <String>[];
+    for (final variant in _variants()) {
+      final size = _variantSize(variant);
+      if (size != null && !sizes.contains(size)) {
+        sizes.add(size);
       }
+    }
+    return sizes;
+  }
+
+  String? _resolveInitialSelectedSize() {
+    if (_inventoryType != 'size_color' || _sizes.isEmpty) {
+      return null;
+    }
+
+    final currentSize = _normalizeString(widget.item.size);
+    if (currentSize != null && _sizes.contains(currentSize)) {
       return currentSize;
     }
 
-    return sizes.isNotEmpty ? sizes.first : null;
+    return _sizes.first;
+  }
+
+  List<cart_model.Color> _buildAvailableColors({String? sizeFilter}) {
+    if (_inventoryType == 'single') {
+      return const <cart_model.Color>[];
+    }
+
+    final colors = <cart_model.Color>[];
+    for (final variant in _variants()) {
+      final variantSize = _variantSize(variant);
+      if (_inventoryType == 'size_color' &&
+          sizeFilter != null &&
+          variantSize != sizeFilter) {
+        continue;
+      }
+
+      final color = _variantColor(variant);
+      if (color == null) {
+        continue;
+      }
+
+      final key = '${color.code?.toLowerCase()}|${color.name?.toLowerCase()}';
+      final exists = colors.any(
+        (item) =>
+            '${item.code?.toLowerCase()}|${item.name?.toLowerCase()}' == key,
+      );
+      if (!exists) {
+        colors.add(color);
+      }
+    }
+
+    return colors;
   }
 
   int? _resolveSelectedColorIndex(List<cart_model.Color> colors) {
+    if (colors.isEmpty) {
+      return null;
+    }
+
     final currentColorName = widget.item.color?.name?.trim();
     final currentColorCode = widget.item.color?.code?.trim();
 
@@ -68,7 +136,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
             option.name?.toLowerCase() == currentColorName.toLowerCase();
         final matchesCode = currentColorCode != null &&
             option.code?.toLowerCase() == currentColorCode.toLowerCase();
-        return matchesName == true || matchesCode == true;
+        return matchesName || matchesCode;
       });
 
       if (index >= 0) {
@@ -76,21 +144,84 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
       }
     }
 
-    return colors.isNotEmpty ? 0 : null;
+    return 0;
+  }
+
+  List<cart_model.Color> _currentColors() {
+    if (_inventoryType == 'size_color') {
+      return _colors;
+    }
+    return _colors;
+  }
+
+  cart_model.Variant? _selectedVariant() {
+    final selectedColors = _currentColors();
+    final selectedColor = _selectedColorIndex == null ||
+            _selectedColorIndex! < 0 ||
+            _selectedColorIndex! >= selectedColors.length
+        ? null
+        : selectedColors[_selectedColorIndex!];
+
+    for (final variant in _variants()) {
+      final variantSize = _variantSize(variant);
+      final variantColor = _variantColor(variant);
+
+      final sizeMatches = _inventoryType == 'size_color'
+          ? variantSize == _selectedSize
+          : true;
+      final colorMatches = selectedColor == null
+          ? true
+          : variantColor != null &&
+              variantColor.code?.toLowerCase() ==
+                  selectedColor.code?.toLowerCase() &&
+              variantColor.name?.toLowerCase() ==
+                  selectedColor.name?.toLowerCase();
+
+      if (sizeMatches && colorMatches) {
+        return variant;
+      }
+    }
+
+    return null;
+  }
+
+  int _selectedQuantity() {
+    final variant = _selectedVariant();
+    if (variant != null) {
+      return variant.quantity ?? 0;
+    }
+
+    return 0;
+  }
+
+  bool get _canApplyChanges => _selectedQuantity() > 0;
+
+  void _syncColorsForSelectedSize() {
+    if (_inventoryType != 'size_color') {
+      return;
+    }
+
+    _colors = _buildAvailableColors(sizeFilter: _selectedSize);
+    _selectedColorIndex = _resolveSelectedColorIndex(_colors);
   }
 
   Future<void> _submit() async {
+    if (!_canApplyChanges) {
+      return;
+    }
+
     final productId = widget.item.productId ?? widget.item.product?.id ?? '';
     if (productId.isEmpty) {
       return;
     }
 
-    final size = _sizes.isEmpty ? null : _selectedSize;
-    final color = _selectedColorIndex == null || _colors.isEmpty
+    final size = _inventoryType == 'size_color' ? _selectedSize : null;
+    final currentColors = _currentColors();
+    final color = _selectedColorIndex == null || currentColors.isEmpty
         ? null
         : {
-            'code': _colors[_selectedColorIndex!].code ?? '',
-            'name': _colors[_selectedColorIndex!].name ?? '',
+            'code': currentColors[_selectedColorIndex!].code ?? '',
+            'name': currentColors[_selectedColorIndex!].name ?? '',
           };
 
     final success = await widget.controller.updateCartItem(
@@ -109,6 +240,8 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final currentColors = _currentColors();
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -158,7 +291,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                   ),
                 ),
                 SizedBox(height: 16.h(context)),
-                if (_sizes.isNotEmpty) ...[
+                if (_inventoryType == 'size_color' && _sizes.isNotEmpty) ...[
                   Text(
                     'Size',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -179,6 +312,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                             onTap: () {
                               setState(() {
                                 _selectedSize = size;
+                                _syncColorsForSelectedSize();
                               });
                             },
                           ),
@@ -186,7 +320,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                         .toList(),
                   ),
                   SizedBox(height: 16.h(context)),
-                ] else ...[
+                ] else if (_inventoryType == 'size_color') ...[
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(12.w(context)),
@@ -199,7 +333,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                   ),
                   SizedBox(height: 16.h(context)),
                 ],
-                if (_colors.isNotEmpty) ...[
+                if (_inventoryType != 'single' && currentColors.isNotEmpty) ...[
                   Text(
                     'Color',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -212,7 +346,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                   Wrap(
                     spacing: 8.w(context),
                     runSpacing: 10.h(context),
-                    children: _colors.asMap().entries.map((entry) {
+                    children: currentColors.asMap().entries.map((entry) {
                       final index = entry.key;
                       final option = entry.value;
                       return FilterOptionChip(
@@ -227,7 +361,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                     }).toList(),
                   ),
                   SizedBox(height: 16.h(context)),
-                ] else ...[
+                ] else if (_inventoryType != 'single') ...[
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(12.w(context)),
@@ -239,6 +373,19 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                     child: const Text('No color available'),
                   ),
                   SizedBox(height: 16.h(context)),
+                ],
+                if (!_canApplyChanges) ...[
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 12.h(context)),
+                    child: Text(
+                      'Out of stock',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 13.sp(context),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFEF4444),
+                      ),
+                    ),
+                  ),
                 ],
                 Row(
                   children: [
@@ -259,6 +406,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                     Expanded(
                       child: CustomButton(
                         text: 'Apply Changes',
+                        enabled: _canApplyChanges,
                         onPressed: _submit,
                       ),
                     ),

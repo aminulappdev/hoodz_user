@@ -80,7 +80,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         context,
                         title: 'General settings',
                         child: Column(
-                          children: [
+                          children: [ 
                             ProfileSettingsTile(
                               onTap: () {
                                 PageNavigationService.to(
@@ -133,6 +133,10 @@ class ProfileScreen extends GetView<ProfileController> {
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.content,
+                                  arguments: {
+                                    'title': 'Terms & Conditions',
+                                    'key': 'userTermsAndConditions',
+                                  },
                                 );
                               },
                               icon: Icons.description_outlined,
@@ -144,6 +148,10 @@ class ProfileScreen extends GetView<ProfileController> {
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.content,
+                                  arguments: {
+                                    'title': 'Privacy Policy',
+                                    'key': 'userPrivacyAndPolicy',
+                                  },
                                 );
                               },
                               icon: Icons.privacy_tip_outlined,

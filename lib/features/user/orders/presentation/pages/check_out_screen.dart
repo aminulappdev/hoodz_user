@@ -21,7 +21,7 @@ import 'package:hoodz/features/user/payment/presentation/controllers/payment_ini
 import 'package:hoodz/core/utils/flutter_toast.dart';
 
 const Color kBgGrey = Color(0xFFF6F6F8);
-
+ 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
 
@@ -45,10 +45,76 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String _selectedDeliveryType = 'regular';
   bool _usePoints = false;
 
+  bool get _hasVoucherCode => _voucherController.text.trim().isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _voucherController.addListener(_handleVoucherChanged);
+  }
+
+  int get _totalAmountValue =>
+      _orderSummaryController.orderSummaryData?.totalAmount ?? 0;
+
+  int get _availableRedeemableCoins {
+    final availablePoints = _availablePoints;
+    final maxByAmount = (_totalAmountValue * 0.15).floor();
+    if (availablePoints < 50 || maxByAmount < 50) {
+      return 0;
+    }
+
+    final eligibleCoins = availablePoints < maxByAmount
+        ? availablePoints
+        : maxByAmount;
+    return eligibleCoins;
+  }
+
+  bool get _canUsePoints => _availableRedeemableCoins >= 50 && !_hasVoucherCode;
+
+  int? get _redeemCoinsValue =>
+      _usePoints && _canUsePoints ? _availableRedeemableCoins : null;
+
+  void _syncPointSelection() {
+    if (_usePoints && !_canUsePoints && mounted) {
+      setState(() {
+        _usePoints = false;
+      });
+    }
+  }
+
+  void _handleVoucherChanged() {
+    if (!mounted) {
+      return;
+    }
+
+    if (_hasVoucherCode && _usePoints) {
+      setState(() {
+        _usePoints = false;
+      });
+    } else {
+      setState(() {});
+    }
+  }
+
+  Future<void> _showCoinRulePopup() async {
+    if (_hasVoucherCode) {
+      showAppToast(
+        message: 'Voucher already added. Coin enable korte parbe na.',
+        isError: true,
+      );
+      return;
+    }
+
+    showAppToast(
+      message: 'You are not eligible. Check coin rules.',
+      isError: true,
+    );
+  }
+
   Future<bool> _submitOrderSummary({required bool showConfirmPopup}) async {
     final note = _noteController.text.trim();
     final voucherCode = _voucherController.text.trim();
-    final redeemCoins = _usePoints ? _availablePoints : null;
+    final redeemCoins = _redeemCoinsValue;
 
     final isSuccess = await _orderSummaryController.createOrderSummary(
       deliveryType: _selectedDeliveryType,
@@ -60,6 +126,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (!isSuccess) {
       return false;
     }
+
+    _syncPointSelection();
 
     if (showConfirmPopup) {
       await _showConfirmOrderPopup();
@@ -75,7 +143,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _handleContinueOrder() async {
     final note = _noteController.text.trim();
     final voucherCode = _voucherController.text.trim();
-    final redeemCoins = _usePoints ? _availablePoints : null;
+    final redeemCoins = _redeemCoinsValue;
 
     final isSuccess = await _productOrderController.createProductOrder(
       deliveryType: _selectedDeliveryType,
@@ -127,6 +195,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _applyVoucherAndPoints() async {
+    if (_usePoints) {
+      showAppToast(
+        message: 'Already coin enabled. Voucher apply korte parbe na.',
+        isError: true,
+      );
+      return;
+    }
+
     await _submitOrderSummary(showConfirmPopup: false);
   }
 
@@ -316,14 +392,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 CheckoutVoucherPointsCard(
                   voucherController: _voucherController,
                   isPointsEnabled: _usePoints,
+                  isPointsToggleEnabled: _canUsePoints,
                   onPointsChanged: (value) {
                     setState(() {
-                      _usePoints = value;
+                      _usePoints = value && _canUsePoints;
                     });
                   },
+                  onInvalidPointsAttempt: _showCoinRulePopup,
                   onApplyVoucher: _applyVoucherAndPoints,
                   availablePointsLabel: _availablePointsLabel,
                 ),
+               
                 const SizedBox(height: 14),
                 _CheckoutSection(
                   title: 'Delivery Type',
@@ -401,7 +480,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: CustomButton(
               text: 'Place Order',
               onPressed: _handlePlaceOrder,
-            ),
+              ),
           ),
         ],
       ),
@@ -410,6 +489,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   void dispose() {
+    _voucherController.removeListener(_handleVoucherChanged);
     _voucherController.dispose();
     _noteController.dispose();
     super.dispose();

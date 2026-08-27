@@ -463,9 +463,13 @@ class Voucher {
     required this.voucherType,
     required this.discountType,
     required this.discountValue,
+    required this.giftDetails,
     required this.maxDiscountAmount,
     required this.minSpend,
     required this.expiryDate,
+    required this.status,
+    required this.hasUsed,
+    required this.useAt,
   });
 
   final String? id;
@@ -474,9 +478,13 @@ class Voucher {
   final String? voucherType;
   final String? discountType;
   final dynamic discountValue;
+  final VoucherGiftDetails? giftDetails;
   final dynamic maxDiscountAmount;
   final dynamic minSpend;
   final DateTime? expiryDate;
+  final String? status;
+  final bool? hasUsed;
+  final DateTime? useAt;
 
   factory Voucher.fromJson(Map<String, dynamic> json) {
     return Voucher(
@@ -486,9 +494,39 @@ class Voucher {
       voucherType: json["voucherType"],
       discountType: json["discountType"],
       discountValue: json["discountValue"],
+      giftDetails: json["giftDetails"] == null
+          ? null
+          : VoucherGiftDetails.fromJson(
+              Map<String, dynamic>.from(json["giftDetails"]),
+            ),
       maxDiscountAmount: json["maxDiscountAmount"],
       minSpend: json["minSpend"],
       expiryDate: DateTime.tryParse(json["expiryDate"] ?? ""),
+      status: json["status"]?.toString(),
+      hasUsed: json["hasUsed"],
+      useAt: DateTime.tryParse(json["useAt"] ?? ""),
+    );
+  }
+}
+
+class VoucherGiftDetails {
+  VoucherGiftDetails({
+    required this.name,
+    required this.bannerImage,
+    required this.description,
+  });
+
+  final String? name;
+  final List<String> bannerImage;
+  final String? description;
+
+  factory VoucherGiftDetails.fromJson(Map<String, dynamic> json) {
+    return VoucherGiftDetails(
+      name: json["name"]?.toString(),
+      bannerImage: json["bannerImage"] == null
+          ? []
+          : List<String>.from(json["bannerImage"]!.map((x) => x.toString())),
+      description: json["description"]?.toString(),
     );
   }
 }

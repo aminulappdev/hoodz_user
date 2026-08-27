@@ -30,6 +30,8 @@ class OrderSummaryController extends GetxController {
   String? _lastVoucherCode;
   int? _lastRedeemCoins;
   String? _lastNote;
+  List<Map<String, dynamic>>? _lastItemsPayload;
+  _OrderItemsSource _lastItemsSource = _OrderItemsSource.none;
 
   order_summary.OrderSummaryModel? get orderSummaryModel =>
       _orderSummaryModel.value;
@@ -41,6 +43,7 @@ class OrderSummaryController extends GetxController {
     String? voucherCode,
     int? redeemCoins,
     String? note,
+    List<Map<String, dynamic>>? itemsOverride,
     void Function()? onSuccessNavigate,
   }) async {
     _lastDeliveryType = deliveryType;
@@ -57,7 +60,24 @@ class OrderSummaryController extends GetxController {
       return false;
     }
 
-    final items = _buildItemsPayload();
+    if (itemsOverride != null) {
+      _lastItemsPayload = itemsOverride;
+      _lastItemsSource = _OrderItemsSource.override;
+    }
+
+    final cartItemsPayload = _buildItemsPayload();
+    if (itemsOverride == null && cartItemsPayload.isNotEmpty) {
+      _lastItemsPayload = cartItemsPayload;
+      _lastItemsSource = _OrderItemsSource.cart;
+    }
+
+    final items = itemsOverride ??
+        (_lastItemsSource == _OrderItemsSource.override
+            ? _lastItemsPayload
+            : cartItemsPayload.isNotEmpty
+                ? cartItemsPayload
+                : _lastItemsPayload) ??
+        const <Map<String, dynamic>>[];
     if (items.isEmpty) {
       showAppToast(message: 'Cart is empty.', isError: true);
       return false;
@@ -132,6 +152,9 @@ class OrderSummaryController extends GetxController {
       voucherCode: _lastVoucherCode,
       redeemCoins: _lastRedeemCoins,
       note: _lastNote,
+      itemsOverride: _lastItemsSource == _OrderItemsSource.override
+          ? _lastItemsPayload
+          : null,
     );
   }
 
@@ -231,5 +254,13 @@ class OrderSummaryController extends GetxController {
 
   void clearOrderSummary() {
     _orderSummaryModel.value = null;
+    _lastItemsPayload = null;
+    _lastItemsSource = _OrderItemsSource.none;
   }
+}
+
+enum _OrderItemsSource {
+  none,
+  cart,
+  override,
 }

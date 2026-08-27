@@ -40,7 +40,7 @@ Future<void> showConfirmOrderSheet(
   required List<OrderItem> items,
   required VoidCallback onContinue,
   required VoidCallback onEditOrder,
-  int secondsToConfirm = 59,
+  int secondsToConfirm = 30,
 }) {
   return showModalBottomSheet(
     context: context,
@@ -85,7 +85,7 @@ class ConfirmOrderSheet extends StatefulWidget {
     required this.items,
     required this.onContinue,
     required this.onEditOrder,
-    this.secondsToConfirm = 59,
+    this.secondsToConfirm = 30,
   });
 
   @override
@@ -95,6 +95,7 @@ class ConfirmOrderSheet extends StatefulWidget {
 class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   late int _secondsLeft = widget.secondsToConfirm;
   Timer? _timer;
+  bool get _canContinue => _secondsLeft <= 0;
 
   @override
   void initState() {
@@ -110,9 +111,9 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsLeft <= 1) {
         timer.cancel();
-        // Countdown hit zero -> auto-confirm the order, same as the app
-        // would do if the user simply doesn't respond in time.
-        widget.onContinue();
+        if (mounted) {
+          setState(() => _secondsLeft = 0);
+        }
         return;
       }
       // setState is what makes the "00:58 -> 00:57" text actually repaint.
@@ -165,7 +166,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          const Text( 
             'Confirm Your Order',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
@@ -236,8 +237,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  
-                  onPressed: widget.onContinue,
+                  onPressed: _canContinue ? widget.onContinue : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kOrange,
                     foregroundColor: Colors.white,

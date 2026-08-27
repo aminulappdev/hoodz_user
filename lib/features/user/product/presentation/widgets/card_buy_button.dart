@@ -7,7 +7,16 @@ import 'package:hoodz/core/widgets/custom_button.dart';
 class CartAndBuy extends StatelessWidget {
   final VoidCallback? onTapAddToCart;
   final VoidCallback? onTapBuyNow;
-  const CartAndBuy({super.key, this.onTapAddToCart, this.onTapBuyNow});
+  final bool isAddToCartEnabled;
+  final bool isBuyNowEnabled;
+
+  const CartAndBuy({
+    super.key,
+    this.onTapAddToCart,
+    this.onTapBuyNow,
+    this.isAddToCartEnabled = true,
+    this.isBuyNowEnabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +27,7 @@ class CartAndBuy extends StatelessWidget {
             text: 'Add to cart',
             height: 48.h(context),
             onPressed: onTapAddToCart,
+            enabled: isAddToCartEnabled,
             textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16.sp(context),
               fontWeight: FontWeight.w700,
@@ -34,6 +44,7 @@ class CartAndBuy extends StatelessWidget {
             text: 'Buy now',
             height: 48.h(context),
             onPressed: onTapBuyNow,
+            enabled: isBuyNowEnabled,
             backgroundColor: LightThemeColors.primaryColor,
           ),
         ),

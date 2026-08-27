@@ -5,6 +5,8 @@ import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/orders/data/models/my_cart_model.dart'
     as cart_model;
+import 'package:hoodz/features/user/orders/data/models/order_summary_model.dart'
+    as order_summary;
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/profile/data/models/user_profile_model.dart'
@@ -111,7 +113,17 @@ class ProductOrderController extends GetxController {
   }
 
   List<Map<String, dynamic>> _buildItemsPayload() {
-    return _cartController.cartItems.map((item) {
+    final orderSummaryItems = _buildItemsPayloadFromOrderSummary();
+    if (orderSummaryItems.isNotEmpty) {
+      return orderSummaryItems;
+    }
+
+    final cartItems = _cartController.cartItems;
+    if (cartItems.isEmpty) {
+      return const [];
+    }
+
+    return cartItems.map((item) {
       return {
         'product': _resolveProductId(item),
         'quantity': item.quantity ?? 1,
@@ -119,6 +131,43 @@ class ProductOrderController extends GetxController {
         'color': _buildColorPayload(item.color),
       };
     }).toList(growable: false);
+  }
+
+  List<Map<String, dynamic>> _buildItemsPayloadFromOrderSummary() {
+    final summaryOrders = _orderSummaryController.orderSummaryData?.orders;
+    if (summaryOrders == null || summaryOrders.isEmpty) {
+      return const [];
+    }
+
+    final items = <Map<String, dynamic>>[];
+    for (final order in summaryOrders) {
+      for (final item in order.items) {
+        final productId =
+            _normalizeString(item.productId) ?? _normalizeString(item.product?.id);
+        if (productId == null) {
+          continue;
+        }
+
+        final payload = <String, dynamic>{
+          'product': productId,
+          'quantity': item.quantity ?? 1,
+        };
+
+        final size = _normalizeString(item.size);
+        if (size != null) {
+          payload['size'] = size;
+        }
+
+        final color = _buildOrderSummaryColorPayload(item.color);
+        if (color != null) {
+          payload['color'] = color;
+        }
+
+        items.add(payload);
+      }
+    }
+
+    return items;
   }
 
   Map<String, dynamic>? _buildBillingDetails({String? note}) {
@@ -160,6 +209,22 @@ class ProductOrderController extends GetxController {
   }
 
   Map<String, dynamic>? _buildColorPayload(cart_model.Color? color) {
+    final code = _normalizeString(color?.code);
+    final name = _normalizeString(color?.name);
+
+    if (code == null && name == null) {
+      return null;
+    }
+
+    return {
+      'code': code,
+      'name': name,
+    };
+  }
+
+  Map<String, dynamic>? _buildOrderSummaryColorPayload(
+    order_summary.Color? color,
+  ) {
     final code = _normalizeString(color?.code);
     final name = _normalizeString(color?.name);
 

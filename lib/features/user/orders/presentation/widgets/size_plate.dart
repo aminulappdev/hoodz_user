@@ -11,7 +11,7 @@ class SizePlate extends StatelessWidget {
     required this.borderColor,
   });
 
-  final String size;
+  final String size; 
   final Color backgroundColor;
   final Color textColor;
   final Color borderColor;
@@ -19,8 +19,8 @@ class SizePlate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 42.h(context),
-      width: 78.w(context),
+      height: 36.h(context),
+      width: 60.w(context),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(24.r(context)),

@@ -24,7 +24,10 @@ class ShopDetailsController extends GetxController {
     initialize(arguments is Map<String, dynamic> ? arguments : null);
   }
 
-  void initialize(Map<String, dynamic>? arguments) {
+  void initialize(
+    Map<String, dynamic>? arguments, {
+    bool forceRefresh = false,
+  }) {
     final rawShopId = arguments?['shopId'] ?? arguments?['reference'];
     final shopId = _extractShopId(rawShopId);
 
@@ -33,7 +36,7 @@ class ShopDetailsController extends GetxController {
       return;
     }
 
-    if (_loadedShopId != shopId) {
+    if (forceRefresh || _loadedShopId != shopId) {
       _loadedShopId = shopId;
       shopIdData.value = shopId;
       _shopDetailsModel.value = null;
