@@ -46,11 +46,21 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
           }
 
           if (controller.messages.isEmpty) {
-            return const Center(
-              child: Text(
-                'No messages found',
-                style: TextStyle(color: Colors.black54),
-              ),
+            return Column(
+              children: [
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      'No messages found',
+                      style: TextStyle(color: Colors.black54),
+                    ),
+                  ),
+                ),
+                CustomInputBar(
+                  hintText: 'Type a message...',
+                  onSend: controller.sendMessage,
+                ),
+              ],
             );
           }
 
@@ -71,6 +81,7 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
                     return MessageBubble(
                       message: message['text']?.toString() ?? '',
                       isMe: controller.isOwnMessage(message),
+                      files: _extractFiles(message['files']),
                       timestamp: _formatTimestamp(
                         DateTime.tryParse(
                           message['createdAt']?.toString() ?? '',
@@ -80,7 +91,10 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
                   },
                 ),
               ),
-              const CustomInputBar(),
+              CustomInputBar(
+                hintText: 'Type a message...',
+                onSend: controller.sendMessage,
+              ),
             ],
           );
         }),
@@ -98,5 +112,17 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
     final minute = local.minute.toString().padLeft(2, '0');
     final period = local.hour >= 12 ? 'PM' : 'AM';
     return '$hour:$minute $period';
+  }
+
+  List<String> _extractFiles(dynamic rawFiles) {
+    if (rawFiles is! List) {
+      return const <String>[];
+    }
+
+    return rawFiles
+        .where((file) => file != null)
+        .map((file) => file.toString().trim())
+        .where((file) => file.isNotEmpty)
+        .toList();
   }
 }

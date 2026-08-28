@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
-import 'package:hoodz/features/user/ai_assistant/presentation/pages/general_message_screen.dart';
+import 'package:hoodz/features/user/chat/presentation/pages/general_message_screen.dart';
 import 'package:hoodz/urls.dart';
 
 class ChatSystemController extends GetxController {

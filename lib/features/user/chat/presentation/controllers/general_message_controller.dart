@@ -9,10 +9,10 @@ import 'package:hoodz/features/user/chat/model/general_message_model.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/urls.dart';
 
-class GeneralMessageController extends GetxController {
+class GeneralMessageController extends GetxController { 
   GeneralMessageController(this._networkCaller);
- 
-  final NetworkCaller _networkCaller; 
+
+  final NetworkCaller _networkCaller;
   late final SocketService socketService;
 
   final RxBool isLoading = false.obs;
@@ -172,9 +172,13 @@ class GeneralMessageController extends GetxController {
     }
   }
 
-  void sendMessage(String text) {
+  void sendMessage(String text, List<String> files) {
     final trimmedText = text.trim();
-    if (trimmedText.isEmpty || chatId.value.isEmpty) {
+    if (trimmedText.isEmpty && files.isEmpty) {
+      return;
+    }
+
+    if (chatId.value.isEmpty) {
       return;
     }
 
@@ -182,11 +186,16 @@ class GeneralMessageController extends GetxController {
       return;
     }
 
-    socketService.socket.emit('chat:send-message', {
+    final payload = {
       'chatId': chatId.value,
       'text': trimmedText,
-      'files': const <dynamic>[],
-    });
+      'files': files,
+      'senderId': currentUserId,
+      'senderType': 'user',
+    };
+
+    print('CHAT SEND PAYLOAD => $payload');
+    socketService.socket.emit('chat:send-message', payload);
   }
 
   void startTyping() {
