@@ -41,6 +41,9 @@ import 'package:hoodz/features/user/payment/presentation/controllers/payment_suc
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_transaction_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/wallet_top_up_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/wallet_transaction_controller.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/general_message_controller.dart';
+import 'package:hoodz/core/services/socket/socket_service.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/change_password_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/content_controller.dart';
@@ -125,7 +128,19 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(PaymentTransactionController.new, fenix: true);
     Get.lazyPut(WalletTopUpController.new, fenix: true);
     Get.lazyPut(WalletTransactionController.new, fenix: true);
-    Get.lazyPut(() => WishlistController(Get.find<NetworkCaller>()), fenix: true);
+    Get.put(SocketService());
+    Get.lazyPut(
+      () => ChatSystemController(Get.find<NetworkCaller>()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => GeneralMessageController(Get.find<NetworkCaller>()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => WishlistController(Get.find<NetworkCaller>()),
+      fenix: true,
+    );
     Get.lazyPut(ProfileController.new, fenix: true);
     Get.lazyPut(
       () => EditProfileController(

@@ -59,6 +59,7 @@ dependencies:
   fluttertoast: ^8.2.12
   shimmer: ^3.0.0
   webview_flutter: ^4.13.1
+  socket_io_client: ^3.1.2
 
 dev_dependencies:
   flutter_test:

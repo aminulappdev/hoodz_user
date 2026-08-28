@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
 import 'package:hoodz/features/user/orders/data/models/order_details_model.dart'
     as order_details;
 import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
@@ -23,12 +24,14 @@ class PaymentDetailsScreen extends StatefulWidget {
 
 class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
   late final OrderDetailsController _controller;
+  late final ChatSystemController _chatSystemController;
   bool _hasRequestedLoad = false;
 
   @override
   void initState() {
     super.initState();
     _controller = Get.find<OrderDetailsController>();
+    _chatSystemController = Get.find<ChatSystemController>();
     _controller.clearOrderDetails();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -65,17 +68,18 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     }
 
     return null;
-  } 
+  }
 
-  @override 
-  Widget build(BuildContext context) { 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
       appBar: CustomAppBar(label: 'Live Tracking'),
       body: SafeArea(
         child: Obx(() {
           final List<order_details.Item> orderItems =
-              _controller.orderDetailsData?.items ?? const <order_details.Item>[];
+              _controller.orderDetailsData?.items ??
+              const <order_details.Item>[];
 
           if (_controller.isLoading.value &&
               _controller.orderDetailsData == null) {
@@ -95,6 +99,11 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                         const TrackingSummaryCard(),
                         SizedBox(height: 12.h(context)),
                         RiderInfoCard(
+                          onTap: () {
+                            _chatSystemController.createSingleChat(
+                              participantId: '6a5d9e075de489e8e2995305',
+                            );
+                          },
                           imageUrl: _controller.riderImageUrl,
                           riderName: _controller.riderName,
                           rating: _controller.riderRating,
@@ -134,24 +143,25 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                                     ),
                               ),
                               SizedBox(height: 14.h(context)),
-                              ...List.generate(_controller.timelineItems.length, (
-                                index,
-                              ) {
-                                final item = _controller.timelineItems[index];
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: 12.h(context),
-                                  ),
-                                  child: TrackingTimelineTile(
-                                    title: item.title,
-                                    trailingText: item.trailingText,
-                                    state: item.state,
-                                    showConnector:
-                                        index !=
-                                        _controller.timelineItems.length - 1,
-                                  ),
-                                );
-                              }),
+                              ...List.generate(
+                                _controller.timelineItems.length,
+                                (index) {
+                                  final item = _controller.timelineItems[index];
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      bottom: 12.h(context),
+                                    ),
+                                    child: TrackingTimelineTile(
+                                      title: item.title,
+                                      trailingText: item.trailingText,
+                                      state: item.state,
+                                      showConnector:
+                                          index !=
+                                          _controller.timelineItems.length - 1,
+                                    ),
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         ),

@@ -7,6 +7,7 @@ class RiderInfoCard extends StatelessWidget {
   final String rating;
   final String vehicleId;
   final String phoneNumber;
+  final VoidCallback onTap;
 
   const RiderInfoCard({
     super.key,
@@ -14,7 +15,7 @@ class RiderInfoCard extends StatelessWidget {
     required this.riderName,
     required this.rating,
     required this.vehicleId,
-    required this.phoneNumber,
+    required this.phoneNumber, required this.onTap,
   });
 
   @override
@@ -49,13 +50,27 @@ class RiderInfoCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      riderName,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 19.sp(context),
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF373737),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          riderName,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                fontSize: 19.sp(context),
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF373737),
+                              ),
+                        ),
+                        IconButton(
+                          onPressed: onTap,
+                          icon: const Icon(
+                            Icons.message_rounded,
+                            size: 24,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 4.h(context)),
                     Row(

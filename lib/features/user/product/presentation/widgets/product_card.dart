@@ -12,7 +12,7 @@ class ProductCard extends StatelessWidget {
     required this.name,
     required this.image,
     required this.price,
-    required this.rating,
+    required this.rating, 
     this.onTap,
     required this.onTapFavourite,
     this.subtitle = 'T-Shirt',

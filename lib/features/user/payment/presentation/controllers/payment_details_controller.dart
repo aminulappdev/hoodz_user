@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 
 class PaymentDetailsController extends GetxController {
-  final String riderImageUrl = 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e';
+  final String riderImageUrl =
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e';
   final String riderName = 'Shahid Hasan';
   final String riderRating = '4.7';
   final String riderVehicleId = 'E2561';

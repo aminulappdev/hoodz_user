@@ -11,7 +11,7 @@ class CustomChatHeader extends StatelessWidget implements PreferredSizeWidget {
 
   const CustomChatHeader({
     super.key,
-    required this.label,
+    required this.label, 
     this.isShowBackButton = true,
     this.actions,
     this.subtitle,

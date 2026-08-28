@@ -1,3 +1,4 @@
+import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
@@ -12,7 +13,7 @@ class ShopHeader extends StatelessWidget {
     super.key,
     required this.coverImageUrl,
     required this.profileImageUrl,
-    required this.shopName, 
+    required this.shopName,
     required this.distance,
     required this.deliveryTime,
     required this.rating,
@@ -23,6 +24,8 @@ class ShopHeader extends StatelessWidget {
     required this.isFollowing,
     required this.isFollowLoading,
     required this.onTapFollow,
+    required this.onTapFavourite,
+    required this.isWishlisted,
   });
 
   final String coverImageUrl;
@@ -38,6 +41,8 @@ class ShopHeader extends StatelessWidget {
   final bool isFollowing;
   final bool isFollowLoading;
   final VoidCallback onTapFollow;
+  final VoidCallback onTapFavourite;
+  final bool isWishlisted;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +64,39 @@ class ShopHeader extends StatelessWidget {
             Positioned(
               top: 48.h(context),
               left: 16.w(context),
-              child: ArrowButton(),
+              right: 16.w(context),
+              child: SizedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    ArrowButton(),
+
+                    GestureDetector(
+                      onTap: onTapFavourite,
+                      child: CircleAvatar(
+                        backgroundColor: isWishlisted == true
+                            ? const Color(0xFFFFE7E7)
+                            : const Color(0xFFF3F3F3),
+                        radius: 17.r(context),
+                        child: CircleAvatar(
+                          backgroundColor: isWishlisted == true
+                              ? const Color(0xFFFFF5F5)
+                              : Colors.white,
+                          radius: 16.r(context),
+                          child: CrashSafeImage(
+                            isWishlisted == true
+                                ? Assets.icons.favouriteFill.path
+                                : Assets.icons.favourite.path,
+                            height: 16.h(context),
+                            width: 16.w(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -113,7 +150,7 @@ class ShopHeader extends StatelessWidget {
                                       label: '$rating ($likes)',
                                       iconColor: const Color(0xffFFC107),
                                     ),
-                                    
+
                                     ShopMetaItem(
                                       icon: Assets.icons.clock.path,
                                       label: deliveryTime,

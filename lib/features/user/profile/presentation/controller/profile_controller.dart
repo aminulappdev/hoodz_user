@@ -43,9 +43,9 @@ class ProfileController extends GetxController {
         'Access token not found. Please login again.',
       );
       return;
-    } 
+    }
 
-    isLoading.value = true; 
+    isLoading.value = true;
 
     final response = await _networkCaller.getRequest(
       Urls.currentUserUrl,
@@ -55,7 +55,14 @@ class ProfileController extends GetxController {
     isLoading.value = false;
 
     if (response.isSuccess) {
-      _userProfileModel.value = UserProfileModel.fromJson(response.responseData);
+      _userProfileModel.value = UserProfileModel.fromJson(
+        response.responseData,
+      );
+      final resolvedUserId =
+          userData?.id?.trim() ?? userData?.dataId?.trim() ?? '';
+      if (resolvedUserId.isNotEmpty) {
+        await MySharedPref.setUserId(resolvedUserId);
+      }
       currentAddress.value = userData?.address ?? '';
       return;
     }

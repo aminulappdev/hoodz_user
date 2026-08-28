@@ -39,8 +39,8 @@ class VerifyEmailController extends GetxController {
       verificationType.value = routeScreenName;
     }
   }
-  
-  Future<Map<String, dynamic>?> verifyEmail() async { 
+
+  Future<Map<String, dynamic>?> verifyEmail() async {
     if (!ValidatorService.validateAndSave(formKey)) {
       return null;
     }
@@ -92,6 +92,9 @@ class VerifyEmailController extends GetxController {
           }
 
           await MySharedPref.setAccessToken(accessToken);
+          await MySharedPref.setUserId(
+            (userData?['_id'] ?? userData?['id'] ?? '').toString(),
+          );
           verifiedData = {'verifiedUser': userData};
         },
       );
@@ -117,8 +120,6 @@ class VerifyEmailController extends GetxController {
 
     return null;
   }
-
-
 
   Map<String, dynamic>? _extractUser(dynamic responseData) {
     if (responseData is! Map) {

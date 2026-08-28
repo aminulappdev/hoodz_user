@@ -79,7 +79,7 @@ class AllTrendingProductController extends GetxController {
     }
   }
 
-  void updateDraftPriceRange(RangeValues values) {
+  void updateDraftPriceRange(RangeValues values) { 
     draftPriceRange.value = values;
   }
 

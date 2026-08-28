@@ -1,5 +1,6 @@
 class Urls {
   static const String _baseUrl = 'http://72.244.153.29:5029/api/v1';
+  static const String socketUrl = 'http://72.244.153.29:5029';
 
   static const String signUpWithEmailUrl = '$_baseUrl/auth/signup-with-email';
   static const String loginWithEmailUrl = '$_baseUrl/auth/login-with-email';
@@ -22,6 +23,9 @@ class Urls {
   static const String paymentInitiateUrl = '$_baseUrl/payments/initiate';
   static const String paymentTransactionsUrl =
       '$_baseUrl/payments/user/transctions';
+  static const String chatUrl = '$_baseUrl/chat';
+  static String getChatMessagesUrlById(String chatId) =>
+      '$_baseUrl/messages/chat/$chatId';
   static const String walletTopUpUrl = '$_baseUrl/top-up/add-wallet-money';
   static const String walletTransactionsUrl = '$_baseUrl/wallet-transactions';
   static const String kycUrl = '$_baseUrl/kyc';

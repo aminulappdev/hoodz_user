@@ -30,7 +30,7 @@ class OrderDetailsController extends GetxController {
       'https://images.unsplash.com/photo-1500648767791-00dcc994a43e';
   String get riderName => 'Shahid Hasan';
   String get riderRating => '4.7';
-  String get riderVehicleId => 'E2561';
+  String get riderVehicleId => 'E2561'; 
   String get riderPhoneNumber => '+880124 65664';
 
   String get orderNumber {

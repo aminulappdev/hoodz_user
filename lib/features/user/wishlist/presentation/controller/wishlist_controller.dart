@@ -8,7 +8,7 @@ import 'package:hoodz/urls.dart';
 
 class WishlistController extends GetxController {
   WishlistController(this._networkCaller);
- 
+
   final NetworkCaller _networkCaller;
   final HomeScreenController _homeScreenController =
       Get.find<HomeScreenController>();
@@ -108,14 +108,18 @@ class WishlistController extends GetxController {
       final serverValue = _extractWishlistedState(response.responseData);
       final resolvedValue = serverValue ?? nextValue;
       _wishlistStates[productId] = resolvedValue;
-      _homeScreenController.updateWishlistStatus(
-        productId: productId,
-        isWishlisted: resolvedValue,
-      );
-      await syncProductWishlistedState(
-        productId: productId,
-        isWishlisted: resolvedValue,
-      );
+      if (modelType == 'product') {
+        _homeScreenController.updateWishlistStatus(
+          productId: productId,
+          isWishlisted: resolvedValue,
+        );
+        await syncProductWishlistedState(
+          productId: productId,
+          isWishlisted: resolvedValue,
+        );
+      } else {
+        await getWishlist();
+      }
       return resolvedValue;
     } finally {
       _togglingProductIds.remove(productId);
@@ -216,7 +220,8 @@ class WishlistController extends GetxController {
   }
 
   void _rebuildWishlistStatesFromItems() {
-    final currentItems = _wishlistModel.value?.data ?? const <WishlistItemModel>[];
+    final currentItems =
+        _wishlistModel.value?.data ?? const <WishlistItemModel>[];
     _wishlistStates.clear();
 
     for (final item in currentItems) {

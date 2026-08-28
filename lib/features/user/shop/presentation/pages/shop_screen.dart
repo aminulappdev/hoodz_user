@@ -88,9 +88,17 @@ class _ShopScreenState extends State<ShopScreen> {
         final shop = _shopDetailsController.shopData?.shop;
         final featuredProducts = _shopProductController.recommendedProducts;
         final allProducts = _shopProductController.allProducts;
-        final isProductsLoading = _shopProductController.isProductsLoading.value;
+        final isProductsLoading =
+            _shopProductController.isProductsLoading.value;
         final isFollowing = _connectionController.isFollowing.value;
         final isFollowLoading = _connectionController.isLoading.value;
+        final shopId = _shopDetailsController.shopIdData.value.trim().isNotEmpty
+            ? _shopDetailsController.shopIdData.value.trim()
+            : (shop?.shopId ?? '').trim();
+        final isWishlisted = _wishlistController.isProductWishlisted(
+          shopId,
+          fallback: shop?.isWishlisted ?? false,
+        );
 
         if (_shopDetailsController.isLoading.value && shop == null) {
           return const Center(child: CircularProgressIndicator());
@@ -123,6 +131,18 @@ class _ShopScreenState extends State<ShopScreen> {
                 isFollowing: isFollowing,
                 isFollowLoading: isFollowLoading,
                 onTapFollow: _connectionController.toggleFollow,
+                onTapFavourite: () async {
+                  if (shopId.isEmpty) {
+                    return;
+                  }
+
+                  await _wishlistController.toggleProductWishlist(
+                    productId: shopId,
+                    currentValue: isWishlisted,
+                    modelType: 'shop',
+                  );
+                },
+                isWishlisted: isWishlisted,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
@@ -147,33 +167,30 @@ class _ShopScreenState extends State<ShopScreen> {
                       child: isProductsLoading && featuredProducts.isEmpty
                           ? const Center(child: CircularProgressIndicator())
                           : featuredProducts.isEmpty
-                              ? const Center(child: Text('No product found'))
-                              : ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: featuredProducts.length,
-                                  separatorBuilder: (_, _) =>
-                                      SizedBox(width: 12.w(context)),
-                                  itemBuilder: (context, index) {
-                                    final product = featuredProducts[index];
-                                    return ShopCard(
-                                      image: product.banner ?? '',
-                                      name: product.title ?? '',
-                                      rating:
-                                          product.avgRating?.toString() ?? '0',
-                                      distance: _shopDetailsController
-                                          .distanceText,
-                                      time:
-                                          _shopDetailsController.deliveryTimeText,
-                                      onTap: () {
-                                        PageNavigationService.to(
-                                          context,
-                                          AppRoutes.productDetails,
-                                          arguments: {'productId': product.id},
-                                        );
-                                      },
+                          ? const Center(child: Text('No product found'))
+                          : ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: featuredProducts.length,
+                              separatorBuilder: (_, _) =>
+                                  SizedBox(width: 12.w(context)),
+                              itemBuilder: (context, index) {
+                                final product = featuredProducts[index];
+                                return ShopCard(
+                                  image: product.banner ?? '',
+                                  name: product.title ?? '',
+                                  rating: product.avgRating?.toString() ?? '0',
+                                  distance: _shopDetailsController.distanceText,
+                                  time: _shopDetailsController.deliveryTimeText,
+                                  onTap: () {
+                                    PageNavigationService.to(
+                                      context,
+                                      AppRoutes.productDetails,
+                                      arguments: {'productId': product.id},
                                     );
                                   },
-                                ),
+                                );
+                              },
+                            ),
                     ),
                     SizedBox(height: 16.h(context)),
                     ShopCategoryTabBar(
@@ -187,94 +204,90 @@ class _ShopScreenState extends State<ShopScreen> {
                     isProductsLoading && allProducts.isEmpty
                         ? const Center(child: CircularProgressIndicator())
                         : allProducts.isEmpty
-                            ? Container(
-                                height: 90.h(context),
-                                alignment: Alignment.center,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(
-                                    14.r(context),
-                                  ),
-                                  border: Border.all(
-                                    color: const Color(0xFFEAEAEA),
-                                  ),
+                        ? Container(
+                            height: 90.h(context),
+                            alignment: Alignment.center,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                14.r(context),
+                              ),
+                              border: Border.all(
+                                color: const Color(0xFFEAEAEA),
+                              ),
+                            ),
+                            child: const Text('No product found'),
+                          )
+                        : GridView.builder(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: allProducts.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 12.w(context),
+                                  mainAxisSpacing: 12.h(context),
+                                  childAspectRatio: 0.68,
                                 ),
-                                child: const Text('No product found'),
-                              )
-                            : GridView.builder(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: allProducts.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 12.w(context),
-                                      mainAxisSpacing: 12.h(context),
-                                      childAspectRatio: 0.68,
-                                    ),
-                                itemBuilder: (context, index) {
-                                  final product = allProducts[index];
-                                  final inStock = product.inStock == true;
-                                  final priceValue =
-                                      product.discountPrice ??
-                                      product.price ??
-                                      0;
-                                  final isWishlisted =
-                                      product.isWishlisted ?? false;
-                                  final oldPriceValue =
-                                      product.discountPrice != null &&
-                                          product.price != null &&
-                                          product.discountPrice != product.price
-                                      ? '\$${product.price}'
-                                      : '';
+                            itemBuilder: (context, index) {
+                              final product = allProducts[index];
+                              final inStock = product.inStock == true;
+                              final priceValue =
+                                  product.discountPrice ?? product.price ?? 0;
+                              final isWishlisted =
+                                  product.isWishlisted ?? false;
+                              final oldPriceValue =
+                                  product.discountPrice != null &&
+                                      product.price != null &&
+                                      product.discountPrice != product.price
+                                  ? '\$${product.price}'
+                                  : '';
 
-                                  return BrandProductCard(
-                                    name: product.title ?? '',
-                                    subtitle:
-                                        product.collectionType ??
-                                        product.brand ??
-                                        _shopDetailsController.shopName,
-                                    image: product.banner ?? '',
-                                    price: '\$$priceValue',
-                                    oldPrice: oldPriceValue,
-                                    rating: product.avgRating?.toString() ?? '0',
-                                    stockLabel: inStock
-                                        ? 'In Stock'
-                                        : 'Out of Stock',
-                                    isWishlisted: isWishlisted,
-                                    onTap: () {
-                                      PageNavigationService.to(
-                                        context,
-                                        AppRoutes.productDetails,
-                                        arguments: {'productId': product.id},
-                                      );
-                                    },
-                                    onTapFavourite: () async {
-                                      final productId = product.id;
-                                      if (productId == null ||
-                                          productId.isEmpty) {
-                                        return;
-                                      }
-
-                                      final updatedValue =
-                                          await _wishlistController
-                                              .toggleProductWishlist(
-                                                productId: productId,
-                                                currentValue: isWishlisted,
-                                              );
-
-                                      if (updatedValue != null) {
-                                        _shopProductController.updateWishlistStatus(
-                                          productId: productId,
-                                          isWishlisted: updatedValue,
-                                        );
-                                      }
-                                    },
+                              return BrandProductCard(
+                                name: product.title ?? '',
+                                subtitle:
+                                    product.collectionType ??
+                                    product.brand ??
+                                    _shopDetailsController.shopName,
+                                image: product.banner ?? '',
+                                price: '\$$priceValue',
+                                oldPrice: oldPriceValue,
+                                rating: product.avgRating?.toString() ?? '0',
+                                stockLabel: inStock
+                                    ? 'In Stock'
+                                    : 'Out of Stock',
+                                isWishlisted: isWishlisted,
+                                onTap: () {
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.productDetails,
+                                    arguments: {'productId': product.id},
                                   );
                                 },
-                              ),
+                                onTapFavourite: () async {
+                                  final productId = product.id;
+                                  if (productId == null || productId.isEmpty) {
+                                    return;
+                                  }
+
+                                  final updatedValue = await _wishlistController
+                                      .toggleProductWishlist(
+                                        productId: productId,
+                                        currentValue: isWishlisted,
+                                      );
+
+                                  if (updatedValue != null) {
+                                    _shopProductController.updateWishlistStatus(
+                                      productId: productId,
+                                      isWishlisted: updatedValue,
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
                     SizedBox(height: 24.h(context)),
                   ],
                 ),

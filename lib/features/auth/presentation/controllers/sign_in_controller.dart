@@ -9,23 +9,27 @@ import 'package:hoodz/urls.dart';
 
 class SignInController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final NetworkCaller _networkCaller; 
+  final NetworkCaller _networkCaller;
   final RxBool isPasswordHidden = true.obs;
   final RxBool rememberMe = true.obs;
-  final TextEditingController emailController = TextEditingController(text: "pewader553@hutdot.com");
-  final TextEditingController passwordController = TextEditingController(text: "Aminul@2000");
+  final TextEditingController emailController = TextEditingController(
+    text: "pewader553@hutdot.com",
+  );
+  final TextEditingController passwordController = TextEditingController(
+    text: "Aminul@2000",
+  );
 
   SignInController(this._networkCaller);
 
   void togglePasswordVisibility() {
     isPasswordHidden.toggle();
-  } 
+  }
 
   void toggleRememberMe() {
     rememberMe.toggle();
   }
 
-  Future<Map<String, dynamic>?> signIn() async { 
+  Future<Map<String, dynamic>?> signIn() async {
     if (!ValidatorService.validateAndSave(formKey)) {
       return null;
     }
@@ -70,6 +74,9 @@ class SignInController extends GetxController {
         }
 
         await MySharedPref.setAccessToken(accessToken);
+        await MySharedPref.setUserId(
+          (user['_id'] ?? user['id'] ?? '').toString(),
+        );
 
         signInData = {
           'user': user,

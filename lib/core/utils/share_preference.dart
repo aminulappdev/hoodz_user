@@ -11,12 +11,13 @@ class MySharedPref {
   static bool _isInitialized = false;
 
   // STORING KEYS
-  static const String _fcmTokenKey = 'fcm_token';
+  static const String _fcmTokenKey = 'fcm_token'; 
   static const String _currentLocalKey = 'current_local';
   static const String _lightThemeKey = 'is_theme_light';
   static const String _accessToken = 'access_token';
+  static const String _userIdKey = 'user_id';
 
-  /// init get storage services
+  /// init get storage services 
   static Future<void> init() async {
     _sharedPreferences = await SharedPreferences.getInstance();
     _isInitialized = true;
@@ -32,12 +33,10 @@ class MySharedPref {
       _sharedPreferences.setBool(_lightThemeKey, lightTheme);
 
   /// get if the current theme type is light
-  static bool isLightTheme() =>
-      !_isInitialized
+  static bool isLightTheme() => !_isInitialized
       ? true
-      :
-      _sharedPreferences.getBool(_lightThemeKey) ??
-      true; // todo set the default theme (true for light, false for dark)
+      : _sharedPreferences.getBool(_lightThemeKey) ??
+            true; // todo set the default theme (true for light, false for dark)
 
   /// save current locale
   static Future<void> setLocale(String languageCode) =>
@@ -47,6 +46,10 @@ class MySharedPref {
   static Future<void> setAccessToken(String token) =>
       _sharedPreferences.setString(_accessToken, token);
 
+  /// save user id
+  static Future<void> setUserId(String userId) =>
+      _sharedPreferences.setString(_userIdKey, userId);
+
   /// get current locale
   static Locale getLocale() {
     if (!_isInitialized) {
@@ -55,7 +58,8 @@ class MySharedPref {
 
     String? langCode = _sharedPreferences.getString(_currentLocalKey);
     // default language is english
-    return LocalizationService.supportedLanguages[langCode] ?? const Locale('en');
+    return LocalizationService.supportedLanguages[langCode] ??
+        const Locale('en');
   }
 
   /// save generated fcm token
@@ -65,6 +69,10 @@ class MySharedPref {
   /// get authorization token
   static String? getAccessToken() =>
       _isInitialized ? _sharedPreferences.getString(_accessToken) : null;
+
+  /// get user id
+  static String? getUserId() =>
+      _isInitialized ? _sharedPreferences.getString(_userIdKey) : null;
 
   /// clear all data from shared pref
   static Future<void> clear() async => await _sharedPreferences.clear();
