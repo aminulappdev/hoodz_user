@@ -16,7 +16,7 @@ class ProductDetailsController extends GetxController {
 
   ProductData? get productData => _productDetailsModel.value?.data;
 
-  void updateSimilarProductWishlistStatus({
+  void updateSimilarProductWishlistStatus({ 
     required String productId,
     required bool isWishlisted,
   }) {

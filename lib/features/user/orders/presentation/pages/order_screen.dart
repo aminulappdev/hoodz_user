@@ -14,7 +14,9 @@ import 'package:hoodz/features/user/orders/presentation/widgets/order_card.dart'
 class OrderScreen extends GetView<MyOrdersController> {
   const OrderScreen({super.key});
 
-  List<Map<String, dynamic>> _buildReorderItemsPayload(order_model.Datum order) {
+  List<Map<String, dynamic>> _buildReorderItemsPayload(
+    order_model.Datum order,
+  ) {
     final items = <Map<String, dynamic>>[];
 
     for (final item in order.items) {
@@ -39,10 +41,7 @@ class OrderScreen extends GetView<MyOrdersController> {
           colorCode.isNotEmpty &&
           colorName != null &&
           colorName.isNotEmpty) {
-        payload['color'] = {
-          'code': colorCode,
-          'name': colorName,
-        };
+        payload['color'] = {'code': colorCode, 'name': colorName};
       }
 
       items.add(payload);
@@ -51,10 +50,7 @@ class OrderScreen extends GetView<MyOrdersController> {
     return items;
   }
 
-  Future<void> _handleReorder(
-    BuildContext context,
-    order_model.Datum order,
-  ) async {
+  Future<void> _handleReorder(order_model.Datum order) async {
     final items = _buildReorderItemsPayload(order);
     if (items.isEmpty) {
       showAppToast(
@@ -77,7 +73,7 @@ class OrderScreen extends GetView<MyOrdersController> {
     }
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return GetBuilder<MyOrdersController>(
       builder: (controller) => Scaffold(
@@ -140,9 +136,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                 child: Builder(
                   builder: (context) {
                     if (controller.isLoading && controller.orders.isEmpty) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     final orders = controller.orders;
@@ -157,7 +151,8 @@ class OrderScreen extends GetView<MyOrdersController> {
                     }
 
                     return RefreshIndicator(
-                      onRefresh: () => controller.fetchOrders(forceRefresh: true),
+                      onRefresh: () =>
+                          controller.fetchOrders(forceRefresh: true),
                       child: ListView.separated(
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: orders.length,
@@ -173,22 +168,28 @@ class OrderScreen extends GetView<MyOrdersController> {
                             price: controller.orderPrice(order),
                             type: controller.orderType(order),
                             item: controller.orderItemCount(order),
-                            onTap: () { 
-                              if (controller.orderType(order) != 'Processing') {
-                                return;
-                              }                             
-                              final orderId = controller.orderRawId(order);
-                              if (orderId.isEmpty) {
+                            onTap: () {
+                              final orderType = controller.orderType(order);
+
+                              if (orderType == 'Processing') {
+                                final orderId = controller.orderRawId(order);
+                                if (orderId.isEmpty) {
+                                  return;
+                                }
+
+                                PageNavigationService.to(
+                                  context,
+                                  AppRoutes.paymentDetails,
+                                  arguments: {'orderId': orderId},
+                                );
                                 return;
                               }
 
-                              PageNavigationService.to(
-                                context,
-                                AppRoutes.paymentDetails,
-                                arguments: {'orderId': orderId},
-                              );
+                              if (orderType == 'Cancelled') {
+                                _handleReorder(order);
+                              }
                             },
-                            onReorder: () => _handleReorder(context, order),
+                            onReorder: () => _handleReorder(order),
                             optionalOnTap: () {
                               PageNavigationService.to(
                                 context,

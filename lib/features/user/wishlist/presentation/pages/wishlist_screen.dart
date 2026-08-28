@@ -12,8 +12,8 @@ import 'package:hoodz/gen/assets.gen.dart';
 class WishlistScreen extends GetView<WishlistController> {
   const WishlistScreen({super.key});
 
-  @override 
-   Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final cartController = Get.find<CartController>();
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
@@ -100,10 +100,21 @@ class WishlistScreen extends GetView<WishlistController> {
                     return;
                   }
 
-                  await cartController.addToCart(
+                  final isAdded = await cartController.addToCart(
                     productId: productId,
                     quantity: 1,
                   );
+
+                  if (!isAdded) {
+                    return;
+                  }
+
+                  final wishlistItemId = item.id;
+                  if (wishlistItemId == null || wishlistItemId.isEmpty) {
+                    return;
+                  }
+
+                  await controller.deleteWishlistItem(wishlistItemId);
                 },
                 onTapDelete: () {
                   final wishlistItemId = item.id;

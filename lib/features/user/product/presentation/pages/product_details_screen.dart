@@ -33,7 +33,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
   Color? _parseColor(dynamic value) {
     if (value is Color) {
-      return value;
+      return value; 
     }
 
     if (value is int) {

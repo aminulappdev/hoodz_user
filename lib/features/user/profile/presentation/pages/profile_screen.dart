@@ -13,7 +13,6 @@ import 'package:hoodz/features/user/profile/presentation/widgets/profile_setting
 
 class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
-
   Widget _buildSectionCard(
     BuildContext context, {
     required String title,
@@ -70,7 +69,7 @@ class ProfileScreen extends GetView<ProfileController> {
           children: [
             ProfileHeader(),
             SizedBox(height: 20.h(context)),
-            Expanded( 
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
                 child: SingleChildScrollView(
@@ -80,7 +79,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         context,
                         title: 'General settings',
                         child: Column(
-                          children: [ 
+                          children: [
                             ProfileSettingsTile(
                               onTap: () {
                                 PageNavigationService.to(
@@ -112,6 +111,12 @@ class ProfileScreen extends GetView<ProfileController> {
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
+                              onTap: () {
+                                PageNavigationService.to(
+                                  context,
+                                  AppRoutes.points,
+                                );
+                              },
                               icon: Icons.receipt_long_outlined,
                               title: 'Points',
                             ),

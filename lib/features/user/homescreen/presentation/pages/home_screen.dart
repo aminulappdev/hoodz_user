@@ -283,16 +283,16 @@ class HomeScreen extends GetView<HomeScreenController> {
                               ),
                       ),
                       SizedBox(height: 12.h(context)),
-                      Text(
-                        'Redeem and save',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 16.sp(context),
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      SizedBox(height: 8.h(context)),
-                      VoucherCardHomeScreen(),
-                      SizedBox(height: 16.h(context)),
+                      // Text(
+                      //   'Redeem and save',
+                      //   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      //     fontSize: 16.sp(context),
+                      //     fontWeight: FontWeight.w800,
+                      //   ),
+                      // ),
+                      // SizedBox(height: 8.h(context)),
+                      // VoucherCardHomeScreen(),
+                      // SizedBox(height: 16.h(context)),
                       CarouselBanner(
                         homeData?.secondSectionBanner ?? const [],
                         (reference) {
