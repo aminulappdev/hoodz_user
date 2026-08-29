@@ -70,7 +70,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     return null;
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
@@ -188,7 +188,26 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                         CustomButton(
                           text: 'Customer Service',
                           onPressed: () {
-                            Get.to(CustomerServiceScreen());
+                            final orderId =
+                                _controller.orderDetailsData?.id ??
+                                _controller.orderDetailsData?.dataId ??
+                                '';
+
+                            if (_controller.hasGrievance) {
+                              if (orderId.isEmpty) {
+                                return;
+                              }
+
+                              _chatSystemController.createOrderSupportChat(
+                                orderId: orderId,
+                              );
+                              return;
+                            }
+
+                            Get.to(
+                              () => const CustomerServiceScreen(),
+                              arguments: {'orderId': orderId},
+                            );
                           },
                         ),
                         SizedBox(height: 24.h(context)),

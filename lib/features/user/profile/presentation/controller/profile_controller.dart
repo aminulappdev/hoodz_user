@@ -14,9 +14,10 @@ class ProfileController extends GetxController {
   final Rx<UserProfileModel?> _userProfileModel = Rx<UserProfileModel?>(null);
   Rx<UserProfileModel?> get userProfileModel => _userProfileModel;
   Data? get userData => _userProfileModel.value?.data;
+  bool get hasCustomerSupport => userData?.hasCustomerSupport ?? false;
 
   final List<String> languages = const ['en', 'bn'];
-
+ 
   @override
   void onInit() {
     super.onInit();

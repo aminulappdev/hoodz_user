@@ -14,6 +14,10 @@ import 'package:hoodz/features/user/homescreen/data/models/search_product_model.
 import 'package:hoodz/urls.dart';
 
 class SearchScreenController extends GetxController {
+  static const Duration _suggestionDebounceDuration = Duration(
+    milliseconds: 300,
+  );
+
   SearchScreenController()
       : _networkCaller = Get.find<NetworkCaller>(),
         _locationService = Get.find<LocationSelectionService>();
@@ -151,9 +155,7 @@ class SearchScreenController extends GetxController {
     _suggestionDebounce?.cancel();
 
     if (normalizedQuery.isEmpty) {
-      _suggestions.clear();
-      _suggestionModel.value = null;
-      _productModel.value = null;
+      _resetSearchResultState();
       showProductResults.value = false;
       fetchSearchData(query: '');
       return;
@@ -163,7 +165,7 @@ class SearchScreenController extends GetxController {
     _suggestionModel.value = null;
     _productModel.value = null;
     _suggestionDebounce = Timer(
-      const Duration(milliseconds: 300),
+      _suggestionDebounceDuration,
       () => fetchSearchSuggestions(normalizedQuery),
     );
   }
@@ -185,9 +187,7 @@ class SearchScreenController extends GetxController {
   void clearSearchText() {
     fillSearchText('');
     _suggestionDebounce?.cancel();
-    _suggestions.clear();
-    _suggestionModel.value = null;
-    _productModel.value = null;
+    _resetSearchResultState();
     showProductResults.value = false;
     fetchSearchData(query: '');
   }
@@ -237,23 +237,9 @@ class SearchScreenController extends GetxController {
       );
 
       if (response.isSuccess) {
-        final model = InitialSearchModel.fromJson(response.responseData);
-        _searchModel.value = model;
-
-        final loadedCategories = model.data?.categories ?? const [];
-        if (loadedCategories.isNotEmpty) {
-          final firstTitle = loadedCategories.first.title;
-          final currentSelected = selectedCategory.value.trim();
-          final hasCurrentSelection = loadedCategories.any(
-            (category) => category.title?.trim() == currentSelected,
-          );
-
-          if (firstTitle != null &&
-              firstTitle.trim().isNotEmpty &&
-              !hasCurrentSelection) {
-            selectedCategory.value = firstTitle;
-          }
-        }
+        _applyInitialSearchModel(
+          InitialSearchModel.fromJson(response.responseData),
+        );
         return;
       }
 
@@ -310,16 +296,16 @@ class SearchScreenController extends GetxController {
     int? maxDistance,
   }) async {
     final normalizedQuery = _resolveSearchTerm(query);
-    final hasFilters =
-        minPrice != null ||
-        maxPrice != null ||
-        (category?.trim().isNotEmpty ?? false) ||
-        (brand?.trim().isNotEmpty ?? false) ||
-        (color?.trim().isNotEmpty ?? false) ||
-        (size?.trim().isNotEmpty ?? false) ||
-        ((gender?.trim().isNotEmpty ?? false) &&
-            gender!.trim().toLowerCase() != 'all') ||
-        maxDistance != null;
+    final hasFilters = _hasActiveFilters(
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      category: category,
+      brand: brand,
+      color: color,
+      size: size,
+      gender: gender,
+      maxDistance: maxDistance,
+    );
 
     if (normalizedQuery.isNotEmpty) {
       searchQuery.value = normalizedQuery;
@@ -482,7 +468,37 @@ class SearchScreenController extends GetxController {
       return;
     }
 
-    final model = InitialSearchModel.fromJson(response.responseData);
+    _applyInitialSearchModel(InitialSearchModel.fromJson(response.responseData));
+  }
+
+  void _resetSearchResultState() {
+    _suggestions.clear();
+    _suggestionModel.value = null;
+    _productModel.value = null;
+  }
+
+  bool _hasActiveFilters({
+    int? minPrice,
+    int? maxPrice,
+    String? category,
+    String? brand,
+    String? color,
+    String? size,
+    String? gender,
+    int? maxDistance,
+  }) {
+    return minPrice != null ||
+        maxPrice != null ||
+        (category?.trim().isNotEmpty ?? false) ||
+        (brand?.trim().isNotEmpty ?? false) ||
+        (color?.trim().isNotEmpty ?? false) ||
+        (size?.trim().isNotEmpty ?? false) ||
+        ((gender?.trim().isNotEmpty ?? false) &&
+            gender!.trim().toLowerCase() != 'all') ||
+        maxDistance != null;
+  }
+
+  void _applyInitialSearchModel(InitialSearchModel model) {
     _searchModel.value = model;
 
     final loadedCategories = model.data?.categories ?? const [];

@@ -10,7 +10,7 @@ class OrderDetailsModel {
     final int? statusCode;
     final String? message;
     final Data? data;
-
+ 
     factory OrderDetailsModel.fromJson(Map<String, dynamic> json){ 
         return OrderDetailsModel(
             success: json["success"],
@@ -59,6 +59,8 @@ class Data {
         required this.rider,
         required this.hasOrderSupports,
         required this.hasRiderChat,
+        required this.hasGrievance,
+        required this.deliveryJob,
         required this.orderSteper,
     });
 
@@ -97,6 +99,8 @@ class Data {
     final dynamic rider;
     final bool? hasOrderSupports;
     final bool? hasRiderChat;
+    final bool? hasGrievance;
+    final DeliveryJob? deliveryJob;
     final int? orderSteper;
 
     factory Data.fromJson(Map<String, dynamic> json){ 
@@ -136,6 +140,10 @@ class Data {
             rider: json["rider"],
             hasOrderSupports: json["hasOrderSupports"],
             hasRiderChat: json["hasRiderChat"],
+            hasGrievance: json["hasGrievance"],
+            deliveryJob: json["deliveryJob"] == null
+                ? null
+                : DeliveryJob.fromJson(json["deliveryJob"]),
             orderSteper: json["orderSteper"],
         );
     }
@@ -317,4 +325,88 @@ class Product {
         );
     }
 
+}
+
+class DeliveryJob {
+    DeliveryJob({
+        required this.id,
+        required this.deliveryType,
+        required this.destination,
+        required this.distance,
+        required this.jobNumber,
+        required this.pickup,
+        required this.createdAt,
+    });
+
+    final String? id;
+    final String? deliveryType;
+    final Destination? destination;
+    final double? distance;
+    final String? jobNumber;
+    final Pickup? pickup;
+    final DateTime? createdAt;
+
+    factory DeliveryJob.fromJson(Map<String, dynamic> json) {
+        return DeliveryJob(
+            id: json["_id"]?.toString() ?? json["id"]?.toString(),
+            deliveryType: json["deliveryType"]?.toString(),
+            destination: json["destination"] == null
+                ? null
+                : Destination.fromJson(
+                    Map<String, dynamic>.from(json["destination"]),
+                  ),
+            distance: (json["distance"] as num?)?.toDouble(),
+            jobNumber: json["id"]?.toString(),
+            pickup: json["pickup"] == null
+                ? null
+                : Pickup.fromJson(Map<String, dynamic>.from(json["pickup"])),
+            createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+        );
+    }
+}
+
+class Destination {
+    Destination({
+        required this.address,
+        required this.coordinates,
+    });
+
+    final String? address;
+    final List<double> coordinates;
+
+    factory Destination.fromJson(Map<String, dynamic> json) {
+        return Destination(
+            address: json["address"]?.toString(),
+            coordinates: json["coordinates"] == null
+                ? []
+                : List<double>.from(
+                    (json["coordinates"] as List).map(
+                      (x) => (x as num).toDouble(),
+                    ),
+                  ),
+        );
+    }
+}
+
+class Pickup {
+    Pickup({
+        required this.address,
+        required this.coordinates,
+    });
+
+    final String? address;
+    final List<double> coordinates;
+
+    factory Pickup.fromJson(Map<String, dynamic> json) {
+        return Pickup(
+            address: json["address"]?.toString(),
+            coordinates: json["coordinates"] == null
+                ? []
+                : List<double>.from(
+                    (json["coordinates"] as List).map(
+                      (x) => (x as num).toDouble(),
+                    ),
+                  ),
+        );
+    }
 }

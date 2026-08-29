@@ -8,8 +8,10 @@ import 'package:hoodz/features/user/orders/data/models/my_order_model.dart'
     as order_model;
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/my_orders_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/pages/customer_services_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/check_out_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/order_card.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
 
 class OrderScreen extends GetView<MyOrdersController> {
   const OrderScreen({super.key});
@@ -191,17 +193,29 @@ class OrderScreen extends GetView<MyOrdersController> {
                             },
                             onReorder: () => _handleReorder(order),
                             optionalOnTap: () {
-                              PageNavigationService.to(
-                                context,
-                                AppRoutes.aiAssistant,
-                                arguments: {
-                                  'isShowBackButton': true,
-                                  'title': 'Customer support',
-                                  'subtitle': 'Online',
-                                },
+                              final orderId = controller.orderRawId(order);
+                              if (orderId.isEmpty) {
+                                showAppToast(
+                                  message: 'Order id not found.',
+                                  isError: true,
+                                );
+                                return;
+                              }
+
+                              final hasGrievance = order.hasGrievance ?? false;
+
+                              if (hasGrievance) {
+                                Get.find<ChatSystemController>()
+                                    .createOrderSupportChat(orderId: orderId);
+                                return;
+                              }
+
+                              Get.to(
+                                () => const CustomerServiceScreen(),
+                                arguments: {'orderId': orderId},
                               );
                             },
-                          );
+                          ); 
                         },
                       ),
                     );

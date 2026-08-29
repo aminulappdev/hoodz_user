@@ -4,6 +4,7 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/user_wallet_screen.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/widgets/logout_button.dart';
@@ -108,6 +109,23 @@ class ProfileScreen extends GetView<ProfileController> {
                               onTap: () {
                                 Get.to(UserWalletScreen());
                               },
+                            ),
+                            const ProfileSettingsDivider(),
+                            ProfileSettingsTile(
+                              onTap: () {
+                                if (controller.hasCustomerSupport) {
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.customerSupportMessage,
+                                  );
+                                  return;
+                                }
+
+                                Get.find<ChatSystemController>()
+                                    .createCustomerSupportChat();
+                              },
+                              icon: Icons.support_agent_outlined,
+                              title: 'Customer Support',
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(

@@ -8,7 +8,7 @@ class UploadService extends GetxService {
   UploadService(this._networkCaller);
 
   final NetworkCaller _networkCaller;
-
+ 
   Future<String?> uploadSingleFile({
     required String accessToken,
     required File file,

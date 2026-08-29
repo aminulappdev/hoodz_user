@@ -29,6 +29,7 @@ class Urls {
   static const String paymentTransactionsUrl =
       '$_baseUrl/payments/user/transctions';
   static const String chatUrl = '$_baseUrl/chat';
+  static const String grievanceUrl = '$_baseUrl/grievance';
   static String getChatMessagesUrlById(String chatId) =>
       '$_baseUrl/messages/chat/$chatId';
   static const String walletTopUpUrl = '$_baseUrl/top-up/add-wallet-money';

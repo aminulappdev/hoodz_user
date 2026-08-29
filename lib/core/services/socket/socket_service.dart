@@ -11,7 +11,7 @@ class SocketService extends GetxController {
   final RxList<Map<String, dynamic>> messageList = <Map<String, dynamic>>[].obs;
 
   bool get isInitialized => _isInitialized;
-  io.Socket get socket => _socket;
+  io.Socket get socket => _socket; 
 
   Future<SocketService> init() async {
     if (_isInitialized) {

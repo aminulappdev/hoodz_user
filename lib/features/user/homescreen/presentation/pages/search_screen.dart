@@ -3,11 +3,17 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/features/user/homescreen/data/models/initial_search_model.dart';
+import 'package:hoodz/features/user/homescreen/data/models/product_search_model.dart'
+    as product_search;
+import 'package:hoodz/features/user/homescreen/data/models/search_product_model.dart'
+    as search_product;
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/banner_card.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/category_chip.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/search_filter_bottom_sheet.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/search_header_row.dart';
+import 'package:hoodz/features/user/homescreen/presentation/widgets/search_history_widgets.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
@@ -50,275 +56,31 @@ class SearchScreen extends GetView<SearchScreenController> {
                     controller: controller.searchTextController,
                     onChanged: controller.updateSearchQuery,
                     onTapLeading: () => Navigator.pop(context),
-                    onTapTrailing: () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (_) => const SearchFilterBottomSheet(),
-                      );
-                    },
-                    onTapSearch: () {
-                      final query = controller.searchTextController.text.trim();
-                      if (query.isEmpty) {
-                        controller.clearSearchText();
-                        return;
-                      }
-
-                      controller.fetchSearchProducts(query: query);
-                    },
+                    onTapTrailing: () => _openFilterSheet(context),
+                    onTapSearch: _handleSearchTap,
                     onClear: controller.clearSearchText,
                   ),
                   SizedBox(height: 22.h(context)),
-                  if (showProductResults) ...[
-                    if (isProductLoading)
-                      const LinearProgressIndicator(
-                        minHeight: 2,
-                        backgroundColor: Color(0xFFF1F1F1),
-                        color: Color(0xFFFF7A1A),
-                      )
-                    else if (searchProducts.isEmpty)
-                      Padding(
-                        padding: EdgeInsets.only(top: 24.h(context)),
-                        child: Text(
-                          'No products found',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                fontSize: 14.sp(context),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFFA7A7A7),
-                              ),
-                        ),
-                      )
-                    else ...[
-                      Text(
-                        'Products',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontSize: 18.sp(context),
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF363636),
-                            ),
-                      ),
-                      SizedBox(height: 14.h(context)),
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: searchProducts.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12.h(context),
-                          crossAxisSpacing: 12.w(context),
-                          childAspectRatio: 0.68,
-                        ),
-                        itemBuilder: (context, index) {
-                          final product = searchProducts[index];
-                          final priceValue =
-                              product.discountPrice ?? product.price ?? 0;
-                          final oldPrice =
-                              product.discountPrice != null &&
-                                  product.price != null &&
-                                  product.price != product.discountPrice
-                              ? '\$${product.price}'
-                              : null;
-
-                          return ProductCard(
-                            name: product.title ?? '',
-                            image: product.banner ?? '',
-                            price: '\$$priceValue',
-                            rating:
-                                '${product.avgRating?.toStringAsFixed(1) ?? '0.0'} (${product.ratingCount ?? 0})',
-                            subtitle:
-                                product.collectionType ?? product.brand ?? '',
-                            oldPrice: oldPrice,
-                            stockLabel: product.inStock == true
-                                ? 'In stock'
-                                : 'Out of stock',
-
-                            onTapFavourite: () {},
-                            onTap: () {
-                              PageNavigationService.to(
-                                context,
-                                AppRoutes.productDetails,
-                                arguments: {'productId': product.id},
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ] else if (searchQuery.isNotEmpty) ...[
-                    if (isSuggestionLoading)
-                      const LinearProgressIndicator(
-                        minHeight: 2,
-                        backgroundColor: Color(0xFFF1F1F1),
-                        color: Color(0xFFFF7A1A),
-                      )
-                    else if (suggestions.isEmpty)
-                      Padding(
-                        padding: EdgeInsets.only(top: 24.h(context)),
-                        child: Text(
-                          'No suggestions found',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                fontSize: 14.sp(context),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFFA7A7A7),
-                              ),
-                        ),
-                      )
-                    else
-                      ListView.separated(
-                        itemCount: suggestions.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        separatorBuilder: (_, __) =>
-                            const Divider(height: 1, color: Color(0xFFEDEDED)),
-                        itemBuilder: (context, index) {
-                          final suggestion = suggestions[index];
-                          final text = suggestion.query ?? '';
-                          return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              text,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(
-                                    fontSize: 17.sp(context),
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF1F1F1F),
-                                  ),
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_outward_rounded,
-                              color: Color(0xFFD5D5D5),
-                            ),
-                            onTap: () {
-                              controller.fillSearchText(text);
-                              controller.fetchSearchProducts(query: text);
-                            },
-                          );
-                        },
-                      ),
-                  ] else ...[
-                    if (categories.isNotEmpty) ...[
-                      SizedBox(
-                        height: 38.h(context),
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: categories.length,
-                          separatorBuilder: (_, __) =>
-                              SizedBox(width: 10.w(context)),
-                          itemBuilder: (context, index) {
-                            final category = categories[index];
-                            final label = category.title ?? '';
-                            final isSelected =
-                                controller.selectedCategory.value.trim() ==
-                                label.trim();
-
-                            return CategoryChip(
-                              label: label,
-                              isSelected: isSelected,
-                              onTap: () {
-                                controller.selectCategory(label);
-                                controller.fillSearchText(label);
-                                controller.fetchSearchProducts(query: label);
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                    if (isLoading) ...[
-                      SizedBox(height: 12.h(context)),
-                      const LinearProgressIndicator(
-                        minHeight: 2,
-                        backgroundColor: Color(0xFFF1F1F1),
-                        color: Color(0xFFFF7A1A),
-                      ),
-                    ],
-                    SizedBox(height: 24.h(context)),
-                    _SectionHeader(
-                      title: 'Search History',
-                      actionText: 'Clear All',
-                      actionIcon: Icons.delete_outline_rounded,
-                      onActionTap: controller.clearSearchHistory,
+                  if (showProductResults)
+                    ..._buildProductResults(
+                      context,
+                      isProductLoading: isProductLoading,
+                      searchProducts: searchProducts,
+                    )
+                  else if (searchQuery.isNotEmpty)
+                    ..._buildSuggestions(
+                      context,
+                      isSuggestionLoading: isSuggestionLoading,
+                      suggestions: suggestions,
+                    )
+                  else
+                    ..._buildInitialContent(
+                      context,
+                      categories: categories,
+                      histories: histories,
+                      featuredVendors: featuredVendors,
+                      isLoading: isLoading,
                     ),
-                    SizedBox(height: 12.h(context)),
-                    if (histories.isEmpty)
-                      Text(
-                        'No recent searches',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14.sp(context),
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFFA7A7A7),
-                        ),
-                      )
-                    else
-                      Wrap(
-                        spacing: 10.w(context),
-                        runSpacing: 10.h(context),
-                        children: histories
-                            .map(
-                              (history) => _SearchChip(
-                                label: history.query ?? '',
-                                onTap: () => controller.useHistoryQuery(
-                                  history.query ?? '',
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    if (featuredVendors.isNotEmpty) ...[
-                      SizedBox(height: 26.h(context)),
-                      Text(
-                        'Featured vendors',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontSize: 18.sp(context),
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF363636),
-                            ),
-                      ),
-                      SizedBox(height: 16.h(context)),
-                      SizedBox(
-                        height: 96.h(context),
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: featuredVendors.length,
-                          separatorBuilder: (_, __) =>
-                              SizedBox(width: 12.w(context)),
-                          itemBuilder: (context, index) {
-                            final vendor = featuredVendors[index];
-                            final ratingCount = vendor.ratingCount ?? 0;
-                            final avgRating =
-                                vendor.avgRating?.toStringAsFixed(1) ?? '0.0';
-                            final distanceKm = vendor.distance?.distanceKm;
-                            final durationMinutes =
-                                vendor.distance?.durationMinutes;
-
-                            return ShopCard(
-                              image: vendor.profileAvatar ?? '',
-                              name: vendor.name ?? '',
-                              rating: '$avgRating ($ratingCount)',
-                              distance: distanceKm == null
-                                  ? 'N/A'
-                                  : '${distanceKm.toStringAsFixed(1)} km',
-                              time: durationMinutes == null
-                                  ? 'N/A'
-                                  : '$durationMinutes min',
-                              onTap: () {
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.shop,
-                                  arguments: {'shopId': vendor.id},
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ],
                 ],
               ),
             ),
@@ -327,86 +89,278 @@ class SearchScreen extends GetView<SearchScreenController> {
       ),
     );
   }
-}
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    required this.actionText,
-    required this.actionIcon,
-    required this.onActionTap,
-  });
-
-  final String title;
-  final String actionText;
-  final IconData actionIcon;
-  final VoidCallback onActionTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 18.sp(context),
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF363636),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: onActionTap,
-          child: Row(
-            children: [
-              Text(
-                actionText,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 14.sp(context),
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF8C8C8C),
-                ),
-              ),
-              SizedBox(width: 4.w(context)),
-              Icon(actionIcon, size: 18, color: const Color(0xFF8C8C8C)),
-            ],
-          ),
-        ),
-      ],
+  void _openFilterSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const SearchFilterBottomSheet(),
     );
   }
-}
 
-class _SearchChip extends StatelessWidget {
-  const _SearchChip({required this.label, required this.onTap});
+  void _handleSearchTap() {
+    final query = controller.searchTextController.text.trim();
+    if (query.isEmpty) {
+      controller.clearSearchText();
+      return;
+    }
 
-  final String label;
-  final VoidCallback onTap;
+    controller.fetchSearchProducts(query: query);
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 14.w(context),
-          vertical: 8.h(context),
+  List<Widget> _buildProductResults(
+    BuildContext context, {
+    required bool isProductLoading,
+    required List<search_product.Datum> searchProducts,
+  }) {
+    if (isProductLoading) {
+      return [_buildLoadingIndicator()];
+    }
+
+    if (searchProducts.isEmpty) {
+      return [_buildEmptyMessage(context, 'No products found')];
+    }
+
+    return [
+      _buildSectionTitle(context, 'Products'),
+      SizedBox(height: 14.h(context)),
+      GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: searchProducts.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 12.h(context),
+          crossAxisSpacing: 12.w(context),
+          childAspectRatio: 0.68,
         ),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(999.r(context)),
-          border: Border.all(color: const Color(0xFFF0F0F0)),
+        itemBuilder: (context, index) =>
+            _buildProductCard(context, searchProducts[index]),
+      ),
+    ];
+  }
+
+  Widget _buildProductCard(
+    BuildContext context,
+    search_product.Datum product,
+  ) {
+    final priceValue = product.discountPrice ?? product.price ?? 0;
+    final oldPrice =
+        product.discountPrice != null &&
+            product.price != null &&
+            product.price != product.discountPrice
+        ? '\$${product.price}'
+        : null;
+
+    return ProductCard(
+      name: product.title ?? '',
+      image: product.banner ?? '',
+      price: '\$$priceValue',
+      rating:
+          '${product.avgRating?.toStringAsFixed(1) ?? '0.0'} (${product.ratingCount ?? 0})',
+      subtitle: product.collectionType ?? product.brand ?? '',
+      oldPrice: oldPrice,
+      stockLabel: product.inStock == true ? 'In stock' : 'Out of stock',
+      onTapFavourite: () {},
+      onTap: () {
+        PageNavigationService.to(
+          context,
+          AppRoutes.productDetails,
+          arguments: {'productId': product.id},
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildSuggestions(
+    BuildContext context, {
+    required bool isSuggestionLoading,
+    required List<product_search.Suggestion> suggestions,
+  }) {
+    if (isSuggestionLoading) {
+      return [_buildLoadingIndicator()];
+    }
+
+    if (suggestions.isEmpty) {
+      return [_buildEmptyMessage(context, 'No suggestions found')];
+    }
+
+    return [
+      ListView.separated(
+        itemCount: suggestions.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        separatorBuilder: (_, __) =>
+            const Divider(height: 1, color: Color(0xFFEDEDED)),
+        itemBuilder: (context, index) {
+          final suggestion = suggestions[index];
+          final text = suggestion.query ?? '';
+
+          return ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              text,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: 17.sp(context),
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1F1F1F),
+              ),
+            ),
+            trailing: const Icon(
+              Icons.arrow_outward_rounded,
+              color: Color(0xFFD5D5D5),
+            ),
+            onTap: () {
+              controller.fillSearchText(text);
+              controller.fetchSearchProducts(query: text);
+            },
+          );
+        },
+      ),
+    ];
+  }
+
+  List<Widget> _buildInitialContent(
+    BuildContext context, {
+    required List<Category> categories,
+    required List<History> histories,
+    required List<FeaturedVendor> featuredVendors,
+    required bool isLoading,
+  }) {
+    return [
+      if (categories.isNotEmpty) _buildCategoryList(context, categories),
+      if (isLoading) ...[
+        SizedBox(height: 12.h(context)),
+        _buildLoadingIndicator(),
+      ],
+      SizedBox(height: 24.h(context)),
+      SearchSectionHeader(
+        title: 'Search History',
+        actionText: 'Clear All',
+        actionIcon: Icons.delete_outline_rounded,
+        onActionTap: controller.clearSearchHistory,
+      ),
+      SizedBox(height: 12.h(context)),
+      if (histories.isEmpty)
+        _buildEmptyMessage(context, 'No recent searches')
+      else
+        Wrap(
+          spacing: 10.w(context),
+          runSpacing: 10.h(context),
+          children: histories
+              .map<Widget>(
+                (history) => SearchChip(
+                  label: history.query ?? '',
+                  onTap: () => controller.useHistoryQuery(history.query ?? ''),
+                ),
+              )
+              .toList(),
         ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 13.sp(context),
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFF6C6C6C),
-          ),
+      if (featuredVendors.isNotEmpty) ...[
+        SizedBox(height: 26.h(context)),
+        _buildSectionTitle(context, 'Featured vendors'),
+        SizedBox(height: 16.h(context)),
+        _buildFeaturedVendorList(context, featuredVendors),
+      ],
+    ];
+  }
+
+  Widget _buildCategoryList(BuildContext context, List<Category> categories) {
+    return SizedBox(
+      height: 38.h(context),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: categories.length,
+        separatorBuilder: (_, __) => SizedBox(width: 10.w(context)),
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          final label = category.title ?? '';
+          final isSelected =
+              controller.selectedCategory.value.trim() == label.trim();
+
+          return CategoryChip(
+            label: label,
+            isSelected: isSelected,
+            onTap: () {
+              controller.selectCategory(label);
+              controller.fillSearchText(label);
+              controller.fetchSearchProducts(query: label);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFeaturedVendorList(
+    BuildContext context,
+    List<FeaturedVendor> featuredVendors,
+  ) {
+    return SizedBox(
+      height: 96.h(context),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: featuredVendors.length,
+        separatorBuilder: (_, __) => SizedBox(width: 12.w(context)),
+        itemBuilder: (context, index) {
+          final vendor = featuredVendors[index];
+          final ratingCount = vendor.ratingCount ?? 0;
+          final avgRating = vendor.avgRating?.toStringAsFixed(1) ?? '0.0';
+          final distanceKm = vendor.distance?.distanceKm;
+          final durationMinutes = vendor.distance?.durationMinutes;
+
+          return ShopCard(
+            image: vendor.profileAvatar ?? '',
+            name: vendor.name ?? '',
+            rating: '$avgRating ($ratingCount)',
+            distance: distanceKm == null
+                ? 'N/A'
+                : '${distanceKm.toStringAsFixed(1)} km',
+            time: durationMinutes == null ? 'N/A' : '$durationMinutes min',
+            onTap: () {
+              PageNavigationService.to(
+                context,
+                AppRoutes.shop,
+                arguments: {'shopId': vendor.id},
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        fontSize: 18.sp(context),
+        fontWeight: FontWeight.w700,
+        color: const Color(0xFF363636),
+      ),
+    );
+  }
+
+  Widget _buildEmptyMessage(BuildContext context, String message) {
+    return Padding(
+      padding: EdgeInsets.only(top: 24.h(context)),
+      child: Text(
+        message,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontSize: 14.sp(context),
+          fontWeight: FontWeight.w500,
+          color: const Color(0xFFA7A7A7),
         ),
       ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const LinearProgressIndicator(
+      minHeight: 2,
+      backgroundColor: Color(0xFFF1F1F1),
+      color: Color(0xFFFF7A1A),
     );
   }
 }

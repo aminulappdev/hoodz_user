@@ -53,6 +53,7 @@ class Data {
         required this.isProfileSetUp,
         required this.isOnline,
         required this.isDeleted,
+        required this.hasCustomerSupport,
         required this.dataId,
         required this.referralCode,
         required this.createdAt,
@@ -89,6 +90,7 @@ class Data {
     final bool? isProfileSetUp;
     final bool? isOnline;
     final bool? isDeleted;
+    final bool? hasCustomerSupport;
     final String? dataId;
     final String? referralCode;
     final DateTime? createdAt;
@@ -128,6 +130,7 @@ class Data {
             isProfileSetUp: json["isProfileSetUp"],
             isOnline: json["isOnline"],
             isDeleted: json["isDeleted"],
+            hasCustomerSupport: json["hasCustomerSupport"],
             dataId: json["id"],
             referralCode: json["referralCode"],
             createdAt: DateTime.tryParse(json["createdAt"] ?? ""),

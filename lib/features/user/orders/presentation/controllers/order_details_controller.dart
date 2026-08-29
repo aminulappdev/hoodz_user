@@ -96,6 +96,8 @@ class OrderDetailsController extends GetxController {
   String get addressNote =>
       orderDetailsData?.billingDetails?.note?.toString() ?? 'N/A';
 
+  bool get hasGrievance => orderDetailsData?.hasGrievance ?? false;
+
   List<tracking.TrackingTimelineItem> get timelineItems {
     final data = orderDetailsData;
     final steps = <_TimelineStep>[

@@ -19,6 +19,7 @@ import 'package:hoodz/features/user/homescreen/presentation/controllers/home_scr
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/customer_service_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/product_order_controller.dart';
@@ -42,7 +43,9 @@ import 'package:hoodz/features/user/payment/presentation/controllers/payment_tra
 import 'package:hoodz/features/user/payment/presentation/controllers/wallet_top_up_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/wallet_transaction_controller.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/customer_support_message_controller.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/general_message_controller.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/order_support_message_controller.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/change_password_controller.dart';
@@ -108,6 +111,10 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(OrderSummaryController.new, fenix: true);
     Get.lazyPut(ProductOrderController.new, fenix: true);
     Get.lazyPut(OrderDetailsController.new, fenix: true);
+    Get.lazyPut(
+      () => CustomerServiceController(Get.find<NetworkCaller>()),
+      fenix: true,
+    );
     Get.lazyPut(MyOrdersController.new, fenix: true);
     Get.lazyPut(OrderController.new, fenix: true);
     Get.lazyPut(ProductController.new, fenix: true);
@@ -135,6 +142,14 @@ class ControllerBinder extends Bindings {
     );
     Get.lazyPut(
       () => GeneralMessageController(Get.find<NetworkCaller>()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CustomerSupportMessageController(Get.find<NetworkCaller>()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => OrderSupportMessageController(Get.find<NetworkCaller>()),
       fenix: true,
     );
     Get.lazyPut(

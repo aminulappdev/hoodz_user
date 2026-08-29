@@ -2,7 +2,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
+import 'package:hoodz/features/user/chat/presentation/pages/customer_support_message_screen.dart';
 import 'package:hoodz/features/user/chat/presentation/pages/general_message_screen.dart';
+import 'package:hoodz/features/user/chat/presentation/pages/order_support_message_screen.dart';
 import 'package:hoodz/urls.dart';
 
 class ChatSystemController extends GetxController {
@@ -10,6 +12,130 @@ class ChatSystemController extends GetxController {
 
   final NetworkCaller _networkCaller;
   final RxBool isCreatingChat = false.obs;
+
+  Future<Map<String, dynamic>?> createCustomerSupportChat() async {
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      print('CUSTOM SUPPORT CREATE ERROR => Access token not found.');
+      return null;
+    }
+
+    Map<String, dynamic>? createdChat;
+
+    await showLoadingOverLay(
+      msg: 'Opening customer support...',
+      asyncFunction: () async {
+        isCreatingChat.value = true;
+
+        try {
+          final response = await _networkCaller.postRequest(
+            Urls.chatUrl,
+            accessToken: accessToken,
+            body: {'type': 'customer_support'},
+          );
+
+          print(
+            'CUSTOM SUPPORT CREATE STATUS CODE => ${response.statusCode}',
+          );
+          print('CUSTOM SUPPORT CREATE SUCCESS => ${response.isSuccess}');
+          print('CUSTOM SUPPORT CREATE MESSAGE => ${response.message}');
+          print('CUSTOM SUPPORT CREATE RAW RESPONSE => ${response.responseData}');
+
+          if (!response.isSuccess) {
+            print('CUSTOM SUPPORT CREATE ERROR => ${response.errorMessage}');
+            return;
+          }
+
+          final chatData = _extractChatData(response.responseData);
+          if (chatData == null) {
+            print('CUSTOM SUPPORT CREATE ERROR => Could not parse chat data.');
+            return;
+          }
+
+          _printChatData(chatData);
+          createdChat = chatData;
+        } finally {
+          isCreatingChat.value = false;
+        }
+      },
+    );
+
+    final createdChatData = createdChat;
+    if (createdChatData != null) {
+      final chatArgs = _buildChatArguments(createdChatData);
+      Get.to(() => const CustomerSupportMessageScreen(), arguments: chatArgs);
+    }
+
+    return createdChat;
+  }
+
+  Future<Map<String, dynamic>?> createOrderSupportChat({
+    required String orderId,
+  }) async {
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      print('ORDER SUPPORT CREATE ERROR => Access token not found.');
+      return null;
+    }
+
+    if (orderId.trim().isEmpty) {
+      print('ORDER SUPPORT CREATE ERROR => orderId is empty.');
+      return null;
+    }
+
+    Map<String, dynamic>? createdChat;
+
+    await showLoadingOverLay(
+      msg: 'Opening order support...',
+      asyncFunction: () async {
+        isCreatingChat.value = true;
+
+        try {
+          final response = await _networkCaller.postRequest(
+            Urls.chatUrl,
+            accessToken: accessToken,
+            body: {'type': 'order_support', 'order': orderId.trim()},
+          );
+
+          print(
+            'ORDER SUPPORT CREATE STATUS CODE => ${response.statusCode}',
+          );
+          print('ORDER SUPPORT CREATE SUCCESS => ${response.isSuccess}');
+          print('ORDER SUPPORT CREATE MESSAGE => ${response.message}');
+          print(
+            'ORDER SUPPORT CREATE RAW RESPONSE => ${response.responseData}',
+          );
+
+          if (!response.isSuccess) {
+            print('ORDER SUPPORT CREATE ERROR => ${response.errorMessage}');
+            return;
+          }
+
+          final chatData = _extractChatData(response.responseData);
+          if (chatData == null) {
+            print('ORDER SUPPORT CREATE ERROR => Could not parse chat data.');
+            return;
+          }
+
+          _printChatData(chatData);
+          createdChat = chatData;
+        } finally {
+          isCreatingChat.value = false;
+        }
+      },
+    );
+
+    final createdChatData = createdChat;
+    if (createdChatData != null) {
+      final chatArgs = _buildChatArguments(createdChatData);
+      chatArgs['title'] = 'Order Support';
+      chatArgs['subtitle'] = 'Online';
+      chatArgs['orderId'] = orderId.trim();
+      Get.to(() => const OrderSupportMessageScreen(), arguments: chatArgs);
+    }
+
+    return createdChat;
+  }
 
   Future<Map<String, dynamic>?> createSingleChat({
     required String participantId,

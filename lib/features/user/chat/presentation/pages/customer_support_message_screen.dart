@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
-import 'package:hoodz/features/user/chat/presentation/controllers/general_message_controller.dart';
+import 'package:hoodz/features/user/chat/presentation/controllers/customer_support_message_controller.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_chat_header.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_input_bar.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/message_bubble.dart';
 
-class GeneralMessageScreen extends GetView<GeneralMessageController> {
-  final bool? isShowBackButton; 
+class CustomerSupportMessageScreen
+    extends GetView<CustomerSupportMessageController> {
+  final bool? isShowBackButton;
   final String? title;
   final String? subtitle;
 
-  const GeneralMessageScreen({
+  const CustomerSupportMessageScreen({
     super.key,
     this.isShowBackButton,
     this.title,
@@ -27,10 +28,10 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
         arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
     final resolvedTitle = controller.chatTitle.value.isNotEmpty
         ? controller.chatTitle.value
-        : arguments?['title'] as String? ?? title ?? 'Customer support';
+        : arguments?['title'] as String? ?? title ?? 'Customer Support';
     final resolvedSubtitle = controller.chatSubtitle.value.isNotEmpty
         ? controller.chatSubtitle.value
-        : arguments?['subtitle'] as String? ?? subtitle ?? 'Powered by AI';
+        : arguments?['subtitle'] as String? ?? subtitle ?? 'Online';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -41,7 +42,8 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
       ),
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value && controller.messages.isEmpty) {
+          if (controller.isInitialLoading.value ||
+              (controller.isLoading.value && controller.messages.isEmpty)) {
             return const Center(child: CircularProgressIndicator());
           }
 

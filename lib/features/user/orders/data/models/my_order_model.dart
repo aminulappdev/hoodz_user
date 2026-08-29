@@ -9,7 +9,7 @@ class MyOrderModel {
 
   final bool? success;
   final int? statusCode;
-  final String? message;
+  final String? message; 
   final Meta? meta;
   final List<Datum> data;
 
@@ -40,6 +40,7 @@ class Datum {
     required this.isDeleted,
     required this.datumId,
     required this.createdAt,
+    required this.hasGrievance,
     required this.hasGrievanceIssued,
   });
 
@@ -55,6 +56,7 @@ class Datum {
   final bool? isDeleted;
   final String? datumId;
   final DateTime? createdAt;
+  final bool? hasGrievance;
   final bool? hasGrievanceIssued;
 
   factory Datum.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,7 @@ class Datum {
       isDeleted: json["isDeleted"],
       datumId: json["id"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
+      hasGrievance: json["hasGrievance"],
       hasGrievanceIssued: json["hasGrievanceIssued"],
     );
   }

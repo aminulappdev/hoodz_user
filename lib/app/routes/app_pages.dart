@@ -7,6 +7,8 @@ import 'package:hoodz/features/auth/presentation/pages/sign_in_screen.dart';
 import 'package:hoodz/features/auth/presentation/pages/sign_up_screen.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/pages/ai_assistant_screen.dart';
 import 'package:hoodz/features/user/dashboard/presentation/pages/dashboard_screen.dart';
+import 'package:hoodz/features/user/chat/presentation/pages/customer_support_message_screen.dart';
+import 'package:hoodz/features/user/chat/presentation/pages/order_support_message_screen.dart';
 import 'package:hoodz/features/user/product/presentation/pages/all_product_screen.dart';
 import 'package:hoodz/features/user/product/presentation/pages/all_product_review_screen.dart';
 import 'package:hoodz/features/user/product/presentation/pages/all_vouchers_screen.dart';
@@ -69,6 +71,9 @@ abstract final class AppPages {
     AppRoutes.paymentMethod: (_) => const PaymentMethodScreen(),
     AppRoutes.paymentSuccessfull: (_) => const PaymentSuccessfullScreen(),
     AppRoutes.aiAssistant: (_) => const AiAssistantScreen(),
+    AppRoutes.customerSupportMessage: (_) =>
+        const CustomerSupportMessageScreen(),
+    AppRoutes.orderSupportMessage: (_) => const OrderSupportMessageScreen(),
     AppRoutes.shopDetails: (_) => const ShopDetailsScreen(),
     AppRoutes.points: (_) => const PointsScreen(),
   };
