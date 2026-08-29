@@ -242,7 +242,7 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
               Text(
                 'Recommended for you',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp(context),
+                  fontSize: 16.sp(context), 
                   fontWeight: FontWeight.w700,
                   color: const Color(0xff434343),
                 ),

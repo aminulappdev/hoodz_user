@@ -12,6 +12,11 @@ class Urls {
   static const String userLocationUrl = '$_baseUrl/users/location';
   static const String deliveryLocationUrl = '$_baseUrl/users/delivery-location';
   static const String settingsUrl = '$_baseUrl/settings';
+  static const String searchUrl = '$_baseUrl/search';
+  static const String searchDataUrl = '$_baseUrl/search/data';
+  static const String searchProductsUrl = '$_baseUrl/products';
+  static const String searchFilterPageDataUrl =
+      '$_baseUrl/search/filter-page-data';
   static const String cartUrl = '$_baseUrl/cart';
   static const String cartAddUrl = '$_baseUrl/cart/add';
   static const String cartUpdateUrl = '$_baseUrl/cart/update';

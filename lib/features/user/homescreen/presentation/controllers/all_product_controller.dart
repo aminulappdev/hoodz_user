@@ -10,7 +10,7 @@ import 'package:hoodz/urls.dart';
 class AllTrendingProductController extends GetxController {
   final NetworkCaller _networkCaller = Get.find<NetworkCaller>();
 
-  final RxBool isLoading = false.obs;  
+  final RxBool isLoading = false.obs;   
   final RxBool isLoadingMore = false.obs;
   final Rx<AllProductModel?> _productModel = Rx<AllProductModel?>(null);
   int _currentPage = 1;

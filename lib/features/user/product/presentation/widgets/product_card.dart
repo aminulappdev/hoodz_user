@@ -7,7 +7,7 @@ import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({
+  const ProductCard({ 
     super.key,
     required this.name,
     required this.image,
