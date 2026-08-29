@@ -7,9 +7,9 @@ class TrackingSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: double.infinity, 
       padding: EdgeInsets.symmetric(
-        horizontal: 14.w(context),
+        horizontal: 14.w(context), 
         vertical: 12.h(context),
       ),
       decoration: BoxDecoration(
@@ -25,7 +25,7 @@ class TrackingSummaryCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(
+          Expanded( 
             child: _InfoBlock(
               icon: Icons.access_time_filled_rounded,
               iconBg: const Color(0xFFD8F8E3),
@@ -72,6 +72,7 @@ class _InfoBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment:
           alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [

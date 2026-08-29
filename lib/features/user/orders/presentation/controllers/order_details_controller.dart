@@ -14,7 +14,7 @@ class OrderDetailsController extends GetxController {
   OrderDetailsController() : _networkCaller = Get.find<NetworkCaller>();
 
   final NetworkCaller _networkCaller;
-
+ 
   final RxBool isLoading = false.obs;
   final Rxn<order_details.OrderDetailsModel> _orderDetailsModel =
       Rxn<order_details.OrderDetailsModel>();

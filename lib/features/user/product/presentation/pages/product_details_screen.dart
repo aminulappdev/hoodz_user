@@ -25,6 +25,7 @@ import 'package:hoodz/features/user/orders/presentation/widgets/color_plate.dart
 import 'package:hoodz/features/user/product/presentation/widgets/product_policy_section.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_info.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/size_plate.dart';
+import 'package:hoodz/features/user/product/presentation/controller/all_vouchers_controller.dart';
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
@@ -32,7 +33,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   const ProductDetailsScreen({super.key});
 
   Color? _parseColor(dynamic value) {
-    if (value is Color) {
+    if (value is Color) { 
       return value; 
     }
 
@@ -238,6 +239,52 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     return [item];
   }
 
+  VoucherViewData _toVoucherViewData(dynamic voucherData) {
+    final discountType = _normalizeString(voucherData?.discountType) ?? 'Discount';
+    final discountValue = _normalizeString(voucherData?.discountValue) ?? '0';
+    final minSpend = _normalizeString(voucherData?.minSpend) ?? '0';
+    final expiryDate = voucherData?.expiryDate;
+    final useAt = voucherData?.useAt;
+    final expiryText = expiryDate == null
+        ? 'No expiry date'
+        : 'Expires on ${expiryDate.toLocal().toString().split(" ").first}';
+    final status = _resolveVoucherStatus(voucherData);
+    final title = _normalizeString(voucherData?.title) ??
+        '$discountValue $discountType Off';
+    final subtitle =
+        'Purchase $minSpend or more and save $discountValue';
+    final usedAtDate = useAt is DateTime
+        ? useAt
+        : DateTime.tryParse(useAt?.toString() ?? '');
+
+    return VoucherViewData(
+      voucher: Voucher(
+        title: title,
+        subtitle: subtitle,
+        code: _normalizeString(voucherData?.code) ?? '',
+        expiryText: expiryText,
+        status: status,
+      ),
+      isUsed: voucherData?.hasUsed == true || status == VoucherStatus.used,
+      usedAtText: usedAtDate?.toLocal().toString().split(" ").first,
+    );
+  }
+
+  VoucherStatus _resolveVoucherStatus(dynamic voucherData) {
+    final status = _normalizeString(voucherData?.status)?.toLowerCase();
+    final hasUsed = voucherData?.hasUsed == true;
+
+    if (hasUsed || status == 'used') {
+      return VoucherStatus.used;
+    }
+
+    if (status == 'expired') {
+      return VoucherStatus.expired;
+    }
+
+    return VoucherStatus.active;
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -246,8 +293,8 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     final cartController = Get.find<CartController>();
     final routeArguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.initialize(routeArguments);
+    WidgetsBinding.instance.addPostFrameCallback((_) { 
+      controller.initialize(routeArguments); 
     });
 
     return Scaffold( 
@@ -669,10 +716,17 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 ViewAllList(
                   title: 'Vouchers',
                   onTap: () {
+                    final productTitle =
+                        _normalizeString(product?.title) ?? 'Product';
+                    final voucherViewData =
+                        vouchers.map((voucher) => _toVoucherViewData(voucher)).toList();
                     PageNavigationService.to(
                       context,
                       AppRoutes.allVouchers,
-                      arguments: {'title': 'Shop Vouchers'},
+                      arguments: {
+                        'title': '$productTitle Vouchers',
+                        'vouchers': voucherViewData,
+                      },
                     );
                   },
                 ),
@@ -691,17 +745,6 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                           ]
                         : List.generate(vouchers.length, (index) {
                             final voucherData = vouchers[index];
-                            final discountType =
-                                voucherData.discountType ?? 'Discount';
-                            final discountValue =
-                                voucherData.discountValue?.toString() ?? '0';
-                            final minSpend =
-                                voucherData.minSpend?.toString() ?? '0';
-                            final expiryDate = voucherData.expiryDate;
-                            final expiryText = expiryDate == null
-                                ? 'No expiry date'
-                                : 'Expires on ${expiryDate.toLocal().toString().split(" ").first}';
-
                             return Padding(
                               padding: EdgeInsets.only(
                                 right: index == vouchers.length - 1
@@ -710,17 +753,17 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                               ),
                               child: SizedBox(
                                 width: 320.w(context),
-                                child: VoucherCardDesign(
-                                  isCompact: true,
-                                  voucher: Voucher(
-                                    title:
-                                        '${discountValue} ${discountType} Off',
-                                    subtitle:
-                                        'Purchase ${minSpend} or more and save ${discountValue}',
-                                    code: voucherData.code ?? '',
-                                    expiryText: expiryText,
-                                    status: VoucherStatus.active,
-                                  ),
+                                child: Builder(
+                                  builder: (context) {
+                                    final voucherViewData =
+                                        _toVoucherViewData(voucherData);
+                                    return VoucherCardDesign(
+                                      isCompact: true,
+                                      voucher: voucherViewData.voucher,
+                                      isUsed: voucherViewData.isUsed,
+                                      usedAtText: voucherViewData.usedAtText,
+                                    );
+                                  },
                                 ),
                               ),
                             );

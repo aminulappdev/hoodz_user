@@ -9,17 +9,29 @@ class VoucherCardDesign extends StatelessWidget {
   final Voucher voucher;
   final bool showDetailsSection;
   final bool isCompact;
+  final bool isUsed;
+  final String? usedAtText;
 
   const VoucherCardDesign({
     super.key,
     required this.voucher,
     this.showDetailsSection = true,
     this.isCompact = false,
+    this.isUsed = false,
+    this.usedAtText,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool isActive = voucher.status == VoucherStatus.active;
+    final bool showUsedState = isUsed || voucher.status == VoucherStatus.used;
+    final bool isActionable = isActive && !showUsedState;
+    final bool showCopyCode = isActive && !showUsedState;
+    final String footerText = showUsedState
+        ? 'Used at ${usedAtText ?? 'N/A'}'
+        : voucher.expiryText;
+    final TextDecoration textDecoration =
+        showUsedState ? TextDecoration.lineThrough : TextDecoration.none;
 
     return Container(
       padding: EdgeInsets.all(isCompact ? 12 : 14),
@@ -28,7 +40,7 @@ class VoucherCardDesign extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF0F0F0)),
         // Used/expired vouchers are visually muted so "Active" clearly
         // reads as the actionable state.
-        color: isActive ? Colors.white : const Color(0xFFFAFAFA),
+        color: isActionable ? Colors.white : const Color(0xFFFAFAFA),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +59,7 @@ class VoucherCardDesign extends StatelessWidget {
                 child: Icon(
                   Icons.confirmation_number_outlined,
                   size: isCompact ? 18.h(context) : 20.h(context),
-                  color: isActive ? kOrange : Colors.grey.shade500,
+                  color: isActionable ? kOrange : Colors.grey.shade500,
                 ),
               ),
               SizedBox(width: isCompact ? 10.w(context) : 12.w(context)),
@@ -64,7 +76,8 @@ class VoucherCardDesign extends StatelessWidget {
                       style: TextStyle(
                         fontSize: (isCompact ? 15 : 16).sp(context),
                         fontWeight: FontWeight.w700,
-                        color: isActive ? Colors.black : Colors.grey.shade500,
+                        color: isActionable ? Colors.black : Colors.grey.shade500,
+                        decoration: textDecoration,
                       ),
                     ),
                     SizedBox(height: isCompact ? 1.h(context) : 2.h(context)),
@@ -76,16 +89,17 @@ class VoucherCardDesign extends StatelessWidget {
                         fontSize: (isCompact ? 11 : 12).sp(context),
                         color: Colors.grey.shade600,
                         height: isCompact ? 1.35 : null,
+                        decoration: textDecoration,
                       ),
                     ),
                   ],
                 ),
               ),
               SizedBox(width: isCompact ? 8.w(context) : 12.w(context)),
-              if (isActive)
+              if (showCopyCode)
                 CopyCodeButton(code: voucher.code)
               else
-                _StatusBadge(status: voucher.status),
+                _StatusBadge(status: voucher.status, isUsed: showUsedState),
             ],
           ),
           if (showDetailsSection) ...[
@@ -107,17 +121,19 @@ class VoucherCardDesign extends StatelessWidget {
                         fontSize: (isCompact ? 13 : 14).sp(context),
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1,
+                        decoration: textDecoration,
                       ),
                     ),
                     SizedBox(width: 12.w(context)),
                     Container(width: 1, height: 16, color: Colors.grey.shade300),
                     SizedBox(width: 12.w(context)),
                     Text(
-                      voucher.expiryText,
+                      footerText,
                       style: TextStyle(
                         fontSize: (isCompact ? 12 : 13).sp(context),
                         fontWeight: FontWeight.w500,
-                        color: isActive ? kOrange : Colors.grey.shade500,
+                        color: isActionable ? kOrange : Colors.grey.shade500,
+                        decoration: textDecoration,
                       ),
                     ),
                   ],
@@ -133,12 +149,15 @@ class VoucherCardDesign extends StatelessWidget {
 
 class _StatusBadge extends StatelessWidget {
   final VoucherStatus status;
+  final bool isUsed;
 
-  const _StatusBadge({required this.status});
+  const _StatusBadge({required this.status, required this.isUsed});
 
   @override
   Widget build(BuildContext context) {
-    final label = status == VoucherStatus.used ? 'Used' : 'Expired';
+    final label = isUsed
+        ? 'Used'
+        : (status == VoucherStatus.used ? 'Used' : 'Expired');
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(

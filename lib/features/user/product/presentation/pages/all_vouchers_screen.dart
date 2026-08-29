@@ -18,18 +18,35 @@ class AllVouchersScreen extends GetView<AllVouchersController> {
       backgroundColor: const Color(0xFFFDFDFD),
       appBar: CustomAppBar(label: controller.title.value),
       body: SafeArea(
-        child: ListView.separated(
-          padding: EdgeInsets.fromLTRB(
-            12.w(context),
-            8.h(context),
-            12.w(context),
-            20.h(context),
-          ),
-          itemCount: controller.vouchers.length,
-          separatorBuilder: (context, index) => SizedBox(height: 14.h(context)),
-          itemBuilder: (context, index) {
-            return VoucherCardDesign(voucher: controller.vouchers[index]);
-          },
+        child: Obx(
+          () => controller.vouchers.isEmpty
+              ? Center(
+                  child: Text(
+                    'No vouchers available',
+                    style: TextStyle(
+                      fontSize: 14.sp(context),
+                      color: const Color(0xFF6B6B6B),
+                    ),
+                  ),
+                )
+              : ListView.separated(
+                  padding: EdgeInsets.fromLTRB(
+                    12.w(context),
+                    8.h(context),
+                    12.w(context),
+                    20.h(context),
+                  ),
+                  itemCount: controller.vouchers.length,
+                  separatorBuilder: (context, index) =>
+                      SizedBox(height: 14.h(context)),
+                  itemBuilder: (context, index) {
+                    return VoucherCardDesign(
+                      voucher: controller.vouchers[index].voucher,
+                      isUsed: controller.vouchers[index].isUsed,
+                      usedAtText: controller.vouchers[index].usedAtText,
+                    );
+                  },
+                ),
         ),
       ),
     );

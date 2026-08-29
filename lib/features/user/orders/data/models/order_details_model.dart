@@ -10,9 +10,9 @@ class OrderDetailsModel {
     final int? statusCode;
     final String? message;
     final Data? data;
- 
+  
     factory OrderDetailsModel.fromJson(Map<String, dynamic> json){ 
-        return OrderDetailsModel(
+        return OrderDetailsModel( 
             success: json["success"],
             statusCode: json["statusCode"],
             message: json["message"],

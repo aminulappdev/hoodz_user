@@ -7,7 +7,10 @@ class RiderInfoCard extends StatelessWidget {
   final String rating;
   final String vehicleId;
   final String phoneNumber;
-  final VoidCallback onTap;
+  final double? liveTrackingButtonWidth;
+  final double? liveTrackingButtonHeight;
+  final VoidCallback onMessageTap;
+  final VoidCallback onLiveTrackingTap;
 
   const RiderInfoCard({
     super.key,
@@ -15,7 +18,11 @@ class RiderInfoCard extends StatelessWidget {
     required this.riderName,
     required this.rating,
     required this.vehicleId,
-    required this.phoneNumber, required this.onTap,
+    required this.phoneNumber,
+    this.liveTrackingButtonWidth,
+    this.liveTrackingButtonHeight,
+    required this.onMessageTap,
+    required this.onLiveTrackingTap,
   });
 
   @override
@@ -63,7 +70,7 @@ class RiderInfoCard extends StatelessWidget {
                               ),
                         ),
                         IconButton(
-                          onPressed: onTap,
+                          onPressed: onMessageTap,
                           icon: const Icon(
                             Icons.message_rounded,
                             size: 24,
@@ -119,6 +126,48 @@ class RiderInfoCard extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: 12.h(context),
+              horizontal: 12.w(context),
+            ),
+            child: SizedBox(
+              width: liveTrackingButtonWidth ?? double.infinity,
+              height: liveTrackingButtonHeight ?? 50.h(context),
+              child: Material(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(color: Colors.redAccent),
+                  borderRadius: BorderRadius.circular(15.r(context)),
+                ),
+                child: InkWell(
+                  onTap: onLiveTrackingTap,
+                  borderRadius: BorderRadius.circular(15.r(context)),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 3.r(context),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                        SizedBox(width: 6.w(context)),
+                        Text(
+                          'Live Tracking',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                fontSize: 15.sp(context),
+                                fontWeight: FontWeight.w500,
+                                color: Colors.redAccent,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),

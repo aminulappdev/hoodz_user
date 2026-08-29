@@ -47,6 +47,7 @@ import 'package:hoodz/features/user/chat/presentation/controllers/customer_suppo
 import 'package:hoodz/features/user/chat/presentation/controllers/general_message_controller.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/order_support_message_controller.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
+import 'package:hoodz/core/services/socket/user_order_socket_service.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/change_password_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/content_controller.dart';
@@ -136,6 +137,7 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(WalletTopUpController.new, fenix: true);
     Get.lazyPut(WalletTransactionController.new, fenix: true);
     Get.put(SocketService());
+    Get.put(UserOrderSocketService(Get.find<SocketService>()));
     Get.lazyPut(
       () => ChatSystemController(Get.find<NetworkCaller>()),
       fenix: true,

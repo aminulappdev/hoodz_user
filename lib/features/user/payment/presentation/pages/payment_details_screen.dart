@@ -3,16 +3,16 @@ import 'package:get/get.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
+import 'package:hoodz/core/services/socket/user_order_socket_service.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
 import 'package:hoodz/features/user/orders/data/models/order_details_model.dart'
     as order_details;
 import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/customer_services_screen.dart';
-import 'package:hoodz/features/user/payment/presentation/widgets/live_tracking_map_panel.dart';
+import 'package:hoodz/features/user/payment/presentation/pages/live_tracking_screen.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/order_details_card.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/order_items_section.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/rider_info_card.dart';
-import 'package:hoodz/features/user/payment/presentation/widgets/tracking_summary_card.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/tracking_timeline_tile.dart';
 
 class PaymentDetailsScreen extends StatefulWidget {
@@ -25,6 +25,7 @@ class PaymentDetailsScreen extends StatefulWidget {
 class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
   late final OrderDetailsController _controller;
   late final ChatSystemController _chatSystemController;
+  late final UserOrderSocketService _userOrderSocketService;
   bool _hasRequestedLoad = false;
 
   @override
@@ -32,6 +33,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     super.initState();
     _controller = Get.find<OrderDetailsController>();
     _chatSystemController = Get.find<ChatSystemController>();
+    _userOrderSocketService = Get.find<UserOrderSocketService>();
     _controller.clearOrderDetails();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -70,11 +72,11 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     return null;
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( 
       backgroundColor: const Color(0xFFF8F8F8),
-      appBar: CustomAppBar(label: 'Live Tracking'),
+      appBar: CustomAppBar(label: 'Order Details'),
       body: SafeArea(
         child: Obx(() {
           final List<order_details.Item> orderItems =
@@ -89,20 +91,85 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                const LiveTrackingMapPanel(),
-                Transform.translate(
-                  offset: Offset(0, -18.h(context)),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w(context)),
-                    child: Column(
-                      children: [
-                        const TrackingSummaryCard(),
-                        SizedBox(height: 12.h(context)),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w(context)),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.fromLTRB(
+                          14.w(context),
+                          16.h(context),
+                          14.w(context),
+                          8.h(context),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.r(context)),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x12000000),
+                              blurRadius: 16,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Order Timeline',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    fontSize: 18.sp(context),
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF444444),
+                                  ),
+                            ),
+                            SizedBox(height: 14.h(context)),
+                            ...List.generate(_controller.timelineItems.length, (
+                              index,
+                            ) {
+                              final item = _controller.timelineItems[index];
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 12.h(context)),
+                                child: TrackingTimelineTile(
+                                  title: item.title,
+                                  trailingText: item.trailingText,
+                                  state: item.state,
+                                  showConnector:
+                                      index !=
+                                      _controller.timelineItems.length - 1,
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                      if (_controller.orderDetailsData?.rider != null) ...[
+                        SizedBox(height: 14.h(context)),
                         RiderInfoCard(
-                          onTap: () {
+                          liveTrackingButtonHeight: 40.h(context),
+                          liveTrackingButtonWidth: 200.w(context),
+                          onMessageTap: () {
                             _chatSystemController.createSingleChat(
                               participantId: '6a5d9e075de489e8e2995305',
                             );
+                          },
+                          onLiveTrackingTap: () {
+                            final orderId =
+                                _controller.orderDetailsData?.id ??
+                                _controller.orderDetailsData?.dataId ??
+                                '';
+
+                            if (orderId.isNotEmpty) {
+                              _userOrderSocketService.startTracking(
+                                orderId: orderId,
+                              );
+                            }
+
+                            Get.to(() => const LiveTrackingScreen());
                           },
                           imageUrl: _controller.riderImageUrl,
                           riderName: _controller.riderName,
@@ -110,109 +177,54 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                           vehicleId: _controller.riderVehicleId,
                           phoneNumber: _controller.riderPhoneNumber,
                         ),
+                      ],
+                      SizedBox(height: 14.h(context)),
+                      OrderDetailsCard(
+                        orderNumber: _controller.orderNumber,
+                        itemsCount: _controller.orderItemsCount,
+                        paymentMethod: _controller.paymentMethod,
+                        totalAmount: _controller.totalAmount,
+                      ),
+                      SizedBox(height: 14.h(context)),
+                      if (orderItems.isNotEmpty) ...[
+                        OrderItemsSection(items: orderItems),
                         SizedBox(height: 14.h(context)),
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(
-                            14.w(context),
-                            16.h(context),
-                            14.w(context),
-                            8.h(context),
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.r(context)),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x12000000),
-                                blurRadius: 16,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Order Timeline',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(
-                                      fontSize: 18.sp(context),
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF444444),
-                                    ),
-                              ),
-                              SizedBox(height: 14.h(context)),
-                              ...List.generate(
-                                _controller.timelineItems.length,
-                                (index) {
-                                  final item = _controller.timelineItems[index];
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                      bottom: 12.h(context),
-                                    ),
-                                    child: TrackingTimelineTile(
-                                      title: item.title,
-                                      trailingText: item.trailingText,
-                                      state: item.state,
-                                      showConnector:
-                                          index !=
-                                          _controller.timelineItems.length - 1,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 14.h(context)),
-                        OrderDetailsCard(
-                          orderNumber: _controller.orderNumber,
-                          itemsCount: _controller.orderItemsCount,
-                          paymentMethod: _controller.paymentMethod,
-                          totalAmount: _controller.totalAmount,
-                        ),
-                        SizedBox(height: 14.h(context)),
-                        if (orderItems.isNotEmpty) ...[
-                          OrderItemsSection(items: orderItems),
-                          SizedBox(height: 14.h(context)),
-                        ],
-                        DeliveryAddressCard(
-                          buildingNumber: _controller.buildingNumber,
-                          floorNumber: _controller.floorNumber,
-                          apartmentNumber: _controller.apartmentNumber,
-                          addressLine: _controller.addressLine,
-                          note: _controller.addressNote,
-                        ),
-                        SizedBox(height: 20.h(context)),
-                        CustomButton(
-                          text: 'Customer Service',
-                          onPressed: () {
-                            final orderId =
-                                _controller.orderDetailsData?.id ??
-                                _controller.orderDetailsData?.dataId ??
-                                '';
+                      ],
+                      DeliveryAddressCard(
+                        buildingNumber: _controller.buildingNumber,
+                        floorNumber: _controller.floorNumber,
+                        apartmentNumber: _controller.apartmentNumber,
+                        addressLine: _controller.addressLine,
+                        note: _controller.addressNote,
+                      ),
+                      SizedBox(height: 20.h(context)),
+                      CustomButton(
+                        text: 'Customer Service',
+                        onPressed: () {
+                          final orderId =
+                              _controller.orderDetailsData?.id ??
+                              _controller.orderDetailsData?.dataId ??
+                              '';
 
-                            if (_controller.hasGrievance) {
-                              if (orderId.isEmpty) {
-                                return;
-                              }
-
-                              _chatSystemController.createOrderSupportChat(
-                                orderId: orderId,
-                              );
+                          if (_controller.hasGrievance) {
+                            if (orderId.isEmpty) {
                               return;
                             }
 
-                            Get.to(
-                              () => const CustomerServiceScreen(),
-                              arguments: {'orderId': orderId},
+                            _chatSystemController.createOrderSupportChat(
+                              orderId: orderId,
                             );
-                          },
-                        ),
-                        SizedBox(height: 24.h(context)),
-                      ],
-                    ),
+                            return;
+                          }
+
+                          Get.to(
+                            () => const CustomerServiceScreen(),
+                            arguments: {'orderId': orderId},
+                          );
+                        },
+                      ),
+                      SizedBox(height: 24.h(context)),
+                    ],
                   ),
                 ),
               ],
