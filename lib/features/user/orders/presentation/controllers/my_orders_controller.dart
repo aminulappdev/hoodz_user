@@ -16,7 +16,7 @@ class MyOrdersController extends GetxController {
   final List<Datum> _orders = [];
   final Map<String, MyOrderModel> _cachedModels = {};
   int _requestSerial = 0;
-
+ 
   final List<String> orderStatuses = const [
     'Active',
     'Completed',
@@ -39,6 +39,10 @@ class MyOrdersController extends GetxController {
   void onInit() {
     super.onInit();
     fetchOrders(forceRefresh: true);
+  }
+
+  Future<void> refreshOrdersSilently() async {
+    await fetchOrders(forceRefresh: true);
   }
 
   void changeStatus(int index) {

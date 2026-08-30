@@ -42,7 +42,7 @@ class ReviewSummaryCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              StarRatingRow(rating: 5, size: 16.w(context)),
+              StarRatingRow(rating: controller.displayedRating, size: 16.w(context)),
               SizedBox(width: 8.w(context)),
               Text(
                 controller.displayedRating.toStringAsFixed(1),

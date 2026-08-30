@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/product_details_model.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:hoodz/urls.dart';
 
 class ProductDetailsController extends GetxController {
@@ -11,11 +14,12 @@ class ProductDetailsController extends GetxController {
 
   final Rx<ProductDetailsModel?> _productDetailsModel =
       Rx<ProductDetailsModel?>(null);
+  final Set<String> _trackedProductIds = <String>{};
 
   Rx<ProductDetailsModel?> get productDetailsModel => _productDetailsModel;
 
   ProductData? get productData => _productDetailsModel.value?.data;
-
+ 
   void updateSimilarProductWishlistStatus({ 
     required String productId,
     required bool isWishlisted,
@@ -63,6 +67,10 @@ class ProductDetailsController extends GetxController {
     final productId = arguments?['productId'];
 
     if (productId is String && productId.isNotEmpty) {
+      if (_trackedProductIds.add(productId)) {
+        unawaited(_trackProductViewed(productId));
+      }
+
       if (_loadedProductId == productId) {
         if (_productDetailsModel.value == null && !isLoading.value) {
           loadProductData(force: true);
@@ -79,7 +87,27 @@ class ProductDetailsController extends GetxController {
       return;
     }
 
-    _showProductIdError();
+      _showProductIdError();
+  }
+
+  Future<void> _trackProductViewed(String productId) async {
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      return;
+    }
+
+    try {
+      final response = await _networkCaller.patchRequest(
+        Urls.getProductViewedUrlById(productId),
+        accessToken: accessToken,
+      );
+
+      if (response.isSuccess && Get.isRegistered<HomeScreenController>()) {
+        unawaited(Get.find<HomeScreenController>().getUserMeta());
+      }
+    } catch (_) {
+      // View tracking should never block the product details screen.
+    }
   }
 
   void _showProductIdError() {

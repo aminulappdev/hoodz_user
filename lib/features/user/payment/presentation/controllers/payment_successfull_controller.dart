@@ -5,12 +5,30 @@ class PaymentSuccessfullController extends GetxController {
       : orderConfirmedLabel = _formatCurrentDate();
 
   final String orderConfirmedLabel;
+  final RxnString _orderId = RxnString();
+  bool _hasTriggeredOrdersRefresh = false;
+
+  String? get orderId => _orderId.value;
+  bool get hasTriggeredOrdersRefresh => _hasTriggeredOrdersRefresh;
+
+  void setOrderId(String? value) {
+    final normalized = value?.trim();
+    _orderId.value = normalized == null || normalized.isEmpty ? null : normalized;
+  }
+
+  void clearOrderId() {
+    _orderId.value = null;
+  }
+
+  void markOrdersRefreshTriggered() {
+    _hasTriggeredOrdersRefresh = true;
+  }
 
   final List<OrderTimelineItem> timelineItems = [
     OrderTimelineItem(
       title: 'Order Confirmed',
       timeLabel: '',
-      state: OrderTimelineState.completed,
+      state: OrderTimelineState.upcoming,
     ),
     OrderTimelineItem(
       title: 'Order Prepared',

@@ -30,6 +30,10 @@ class Urls {
       '$_baseUrl/payments/user/transctions';
   static const String chatUrl = '$_baseUrl/chat';
   static const String grievanceUrl = '$_baseUrl/grievance';
+  static const String reviewsUrl = '$_baseUrl/reviews';
+  static String getProductReviewsUrlById(String id) {
+    return '$_baseUrl/reviews/product/$id';
+  }
   static String getChatMessagesUrlById(String chatId) =>
       '$_baseUrl/messages/chat/$chatId';
   static const String walletTopUpUrl = '$_baseUrl/top-up/add-wallet-money';
@@ -49,6 +53,10 @@ class Urls {
 
   static String getProductUrlById(String id) {
     return '$_baseUrl/products/$id';
+  }
+
+  static String getProductViewedUrlById(String id) {
+    return '$_baseUrl/products/viewed/$id';
   }
 
   static String getShopDetailsUrlById(String id) {

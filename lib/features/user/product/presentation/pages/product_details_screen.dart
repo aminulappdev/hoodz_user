@@ -3,11 +3,13 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
+import 'package:hoodz/core/services/others/image_preview_service.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
+import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/core/widgets/label_container.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/view_all.dart';
@@ -17,6 +19,8 @@ import 'package:hoodz/features/user/payment/presentation/models/voucher_model.da
 import 'package:hoodz/features/user/payment/presentation/pages/voucher_screen.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/voucher_card_design.dart';
 import 'package:hoodz/features/user/product/data/models/feedback_model.dart';
+import 'package:hoodz/features/user/product/presentation/controller/product_review_controller.dart';
+import 'package:hoodz/features/user/product/presentation/widgets/product_review_bottom_sheet.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/feedback_section.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/check_out_screen.dart';
@@ -27,15 +31,15 @@ import 'package:hoodz/features/user/product/presentation/widgets/product_info.da
 import 'package:hoodz/features/user/orders/presentation/widgets/size_plate.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_vouchers_controller.dart';
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
-import 'package:hoodz/gen/assets.gen.dart';
+import 'package:hoodz/gen/assets.gen.dart'; 
 
 class ProductDetailsScreen extends GetView<ProductDetailsController> {
   const ProductDetailsScreen({super.key});
 
-  Color? _parseColor(dynamic value) {
-    if (value is Color) { 
-      return value; 
-    }
+  Color? _parseColor(dynamic value) { 
+    if (value is Color) {
+      return value;
+    } 
 
     if (value is int) {
       return Color(value);
@@ -86,6 +90,42 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
     return null;
   } 
+
+  Future<void> _showImagePreview({
+    required BuildContext context,
+    required List<String> images,
+    int initialIndex = 0,
+  }) async {
+    await ImagePreviewService.show(
+      context: context,
+      images: images,
+      initialIndex: initialIndex,
+    );
+  }
+
+  List<String> _buildPreviewImages({
+    required String? banner,
+    required List<String> images,
+  }) {
+    final normalizedBanner = _normalizeString(banner);
+    final previewImages = <String>[
+      if (normalizedBanner != null) normalizedBanner,
+      ...images
+          .map(_normalizeString)
+          .whereType<String>()
+          .where((image) => image.isNotEmpty),
+    ];
+
+    return previewImages.toSet().toList(growable: false);
+  }
+
+  int _previewIndexForUrl({
+    required List<String> previewImages,
+    required String imageUrl,
+  }) {
+    final index = previewImages.indexOf(imageUrl);
+    return index < 0 ? 0 : index;
+  }
 
   String? _normalizeString(dynamic value) {
     final normalized = value?.toString().trim();
@@ -161,13 +201,16 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     required String selectedSize,
     required int selectedColorIndex,
   }) {
-    final inventoryType = _normalizeString(product?.inventoryType)?.toLowerCase();
+    final inventoryType = _normalizeString(
+      product?.inventoryType,
+    )?.toLowerCase();
     if (inventoryType == 'single') {
       return const _ResolvedProductSelection();
     }
 
-    final normalizedSize =
-        sizeOptions.isNotEmpty ? _normalizeString(selectedSize) : null;
+    final normalizedSize = sizeOptions.isNotEmpty
+        ? _normalizeString(selectedSize)
+        : null;
     final selectedColor = _resolveSelectedColorPayload(
       rawColors: rawColors,
       selectedIndex: selectedColorIndex,
@@ -191,13 +234,18 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
       matchedVariant ??= variants.first;
 
-      final resolvedSize = _extractVariantSize(matchedVariant) ??
+      final resolvedSize =
+          _extractVariantSize(matchedVariant) ??
           normalizedSize ??
           (sizeOptions.isNotEmpty ? sizeOptions.first : null);
-      final resolvedColor = _extractVariantColor(matchedVariant) ??
+      final resolvedColor =
+          _extractVariantColor(matchedVariant) ??
           selectedColor ??
           (rawColors.isNotEmpty
-              ? _resolveSelectedColorPayload(rawColors: rawColors, selectedIndex: 0)
+              ? _resolveSelectedColorPayload(
+                  rawColors: rawColors,
+                  selectedIndex: 0,
+                )
               : null);
 
       return _ResolvedProductSelection(
@@ -208,25 +256,23 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
     final fallbackSize =
         normalizedSize ?? (sizeOptions.isNotEmpty ? sizeOptions.first : null);
-    final fallbackColor = selectedColor ??
+    final fallbackColor =
+        selectedColor ??
         (rawColors.isNotEmpty
-            ? _resolveSelectedColorPayload(rawColors: rawColors, selectedIndex: 0)
+            ? _resolveSelectedColorPayload(
+                rawColors: rawColors,
+                selectedIndex: 0,
+              )
             : null);
 
-    return _ResolvedProductSelection(
-      size: fallbackSize,
-      color: fallbackColor,
-    );
+    return _ResolvedProductSelection(size: fallbackSize, color: fallbackColor);
   }
 
   List<Map<String, dynamic>> _buildBuyNowItems({
     required String productId,
     required _ResolvedProductSelection selection,
   }) {
-    final item = <String, dynamic>{
-      'product': productId,
-      'quantity': 1,
-    };
+    final item = <String, dynamic>{'product': productId, 'quantity': 1};
 
     if (selection.size != null && selection.size!.trim().isNotEmpty) {
       item['size'] = selection.size!.trim();
@@ -240,7 +286,8 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   }
 
   VoucherViewData _toVoucherViewData(dynamic voucherData) {
-    final discountType = _normalizeString(voucherData?.discountType) ?? 'Discount';
+    final discountType =
+        _normalizeString(voucherData?.discountType) ?? 'Discount';
     final discountValue = _normalizeString(voucherData?.discountValue) ?? '0';
     final minSpend = _normalizeString(voucherData?.minSpend) ?? '0';
     final expiryDate = voucherData?.expiryDate;
@@ -249,10 +296,10 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
         ? 'No expiry date'
         : 'Expires on ${expiryDate.toLocal().toString().split(" ").first}';
     final status = _resolveVoucherStatus(voucherData);
-    final title = _normalizeString(voucherData?.title) ??
+    final title =
+        _normalizeString(voucherData?.title) ??
         '$discountValue $discountType Off';
-    final subtitle =
-        'Purchase $minSpend or more and save $discountValue';
+    final subtitle = 'Purchase $minSpend or more and save $discountValue';
     final usedAtDate = useAt is DateTime
         ? useAt
         : DateTime.tryParse(useAt?.toString() ?? '');
@@ -293,12 +340,12 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     final cartController = Get.find<CartController>();
     final routeArguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    WidgetsBinding.instance.addPostFrameCallback((_) { 
-      controller.initialize(routeArguments); 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initialize(routeArguments);
     });
 
     return Scaffold( 
-      appBar: CustomAppBar(label: 'Product Details'),
+      appBar: CustomAppBar(label: 'Product Details'), 
 
       bottomNavigationBar: Obx(
         () => Padding(
@@ -384,6 +431,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
         final similarProducts = productData?.similarProducts ?? const [];
         final vouchers = productData?.vouchers ?? const [];
         final reviews = productData?.reviews ?? const [];
+        final hasPurchase = productData?.hasPurchase ?? false;
         final inventoryType = controller.inventoryType;
         final sizeOptions = controller.availableSizes;
         final colorPayloadOptions = controller.availableColors;
@@ -400,17 +448,36 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
             : '';
         final displayStoreImage =
             vendor?.profileAvatar ?? product?.banner ?? productImage;
+        final topImageUrl = _normalizeString(product?.banner) ??
+            (product?.images.isNotEmpty == true
+                ? _normalizeString(product!.images.first)
+                : null);
+        final previewImages = product == null
+            ? const <String>[]
+            : _buildPreviewImages(
+                banner: product.banner,
+                images: product.images,
+              );
+        final thumbnailImages = product?.images
+                .map(_normalizeString)
+                .whereType<String>()
+                .where((image) => image.isNotEmpty)
+                .toList(growable: false) ??
+            const <String>[];
 
-        return SizedBox(
-          height: height,
-          width: width,
+        return RefreshIndicator(
+          onRefresh: () => controller.loadProductData(force: true),
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 20.w(context)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child: SizedBox(
+              height: height,
+              width: width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 // ================= PRODUCT IMAGE =================
-                if (product == null || product.images.isEmpty)
+                if (topImageUrl == null)
                   SizedBox(
                     height: 200.h(context),
                     width: width,
@@ -420,12 +487,28 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppCachedNetworkImage(
-                        imageUrl: product.images.first,
-                        imageWidth: width,
-                        imageHeight: 200.h(context),
-                        imageFit: BoxFit.cover,
-                        radius: 12.r(context),
+                      GestureDetector(
+                        onTap: () {
+                          _showImagePreview(
+                            context: context,
+                            images: previewImages.isNotEmpty
+                                ? previewImages
+                                : [topImageUrl],
+                            initialIndex: _previewIndexForUrl(
+                              previewImages: previewImages.isNotEmpty
+                                  ? previewImages
+                                  : [topImageUrl],
+                              imageUrl: topImageUrl,
+                            ),
+                          );
+                        },
+                        child: AppCachedNetworkImage(
+                          imageUrl: topImageUrl,
+                          imageWidth: width,
+                          imageHeight: 200.h(context),
+                          imageFit: BoxFit.cover,
+                          radius: 12.r(context),
+                        ),
                       ),
 
                       SizedBox(height: 8.h(context)),
@@ -433,22 +516,40 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                       SizedBox(
                         height: 100.h(context),
                         width: width,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: product.images.length,
-                          itemBuilder: (context, index) {
-                            return AppCachedNetworkImage(
-                              imageUrl: product.images[index],
-                              imageHeight: 100.h(context),
-                              imageWidth: 100.w(context),
-                              imageFit: BoxFit.cover,
-                              radius: 12.r(context),
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(width: 10.w(context));
-                          },
-                        ),
+                        child: thumbnailImages.isEmpty
+                            ? const SizedBox.shrink()
+                            : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: thumbnailImages.length,
+                                itemBuilder: (context, index) {
+                                return GestureDetector(
+                                    onTap: () {
+                                      final currentPreviewImages =
+                                          previewImages.isNotEmpty
+                                          ? previewImages
+                                          : [topImageUrl];
+                                      _showImagePreview(
+                                        context: context,
+                                        images: currentPreviewImages,
+                                        initialIndex: _previewIndexForUrl(
+                                          previewImages: currentPreviewImages,
+                                          imageUrl: thumbnailImages[index],
+                                        ),
+                                      );
+                                    },
+                                    child: AppCachedNetworkImage(
+                                      imageUrl: thumbnailImages[index],
+                                      imageHeight: 100.h(context),
+                                      imageWidth: 100.w(context),
+                                      imageFit: BoxFit.cover,
+                                      radius: 12.r(context),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return SizedBox(width: 10.w(context));
+                                },
+                              ),
                       ),
                     ],
                   ),
@@ -469,7 +570,8 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 SizedBox(height: 10.h(context)),
 
-                if (inventoryType == 'size_color' && sizeOptions.isNotEmpty) ...[
+                if (inventoryType == 'size_color' &&
+                    sizeOptions.isNotEmpty) ...[
                   Text(
                     'Select Size',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -516,19 +618,8 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                   SizedBox(height: 20.h(context)),
                 ] else ...[
-                  Container(
-                    height: 60.h(context),
-                    alignment: Alignment.center,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r(context)),
-                      border: Border.all(color: const Color(0xFFE7E7E7)),
-                    ),
-                    child: const Center(child: Text('No size available')),
-                  ),
-
-                  SizedBox(height: 20.h(context)),
+                  Container(),
+                  SizedBox(height: 10.h(context)),
                 ],
 
                 if (colorOptions.isNotEmpty) ...[
@@ -570,19 +661,8 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                   SizedBox(height: 16.h(context)),
                 ] else ...[
-                  Container(
-                    height: 60.h(context),
-                    alignment: Alignment.center,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r(context)),
-                      border: Border.all(color: const Color(0xFFE7E7E7)),
-                    ),
-                    child: const Center(child: Text('No color available')),
-                  ),
-
-                  SizedBox(height: 16.h(context)),
+                  Container(),
+                  
                 ],
 
                 // ================= DESCRIPTION =================
@@ -718,8 +798,9 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                   onTap: () {
                     final productTitle =
                         _normalizeString(product?.title) ?? 'Product';
-                    final voucherViewData =
-                        vouchers.map((voucher) => _toVoucherViewData(voucher)).toList();
+                    final voucherViewData = vouchers
+                        .map((voucher) => _toVoucherViewData(voucher))
+                        .toList();
                     PageNavigationService.to(
                       context,
                       AppRoutes.allVouchers,
@@ -755,8 +836,9 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                                 width: 320.w(context),
                                 child: Builder(
                                   builder: (context) {
-                                    final voucherViewData =
-                                        _toVoucherViewData(voucherData);
+                                    final voucherViewData = _toVoucherViewData(
+                                      voucherData,
+                                    );
                                     return VoucherCardDesign(
                                       isCompact: true,
                                       voucher: voucherViewData.voucher,
@@ -777,10 +859,22 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 ViewAllList(
                   title: 'User Feedbacks',
                   onTap: () {
+                    final productId = product?.id?.trim() ?? '';
+                    if (productId.isEmpty) {
+                      showAppToast(
+                        message: 'Product id not found.',
+                        isError: true,
+                      );
+                      return;
+                    }
+
                     PageNavigationService.to(
                       context,
                       AppRoutes.allProductReview,
-                      arguments: {'title': 'Reviews'},
+                      arguments: {
+                        'title': 'Reviews',
+                        'productId': productId,
+                      },
                     );
                   },
                 ),
@@ -807,12 +901,40 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                             date: review.createdAt ?? DateTime.now(),
                             rating: (review.rating ?? 0).toDouble(),
                             comment: review.review ?? '',
+                            images: review.files,
                           );
                         }).toList(),
                       ),
 
+                if (hasPurchase) ...[
+                  SizedBox(height: 12.h(context)),
+                  CustomButton(
+                    text: 'Add review',
+                    onPressed: () {
+                      final productId = product?.id?.trim() ?? '';
+                      if (productId.isEmpty) {
+                        showAppToast(
+                          message: 'Product id not found.',
+                          isError: true,
+                        );
+                        return;
+                      }
+
+                      final reviewController =
+                          Get.find<ProductReviewController>();
+                      reviewController.initialize(reference: productId);
+                      Get.bottomSheet(
+                        const ProductReviewBottomSheet(),
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                      );
+                    },
+                  ),
+                ],
+
                 SizedBox(height: 20.h(context)),
-              ],
+                ],
+              ),
             ),
           ),
         );

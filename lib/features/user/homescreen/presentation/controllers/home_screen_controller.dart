@@ -10,7 +10,7 @@ import 'package:hoodz/urls.dart';
 class HomeScreenController extends GetxController { 
   HomeScreenController(this._locationService);
 
-  final LocationSelectionService _locationService;
+  final LocationSelectionService _locationService; 
   final RxInt currentBannerIndex = 0.obs;
   final RxInt notificationCount = 3.obs;
   final RxString selectedAddress = 'AQUA Tower, 43 Mohakhali C/A'.obs;

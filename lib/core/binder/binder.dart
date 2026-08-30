@@ -27,6 +27,7 @@ import 'package:hoodz/features/user/orders/presentation/controllers/my_orders_co
 import 'package:hoodz/features/user/product/presentation/controller/all_product_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_vouchers_controller.dart';
+import 'package:hoodz/features/user/product/presentation/controller/product_review_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/orders_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/product_controller.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/shop_controller.dart';
@@ -174,6 +175,7 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(AiRecommendedProductController.new, fenix: true);
     Get.lazyPut(AllProductInfoController.new, fenix: true);
     Get.lazyPut(ProductDetailsController.new, fenix: true);
+    Get.lazyPut(ProductReviewController.new, fenix: true);
     Get.lazyPut(ShopDetailsController.new, fenix: true);
     Get.lazyPut(ShopProductController.new, fenix: true);
     Get.lazyPut(ShoConnectionControoler.new, fenix: true);

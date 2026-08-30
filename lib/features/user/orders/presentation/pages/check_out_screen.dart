@@ -18,6 +18,7 @@ import 'package:hoodz/features/user/orders/presentation/widgets/checkout_voucher
 import 'package:hoodz/features/user/orders/presentation/widgets/payment_summary_card.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/play_with_card.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/payment_successfull_controller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 
 const Color kBgGrey = Color(0xFFF6F6F8);
@@ -166,6 +167,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (!mounted || !paymentInitiated) {
       return;
     }
+
+    final paymentSuccessfullController =
+        Get.find<PaymentSuccessfullController>();
+    paymentSuccessfullController.setOrderId(
+      _paymentInitiateController.firstOrderId ??
+          (orderIds.isNotEmpty ? orderIds.first : null),
+    );
 
     if (_selectedPaymentMethodValue == 'card') {
       final paymentData = _paymentInitiateController.cardPaymentData;

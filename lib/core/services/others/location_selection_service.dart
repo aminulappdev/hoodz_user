@@ -38,6 +38,13 @@ class LocationSelectionService {
     );
   }
 
+  Future<Position> getCurrentPosition() async {
+    await _ensurePermission();
+    return Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+  }
+
   Future<LocationAddress> getAddressFromCoordinates({
     required double latitude,
     required double longitude,

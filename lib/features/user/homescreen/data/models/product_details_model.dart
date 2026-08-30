@@ -7,7 +7,7 @@ class ProductDetailsModel {
   });
 
   final bool? success;
-  final dynamic statusCode; 
+  final dynamic statusCode;  
   final String? message;
   final ProductData? data;
  

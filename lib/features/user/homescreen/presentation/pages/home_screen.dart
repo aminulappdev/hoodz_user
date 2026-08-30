@@ -10,7 +10,6 @@ import 'package:hoodz/features/user/product/presentation/widgets/product_card.da
 import 'package:hoodz/features/user/product/presentation/widgets/product_list.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/view_all.dart';
-import 'package:hoodz/features/user/homescreen/presentation/widgets/voucher_card.dart';
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 
 class HomeScreen extends GetView<HomeScreenController> {
@@ -106,14 +105,17 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 },
                               ),
                             ),
-                      const Text('First Section'),
-                      SizedBox(height: 16.h(context)),
-                      CarouselBanner(homeData?.firstSectionBanner ?? const [], (
-                        reference,
-                      ) {
-                        PageNavigationService.to(context, AppRoutes.shop);
-                      }),
-                      SizedBox(height: 12.h(context)),
+                      if ((homeData?.firstSectionBanner ?? const []).isNotEmpty) ...[
+                        const Text('First Section'),
+                        SizedBox(height: 16.h(context)),
+                        CarouselBanner(
+                          homeData?.firstSectionBanner ?? const [],
+                          (reference) {
+                            PageNavigationService.to(context, AppRoutes.shop);
+                          },
+                        ),
+                        SizedBox(height: 12.h(context)),
+                      ],
                       Text(
                         'Near by Brands',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -188,7 +190,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 itemBuilder: (context, index) {
                                   final product = recentlyViewed[index];
                                   final name = product.title ?? "";
-                                  final image = product.image ?? "";
+                                  final image =
+                                      product.banner ?? product.image ?? "";
                                   final price = "${product.price ?? ''}";
                                   final rating = "${product.avgRating ?? ''}";
                                   final isWishlisted =
@@ -198,11 +201,13 @@ class HomeScreen extends GetView<HomeScreenController> {
                                     image: image, 
                                     price: price,
                                     rating: rating,
+                                    productId: product.id,
                                     isWishlisted: isWishlisted, 
                                     onTap: () {
                                       PageNavigationService.to(
                                         context,
                                         AppRoutes.productDetails,
+                                        arguments: {'productId': product.id},
                                       );
                                     },
                                     onTapFavourite: () {
@@ -293,13 +298,15 @@ class HomeScreen extends GetView<HomeScreenController> {
                       // SizedBox(height: 8.h(context)),
                       // VoucherCardHomeScreen(),
                       // SizedBox(height: 16.h(context)),
-                      CarouselBanner(
-                        homeData?.secondSectionBanner ?? const [],
-                        (reference) {
-                          PageNavigationService.to(context, AppRoutes.shop);
-                        },
-                      ),
-                      SizedBox(height: 12.h(context)),
+                      if ((homeData?.secondSectionBanner ?? const []).isNotEmpty) ...[
+                        CarouselBanner(
+                          homeData?.secondSectionBanner ?? const [],
+                          (reference) {
+                            PageNavigationService.to(context, AppRoutes.shop);
+                          },
+                        ),
+                        SizedBox(height: 12.h(context)),
+                      ],
                       ViewAllList(
                         title: 'AI Recommended for you',
                         onTap: () {
@@ -338,11 +345,13 @@ class HomeScreen extends GetView<HomeScreenController> {
                                     image: image,
                                     price: price,
                                     rating: rating,
+                                    productId: product.id,
                                     isWishlisted: isWishlisted,
                                     onTap: () {
                                       PageNavigationService.to(
                                         context,
                                         AppRoutes.productDetails,
+                                        arguments: {'productId': product.id},
                                       );
                                     },
                                     onTapFavourite: () {

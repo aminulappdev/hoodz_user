@@ -6,6 +6,9 @@
         android:label="Hoodz User"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCTnKPaarHYePg0Z9EvUgCt5OWYYcUvVlw" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

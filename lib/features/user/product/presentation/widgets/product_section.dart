@@ -84,10 +84,12 @@ class ProductSection extends StatelessWidget {
                     image: product['image'] ?? '',
                     price: product['price'] ?? '',
                     rating: product['rating'] ?? '',
+                    productId: product['id'],
                     onTap: () {
                       PageNavigationService.to(
                         context,
                         AppRoutes.productDetails,
+                        arguments: {'productId': product['id']},
                       );
                     },
                     onTapFavourite: () {},

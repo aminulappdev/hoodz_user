@@ -17,6 +17,10 @@ class _CarouselBannerState extends State<CarouselBanner> {
 
   @override 
   Widget build(BuildContext context) {
+    if (widget.bannerList.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

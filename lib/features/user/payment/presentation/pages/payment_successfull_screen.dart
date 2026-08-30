@@ -5,6 +5,7 @@ import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/my_orders_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_successfull_controller.dart';
@@ -15,14 +16,25 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
   const PaymentSuccessfullScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
+    if (!controller.hasTriggeredOrdersRefresh) {
+      controller.markOrdersRefreshTriggered();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!Get.isRegistered<MyOrdersController>()) {
+          return;
+        }
+
+        await Get.find<MyOrdersController>().refreshOrdersSilently();
+      });
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB( 
             14.w(context),
-            8.h(context),
+            8.h(context), 
             14.w(context),
             20.h(context),
           ),
@@ -50,18 +62,13 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
                         ),
                       ),
                       SizedBox(height: 30.h(context)),
-                      ...List.generate(controller.timelineItems.length, (
-                        index,
-                      ) {
+                      ...List.generate(controller.timelineItems.length, (index) {
                         final item = controller.timelineItems[index];
-                        final timeLabel = index == 0
-                            ? controller.orderConfirmedLabel
-                            : item.timeLabel;
                         return Padding(
                           padding: EdgeInsets.only(bottom: 4.h(context)),
                           child: OrderTimelineTile(
                             title: item.title,
-                            timeLabel: timeLabel,
+                            timeLabel: null,
                             state: item.state,
                             showConnector:
                                 index != controller.timelineItems.length - 1,
@@ -75,12 +82,16 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
               SizedBox(height: 12.h(context)),
               CustomButton(
                 text: 'Order Details',
-                onPressed: () async {
+                onPressed: () async { 
+                  final successController =
+                      Get.find<PaymentSuccessfullController>();
                   final paymentController =
                       Get.find<PaymentInitiateController>();
                   final orderDetailsController =
                       Get.find<OrderDetailsController>();
                   final orderId =
+                      successController.orderId ??
+                      paymentController.firstOrderId ??
                       paymentController.cardPaymentData?.payments.first.order?.id ??
                       paymentController.codPaymentData?.payments.first.order?.id;
 

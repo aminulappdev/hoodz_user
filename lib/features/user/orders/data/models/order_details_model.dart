@@ -9,7 +9,7 @@ class OrderDetailsModel {
     final bool? success;
     final int? statusCode;
     final String? message;
-    final Data? data;
+    final Data? data; 
   
     factory OrderDetailsModel.fromJson(Map<String, dynamic> json){ 
         return OrderDetailsModel( 
@@ -96,7 +96,7 @@ class Data {
     final DateTime? updatedAt;
     final List<Item> items;
     final int? totalOrderItems;
-    final dynamic rider;
+    final Rider? rider;
     final bool? hasOrderSupports;
     final bool? hasRiderChat;
     final bool? hasGrievance;
@@ -133,11 +133,11 @@ class Data {
             isShopBalanceCredited: json["isShopBalanceCredited"],
             isDeleted: json["isDeleted"],
             dataId: json["id"],
-            createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
-            updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
+            createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+            updatedAt: DateTime.tryParse(json["updatedAt"]?.toString() ?? ""),
             items: json["items"] == null ? [] : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
             totalOrderItems: json["totalOrderItems"],
-            rider: json["rider"],
+            rider: json["rider"] == null ? null : Rider.fromJson(json["rider"]),
             hasOrderSupports: json["hasOrderSupports"],
             hasRiderChat: json["hasRiderChat"],
             hasGrievance: json["hasGrievance"],
@@ -148,6 +148,38 @@ class Data {
         );
     }
 
+}
+
+class Rider {
+    Rider({
+        required this.id,
+        required this.name,
+        required this.profileAvatar,
+        required this.phone,
+        required this.avgRating,
+        required this.ratingCount,
+        required this.vehicle,
+    });
+
+    final String? id;
+    final String? name;
+    final String? profileAvatar;
+    final String? phone;
+    final num? avgRating;
+    final int? ratingCount;
+    final String? vehicle;
+
+    factory Rider.fromJson(Map<String, dynamic> json) {
+        return Rider(
+            id: json["_id"]?.toString(),
+            name: json["name"]?.toString(),
+            profileAvatar: json["profileAvatar"]?.toString(),
+            phone: json["phone"]?.toString(),
+            avgRating: json["avgRating"] as num?,
+            ratingCount: json["ratingCount"] as int?,
+            vehicle: json["vehicle"]?.toString(),
+        );
+    }
 }
 
 class Author {

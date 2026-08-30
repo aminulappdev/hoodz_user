@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class TrackingSummaryCard extends StatelessWidget {
-  const TrackingSummaryCard({super.key});
+  const TrackingSummaryCard({
+    super.key,
+    this.distanceText = '2.5 km',
+  });
+
+  final String distanceText;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,7 @@ class TrackingSummaryCard extends StatelessWidget {
             child: _InfoBlock(
               alignEnd: true,
               label: 'Distance',
-              value: '2.5 km',
+              value: distanceText,
             ),
           ),
         ],

@@ -14,6 +14,7 @@ class ProductCard extends StatelessWidget {
     required this.price,
     required this.rating, 
     this.onTap,
+    this.productId,
     required this.onTapFavourite,
     this.subtitle = 'T-Shirt',
     this.oldPrice,
@@ -26,6 +27,7 @@ class ProductCard extends StatelessWidget {
   final String price;
   final String rating;
   final VoidCallback? onTap;
+  final String? productId;
   final VoidCallback onTapFavourite;
   final String subtitle;
   final String? oldPrice;
@@ -38,7 +40,13 @@ class ProductCard extends StatelessWidget {
       onTap:
           onTap ??
           () {
-            PageNavigationService.to(context, AppRoutes.productDetails);
+            PageNavigationService.to(
+              context,
+              AppRoutes.productDetails,
+              arguments: productId == null || productId!.isEmpty
+                  ? null
+                  : {'productId': productId},
+            );
           },
       child: Container(
         width: 200.w(context),

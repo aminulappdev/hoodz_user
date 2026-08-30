@@ -8,7 +8,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 class UserOrderSocketService extends GetxService {
   UserOrderSocketService(this._socketService);
-
+ 
   final SocketService _socketService;
 
   final RxBool isListening = false.obs;
@@ -200,18 +200,19 @@ class UserOrderSocketService extends GetxService {
     final payload = _extractPayload(data);
     lastEventName.value = 'order:location';
     lastEventPayload.assignAll(payload);
-    locationUpdates.add(payload); 
+    locationUpdates.add(payload);
+
+    print('order:location update => $payload');
 
     final lat = _toDouble(payload['lat']);
     final lng = _toDouble(payload['lng']);
     if (lat == null || lng == null) {
+      print('order:location ignored, missing lat/lng => $payload');
       return;
     }
 
     final encodedRoute = payload['encodedRoute']?.toString().trim() ?? '';
-    final routePoints = encodedRoute.isNotEmpty
-        ? _decodePolyline(encodedRoute)
-        : <TrackingGeoPoint>[];
+    final routePoints = _safeDecodePolyline(encodedRoute);
 
     currentTrackingLocation.value = UserOrderTrackingLocation(
       riderLocation: TrackingGeoPoint(lat: lat, lng: lng),
@@ -220,6 +221,12 @@ class UserOrderSocketService extends GetxService {
       encodedRoute: encodedRoute.isEmpty ? null : encodedRoute,
       routePoints: routePoints,
       destinationLocation: routePoints.isNotEmpty ? routePoints.last : null,
+    );
+
+    print(
+      'order:location parsed => lat=$lat, lng=$lng, '
+      'speed=${currentTrackingLocation.value?.speed}, '
+      'heading=${currentTrackingLocation.value?.heading}',
     );
   }
 
@@ -303,6 +310,20 @@ class UserOrderSocketService extends GetxService {
     }
 
     return points;
+  }
+
+  List<TrackingGeoPoint> _safeDecodePolyline(String encoded) {
+    final cleaned = encoded.trim();
+    if (cleaned.isEmpty) {
+      return const <TrackingGeoPoint>[];
+    }
+
+    try {
+      return _decodePolyline(cleaned);
+    } catch (error) {
+      print('order:location invalid encodedRoute skipped => $error');
+      return const <TrackingGeoPoint>[];
+    }
   }
 
   @override 

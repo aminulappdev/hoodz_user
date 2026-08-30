@@ -4,7 +4,7 @@ import 'package:hoodz/features/user/payment/presentation/controllers/payment_suc
 
 class OrderTimelineTile extends StatelessWidget {
   final String title;
-  final String timeLabel;
+  final String? timeLabel;
   final OrderTimelineState state;
   final bool showConnector;
 
@@ -82,26 +82,29 @@ class OrderTimelineTile extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w(context),
-              vertical: 4.h(context),
-            ),
-            decoration: BoxDecoration(
-              color: isCompleted ? Colors.transparent : const Color(0xFFF8F8F8),
-              borderRadius: BorderRadius.circular(999.r(context)),
-            ),
-            child: Text(
-              timeLabel,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontSize: 12.sp(context),
-                fontWeight: FontWeight.w600,
+          if (timeLabel != null && timeLabel!.trim().isNotEmpty)
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 10.w(context),
+                vertical: 4.h(context),
+              ),
+              decoration: BoxDecoration(
                 color: isCompleted
-                    ? const Color(0xFF7A7A7A)
-                    : const Color(0xFFC0C0C0),
+                    ? Colors.transparent
+                    : const Color(0xFFF8F8F8),
+                borderRadius: BorderRadius.circular(999.r(context)),
+              ),
+              child: Text(
+                timeLabel!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontSize: 12.sp(context),
+                  fontWeight: FontWeight.w600,
+                  color: isCompleted
+                      ? const Color(0xFF7A7A7A)
+                      : const Color(0xFFC0C0C0),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

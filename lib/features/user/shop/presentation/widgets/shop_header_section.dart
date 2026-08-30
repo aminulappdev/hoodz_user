@@ -1,5 +1,6 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hoodz/core/services/others/image_preview_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
@@ -47,6 +48,27 @@ class ShopHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final previewImages = <String>[
+      if (coverImageUrl.trim().isNotEmpty) coverImageUrl.trim(),
+      if (profileImageUrl.trim().isNotEmpty) profileImageUrl.trim(),
+    ].toSet().toList(growable: false);
+
+    int previewIndexFor(String url) {
+      final index = previewImages.indexOf(url.trim());
+      return index < 0 ? 0 : index;
+    }
+
+    Future<void> showPreview(String url) async {
+      if (previewImages.isEmpty) {
+        return;
+      }
+
+      await ImagePreviewService.show(
+        context: context,
+        images: previewImages,
+        initialIndex: previewIndexFor(url),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,12 +76,15 @@ class ShopHeader extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            AppCachedNetworkImage(
-              imageUrl: coverImageUrl,
-              imageHeight: 240.h(context),
-              imageWidth: screenWidth,
-              imageFit: BoxFit.cover,
-              radius: 0,
+            GestureDetector(
+              onTap: () => showPreview(coverImageUrl),
+              child: AppCachedNetworkImage(
+                imageUrl: coverImageUrl,
+                imageHeight: 240.h(context),
+                imageWidth: screenWidth,
+                imageFit: BoxFit.cover,
+                radius: 0,
+              ),
             ),
             Positioned(
               top: 48.h(context),
@@ -118,7 +143,10 @@ class ShopHeader extends StatelessWidget {
                     Positioned(
                       left: 0,
                       top: 0,
-                      child: ShopProfileImage(imageUrl: profileImageUrl),
+                      child: GestureDetector(
+                        onTap: () => showPreview(profileImageUrl),
+                        child: ShopProfileImage(imageUrl: profileImageUrl),
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 18.h(context)),

@@ -18,74 +18,95 @@ class AllProductReviewScreen extends GetView<AllProductReviewController> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(label: 'Product Review'),
+      appBar: CustomAppBar(label: controller.title.value),
       body: SafeArea(
         child: Obx(
-          () => SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              16.w(context),
-              8.h(context),
-              16.w(context),
-              24.h(context),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ReviewSummaryCard(controller: controller),
-                SizedBox(height: 16.h(context)),
-                Text(
-                  "User's Review",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 18.sp(context),
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF202020),
-                  ),
+          () {
+            if (controller.isLoading.value &&
+                controller.allReviewModel.value == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final feedbacks = controller.feedbacks;
+
+            return RefreshIndicator(
+              onRefresh: () => controller.fetchAllReviews(force: true),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(
+                  16.w(context),
+                  8.h(context),
+                  16.w(context),
+                  24.h(context),
                 ),
-                SizedBox(height: 12.h(context)),
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: ReviewDropdown(
-                        value: controller.selectedReviewFilter.value,
-                        items: controller.reviewFilters,
-                        onChanged: controller.updateReviewFilter,
+                    ReviewSummaryCard(controller: controller),
+                    SizedBox(height: 16.h(context)),
+                    Text(
+                      "User's Review",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 18.sp(context),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF202020),
                       ),
                     ),
-                    SizedBox(width: 10.w(context)),
-                    Expanded(
-                      child: ReviewDropdown(
-                        value: controller.selectedRatingFilter.value,
-                        items: controller.ratingFilters,
-                        onChanged: controller.updateRatingFilter,
+                    SizedBox(height: 12.h(context)),
+                    Obx(
+                      () => Row(
+                        children: [
+                          Expanded(
+                            child: ReviewDropdown(
+                              value: controller.selectedSort.value,
+                              items: controller.sortFilters,
+                              onChanged: controller.updateSort,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    SizedBox(height: 14.h(context)),
+                    if (feedbacks.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(16.w(context)),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8F8F8),
+                          borderRadius: BorderRadius.circular(14.r(context)),
+                          border: Border.all(color: const Color(0xFFEAEAEA)),
+                        ),
+                        child: const Center(child: Text('No reviews found')),
+                      )
+                    else
+                      ListView.separated(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: feedbacks.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 12.h(context)),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.all(12.w(context)),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8F8F8),
+                              borderRadius: BorderRadius.circular(14.r(context)),
+                              border: Border.all(
+                                color: const Color(0xFFEAEAEA),
+                              ),
+                            ),
+                            child: UserFeedbackCard(
+                              feedback: feedbacks[index],
+                            ),
+                          );
+                        },
+                      ),
                   ],
                 ),
-                SizedBox(height: 14.h(context)),
-                ListView.separated(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.feedbacks.length,
-                  separatorBuilder: (context, index) =>
-                      SizedBox(height: 12.h(context)),
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: EdgeInsets.all(12.w(context)),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8F8F8),
-                        borderRadius: BorderRadius.circular(14.r(context)),
-                        border: Border.all(color: const Color(0xFFEAEAEA)),
-                      ),
-                      child: UserFeedbackCard(
-                        feedback: controller.feedbacks[index],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

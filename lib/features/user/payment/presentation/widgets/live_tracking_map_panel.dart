@@ -1,14 +1,21 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmap;
 import 'package:hoodz/core/services/socket/user_order_socket_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart' as lat;
 
-class LiveTrackingMapPanel extends StatelessWidget {
+const String _googleMapsApiKey = 'AIzaSyCTnKPaarHYePg0Z9EvUgCt5OWYYcUvVlw';
+
+class LiveTrackingMapPanel extends StatefulWidget {
   final double? height;
   final BorderRadiusGeometry? borderRadius;
   final bool expand;
   final UserOrderTrackingLocation? trackingLocation;
+  final lat.LatLng? fallbackDestination;
 
   const LiveTrackingMapPanel({
     super.key,
@@ -16,16 +23,390 @@ class LiveTrackingMapPanel extends StatelessWidget {
     this.borderRadius,
     this.expand = false,
     this.trackingLocation,
+    this.fallbackDestination,
   });
+
+  @override
+  State<LiveTrackingMapPanel> createState() => _LiveTrackingMapPanelState();
+}
+
+class _LiveTrackingMapPanelState extends State<LiveTrackingMapPanel> {
+  gmap.GoogleMapController? _mapController;
+  Set<gmap.Marker> _markers = <gmap.Marker>{};
+  Set<gmap.Polyline> _polylines = <gmap.Polyline>{};
+  String? _routeSignature;
+  int _routeRequestToken = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncMapState(forceCenter: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant LiveTrackingMapPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.trackingLocation != widget.trackingLocation ||
+        oldWidget.fallbackDestination != widget.fallbackDestination) {
+      _syncMapState();
+    }
+  }
+
+  gmap.LatLng? _toGoogleLatLng(lat.LatLng? point) {
+    if (point == null) {
+      return null;
+    }
+
+    return gmap.LatLng(point.latitude, point.longitude);
+  }
+
+  gmap.LatLng? _riderPoint() {
+    final trackingLocation = widget.trackingLocation;
+    if (trackingLocation == null) {
+      return null;
+    }
+
+    return gmap.LatLng(
+      trackingLocation.riderLocation.lat,
+      trackingLocation.riderLocation.lng,
+    );
+  }
+
+  gmap.LatLng? _destinationPoint() {
+    final trackingLocation = widget.trackingLocation;
+    final fallbackDestination = _toGoogleLatLng(widget.fallbackDestination);
+
+    if (trackingLocation != null) {
+      final trackingDestination = trackingLocation.destinationLocation;
+      final socketDestination = trackingDestination == null
+          ? null
+          : gmap.LatLng(trackingDestination.lat, trackingDestination.lng);
+
+      return fallbackDestination ?? socketDestination;
+    }
+
+    return fallbackDestination;
+  }
+
+  List<gmap.LatLng> _cameraPoints() {
+    final points = <gmap.LatLng>[];
+    final rider = _riderPoint();
+    final fallbackDestination = _toGoogleLatLng(widget.fallbackDestination);
+    final socketDestination = widget.trackingLocation?.destinationLocation;
+    final trackingDestination = socketDestination == null
+        ? null
+        : gmap.LatLng(socketDestination.lat, socketDestination.lng);
+
+    if (rider != null) {
+      points.add(rider);
+    }
+    if (fallbackDestination != null) {
+      points.add(fallbackDestination);
+    }
+    if (trackingDestination != null) {
+      points.add(trackingDestination);
+    }
+
+    return points;
+  }
+
+  List<gmap.LatLng> _fallbackStraightRoute(
+    gmap.LatLng origin,
+    gmap.LatLng destination,
+  ) {
+    return [origin, destination];
+  }
+
+  Future<List<gmap.LatLng>> _fetchDirectionsRoute(
+    gmap.LatLng origin,
+    gmap.LatLng destination,
+  ) async {
+    final uri = Uri.https(
+      'maps.googleapis.com',
+      '/maps/api/directions/json',
+      {
+        'origin': '${origin.latitude},${origin.longitude}',
+        'destination': '${destination.latitude},${destination.longitude}',
+        'mode': 'driving',
+        'alternatives': 'false',
+        'key': _googleMapsApiKey,
+      },
+    );
+
+    try {
+      final response = await http.get(uri);
+      if (response.statusCode != 200) {
+        return _fallbackStraightRoute(origin, destination);
+      }
+
+      final body = jsonDecode(response.body);
+      if (body is! Map<String, dynamic>) {
+        return _fallbackStraightRoute(origin, destination);
+      }
+
+      if (body['status']?.toString() != 'OK') {
+        return _fallbackStraightRoute(origin, destination);
+      }
+
+      final routes = body['routes'];
+      if (routes is! List || routes.isEmpty) {
+        return _fallbackStraightRoute(origin, destination);
+      }
+
+      final firstRoute = routes.first;
+      if (firstRoute is! Map<String, dynamic>) {
+        return _fallbackStraightRoute(origin, destination);
+      }
+
+      final overviewPolyline = firstRoute['overview_polyline'];
+      if (overviewPolyline is! Map<String, dynamic>) {
+        return _fallbackStraightRoute(origin, destination);
+      }
+
+      final encoded = overviewPolyline['points']?.toString().trim() ?? '';
+      if (encoded.isEmpty) {
+        return _fallbackStraightRoute(origin, destination);
+      }
+
+      final decoded = _decodePolyline(encoded);
+      return decoded.length >= 2
+          ? decoded
+          : _fallbackStraightRoute(origin, destination);
+    } catch (error) {
+      debugPrint('LiveTrackingMapPanel directions error: $error');
+      return _fallbackStraightRoute(origin, destination);
+    }
+  }
+
+  List<gmap.LatLng> _decodePolyline(String encoded) {
+    final points = <gmap.LatLng>[];
+    int index = 0;
+    int latValue = 0;
+    int lngValue = 0;
+
+    while (index < encoded.length) {
+      int result = 0;
+      int shift = 0;
+      int byteValue;
+      do {
+        byteValue = encoded.codeUnitAt(index++) - 63;
+        result |= (byteValue & 0x1f) << shift;
+        shift += 5;
+      } while (byteValue >= 0x20);
+      final deltaLat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      latValue += deltaLat;
+
+      result = 0;
+      shift = 0;
+      do {
+        byteValue = encoded.codeUnitAt(index++) - 63;
+        result |= (byteValue & 0x1f) << shift;
+        shift += 5;
+      } while (byteValue >= 0x20);
+      final deltaLng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lngValue += deltaLng;
+
+      points.add(gmap.LatLng(latValue / 1e5, lngValue / 1e5));
+    }
+
+    return points;
+  }
+
+  gmap.Marker _buildMarker({
+    required String id,
+    required gmap.LatLng position,
+    required String label,
+    required double hue,
+    String? snippet,
+  }) {
+    return gmap.Marker(
+      markerId: gmap.MarkerId(id),
+      position: position,
+      icon: gmap.BitmapDescriptor.defaultMarkerWithHue(hue),
+      infoWindow: gmap.InfoWindow(title: label, snippet: snippet),
+      anchor: const Offset(0.5, 1),
+      zIndex: hue,
+    );
+  }
+
+  Set<gmap.Marker> _buildMarkers() {
+    final markers = <gmap.Marker>{};
+    final trackingLocation = widget.trackingLocation;
+    final rider = _riderPoint();
+    final fallbackDestination = _toGoogleLatLng(widget.fallbackDestination);
+    final socketDestination = trackingLocation?.destinationLocation == null
+        ? null
+        : gmap.LatLng(
+            trackingLocation!.destinationLocation!.lat,
+            trackingLocation.destinationLocation!.lng,
+          );
+
+    if (rider != null) {
+      markers.add(
+        _buildMarker(
+          id: 'rider',
+          position: rider,
+          label: 'Rider',
+          hue: gmap.BitmapDescriptor.hueOrange,
+          snippet: trackingLocation?.speed == null
+              ? null
+              : '${trackingLocation!.speed!.toStringAsFixed(0)} km/h',
+        ),
+      );
+    }
+
+    final destinationPoint = fallbackDestination ?? socketDestination;
+    if (destinationPoint != null) {
+      markers.add(
+        _buildMarker(
+          id: 'destination',
+          position: destinationPoint,
+          label: 'Destination',
+          hue: gmap.BitmapDescriptor.hueRed,
+        ),
+      );
+    }
+
+    return markers;
+  }
+
+  Set<gmap.Polyline> _buildPolylines(List<gmap.LatLng> routePoints) {
+    if (routePoints.length < 2) {
+      return <gmap.Polyline>{};
+    }
+
+    return {
+      gmap.Polyline(
+        polylineId: const gmap.PolylineId('live_tracking_route'),
+        points: routePoints,
+        color: const Color(0xFF1E88E5),
+        width: 6,
+        geodesic: true,
+      ),
+    };
+  }
+
+  Future<void> _syncMapState({bool forceCenter = false}) async {
+    final origin = _riderPoint();
+    final destination = _destinationPoint();
+    final markers = _buildMarkers();
+
+    if (mounted) {
+      setState(() {
+        _markers = markers;
+      });
+    }
+
+    if (origin == null || destination == null) {
+      if (mounted) {
+        setState(() {
+          _polylines = <gmap.Polyline>{};
+        });
+      }
+      _fitCameraToVisiblePoints(forceCenter: forceCenter);
+      return;
+    }
+
+    final signature =
+        '${origin.latitude},${origin.longitude}|${destination.latitude},${destination.longitude}';
+    if (!forceCenter && _routeSignature == signature) {
+      _fitCameraToVisiblePoints(forceCenter: forceCenter);
+      return;
+    }
+
+    _routeSignature = signature;
+    final requestToken = ++_routeRequestToken;
+    final routePoints = await _fetchDirectionsRoute(origin, destination);
+    if (!mounted || requestToken != _routeRequestToken) {
+      return;
+    }
+
+    setState(() {
+      _polylines = _buildPolylines(routePoints);
+    });
+
+    _fitCameraToVisiblePoints(forceCenter: forceCenter);
+  }
+
+  Future<void> _fitCameraToVisiblePoints({bool forceCenter = false}) async {
+    final controller = _mapController;
+    if (controller == null) {
+      return;
+    }
+
+    final points = _cameraPoints();
+    if (points.isEmpty) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || _mapController == null) {
+        return;
+      }
+
+      try {
+        if (points.length == 1) {
+          await _mapController!.animateCamera(
+            gmap.CameraUpdate.newLatLngZoom(
+              points.first,
+              widget.trackingLocation == null ? 14.5 : 15.0,
+            ),
+          );
+          return;
+        }
+
+        final bounds = _boundsFromPoints(points);
+        await _mapController!.animateCamera(
+          gmap.CameraUpdate.newLatLngBounds(bounds, 72),
+        );
+      } catch (error) {
+        debugPrint('LiveTrackingMapPanel camera fit error: $error');
+        final fallback = _riderPoint() ?? _toGoogleLatLng(widget.fallbackDestination);
+        if (fallback != null) {
+          await _mapController!.animateCamera(
+            gmap.CameraUpdate.newLatLngZoom(
+              fallback,
+              widget.trackingLocation == null ? 14.5 : 15.0,
+            ),
+          );
+        }
+      }
+    });
+  }
+
+  gmap.LatLngBounds _boundsFromPoints(List<gmap.LatLng> points) {
+    double south = points.first.latitude;
+    double north = points.first.latitude;
+    double west = points.first.longitude;
+    double east = points.first.longitude;
+
+    for (final point in points.skip(1)) {
+      south = math.min(south, point.latitude);
+      north = math.max(north, point.latitude);
+      west = math.min(west, point.longitude);
+      east = math.max(east, point.longitude);
+    }
+
+    return gmap.LatLngBounds(
+      southwest: gmap.LatLng(south, west),
+      northeast: gmap.LatLng(north, east),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final effectiveBorderRadius =
-        borderRadius ?? BorderRadius.circular(20.r(context));
+        widget.borderRadius ?? BorderRadius.circular(20.r(context));
+    final fallbackCenter =
+        _riderPoint() ??
+        _toGoogleLatLng(widget.fallbackDestination) ??
+        const gmap.LatLng(23.8103, 90.4125);
+    final hasTracking = widget.trackingLocation != null;
+    final isLoadingRoute = _routeRequestToken > 0 && _polylines.isEmpty;
 
     return SizedBox(
       width: double.infinity,
-      height: expand ? null : (height ?? 300.h(context)),
+      height: widget.expand ? null : (widget.height ?? 300.h(context)),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: const Color(0xFFF2F4F6),
@@ -35,501 +416,79 @@ class LiveTrackingMapPanel extends StatelessWidget {
           borderRadius: effectiveBorderRadius,
           child: Stack(
             children: [
-              const _MapBackdrop(),
-              if (trackingLocation == null) ...[
-                Positioned(
-                  left: 28.w(context),
-                  top: 112.h(context),
-                  child: const _MapPin(
-                    label: 'Rider',
-                    markerColor: Color(0xFF2E2E2E),
-                    badgeColor: Color(0xFFFF6B00),
-                    icon: Icons.navigation_rounded,
+              gmap.GoogleMap(
+                initialCameraPosition: gmap.CameraPosition(
+                  target: fallbackCenter,
+                  zoom: hasTracking ? 14.5 : 13.5,
+                ),
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                  _fitCameraToVisiblePoints(forceCenter: true);
+                },
+                markers: _markers,
+                polylines: _polylines,
+                mapType: gmap.MapType.normal,
+                myLocationEnabled: false,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                compassEnabled: false,
+                trafficEnabled: false,
+                buildingsEnabled: true,
+                indoorViewEnabled: false,
+                mapToolbarEnabled: false,
+                rotateGesturesEnabled: true,
+                scrollGesturesEnabled: true,
+                zoomGesturesEnabled: true,
+                tiltGesturesEnabled: true,
+              ),
+              Positioned(
+                top: 14.h(context),
+                left: 14.w(context),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w(context),
+                    vertical: 6.h(context),
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.92),
+                    borderRadius: BorderRadius.circular(999.r(context)),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x14000000),
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isLoadingRoute) ...[
+                        SizedBox(
+                          width: 12.w(context),
+                          height: 12.w(context),
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        ),
+                        SizedBox(width: 8.w(context)),
+                      ],
+                      Text(
+                        hasTracking ? 'Live Tracking' : 'Tracking Preview',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontSize: 12.sp(context),
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF303030),
+                            ),
+                      ),
+                    ],
                   ),
                 ),
-                Positioned(
-                  right: 44.w(context),
-                  top: 42.h(context),
-                  child: const _MapPin(
-                    label: 'Your location',
-                    markerColor: Color(0xFF2E2E2E),
-                    badgeColor: Color(0xFFFF6B00),
-                    icon: Icons.location_on_rounded,
-                  ),
-                ),
-                Positioned.fill(child: CustomPaint(painter: _RoutePainter())),
-              ] else
-                Positioned.fill(
-                  child: _RealtimeTrackingOverlay(
-                    location: trackingLocation!,
-                  ),
-                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-}
-
-class _MapBackdrop extends StatelessWidget {
-  const _MapBackdrop();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(painter: _MapPainter(), child: Container());
-  }
-}
-
-class _RealtimeTrackingOverlay extends StatelessWidget {
-  final UserOrderTrackingLocation location;
-
-  const _RealtimeTrackingOverlay({
-    required this.location,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final size = Size(constraints.maxWidth, constraints.maxHeight);
-        final projection = _TrackingProjection.fromLocation(location, size);
-
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: CustomPaint(
-                painter: _RealtimeRoutePainter(
-                  route: projection.routeOffsets,
-                ),
-              ),
-            ),
-            Positioned(
-              left: projection.riderOffset.dx,
-              top: projection.riderOffset.dy,
-              child: Transform.translate(
-                offset: const Offset(-18, -48),
-                child: _TrackingMarker(
-                  label: 'Rider',
-                  icon: Icons.navigation_rounded,
-                  markerColor: const Color(0xFF2E2E2E),
-                  badgeColor: const Color(0xFFFF6B00),
-                  subtitle: location.speed == null
-                      ? null
-                      : '${location.speed!.toStringAsFixed(0)} km/h',
-                ),
-              ),
-            ),
-            Positioned(
-              left: projection.destinationOffset.dx,
-              top: projection.destinationOffset.dy,
-              child: Transform.translate(
-                offset: const Offset(-18, -48),
-                child: _TrackingMarker(
-                  label: 'Your location',
-                  icon: Icons.location_on_rounded,
-                  markerColor: const Color(0xFF2E2E2E),
-                  badgeColor: const Color(0xFFFF6B00),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _TrackingMarker extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color markerColor;
-  final Color badgeColor;
-  final String? subtitle;
-
-  const _TrackingMarker({
-    required this.label,
-    required this.icon,
-    required this.markerColor,
-    required this.badgeColor,
-    this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 8.w(context),
-            vertical: 4.h(context),
-          ),
-          decoration: BoxDecoration(
-            color: markerColor,
-            borderRadius: BorderRadius.circular(8.r(context)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white,
-                  fontSize: 10.sp(context),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              if (subtitle != null) ...[
-                SizedBox(height: 2.h(context)),
-                Text(
-                  subtitle!,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white70,
-                    fontSize: 9.sp(context),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-        SizedBox(height: 4.h(context)),
-        Center(
-          child: Container(
-            width: 24.w(context),
-            height: 24.w(context),
-            decoration: BoxDecoration(
-              color: badgeColor,
-              shape: BoxShape.circle,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x24000000),
-                  blurRadius: 8,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Icon(icon, color: Colors.white, size: 16.sp(context)),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _TrackingProjection {
-  const _TrackingProjection({
-    required this.routeOffsets,
-    required this.riderOffset,
-    required this.destinationOffset,
-  });
-
-  final List<Offset> routeOffsets;
-  final Offset riderOffset;
-  final Offset destinationOffset;
-
-  factory _TrackingProjection.fromLocation(
-    UserOrderTrackingLocation location,
-    Size size,
-  ) {
-    final points = <TrackingGeoPoint>[
-      location.riderLocation,
-      if (location.destinationLocation != null) location.destinationLocation!,
-      ...location.routePoints,
-    ];
-
-    final bounds = _GeoBounds.fromPoints(points);
-    final projectedRoute =
-        location.routePoints.isNotEmpty
-            ? location.routePoints
-                .map((point) => bounds.project(point, size))
-                .toList()
-            : <Offset>[
-              bounds.project(location.riderLocation, size),
-              if (location.destinationLocation != null)
-                bounds.project(location.destinationLocation!, size),
-            ];
-
-    final riderOffset = bounds.project(location.riderLocation, size);
-    final destinationPoint =
-        location.destinationLocation ?? location.routePoints.lastOrNull ??
-        location.riderLocation;
-    final destinationOffset = bounds.project(destinationPoint, size);
-
-    return _TrackingProjection(
-      routeOffsets: projectedRoute,
-      riderOffset: riderOffset,
-      destinationOffset: destinationOffset,
-    );
-  }
-}
-
-class _GeoBounds {
-  const _GeoBounds({
-    required this.minLat,
-    required this.maxLat,
-    required this.minLng,
-    required this.maxLng,
-  });
-
-  final double minLat;
-  final double maxLat;
-  final double minLng;
-  final double maxLng;
-
-  factory _GeoBounds.fromPoints(List<TrackingGeoPoint> points) {
-    var minLat = points.first.lat;
-    var maxLat = points.first.lat;
-    var minLng = points.first.lng;
-    var maxLng = points.first.lng;
-
-    for (final point in points.skip(1)) {
-      minLat = math.min(minLat, point.lat);
-      maxLat = math.max(maxLat, point.lat);
-      minLng = math.min(minLng, point.lng);
-      maxLng = math.max(maxLng, point.lng);
-    }
-
-    if ((maxLat - minLat).abs() < 0.0001) {
-      minLat -= 0.002;
-      maxLat += 0.002;
-    }
-    if ((maxLng - minLng).abs() < 0.0001) {
-      minLng -= 0.002;
-      maxLng += 0.002;
-    }
-
-    return _GeoBounds(
-      minLat: minLat,
-      maxLat: maxLat,
-      minLng: minLng,
-      maxLng: maxLng,
-    );
-  }
-
-  Offset project(TrackingGeoPoint point, Size size) {
-    const padding = 28.0;
-    final usableWidth = (size.width - padding * 2).clamp(1.0, size.width);
-    final usableHeight = (size.height - padding * 2).clamp(1.0, size.height);
-
-    final xPercent = (point.lng - minLng) / (maxLng - minLng);
-    final yPercent = (maxLat - point.lat) / (maxLat - minLat);
-
-    return Offset(
-      padding + usableWidth * xPercent,
-      padding + usableHeight * yPercent,
-    );
-  }
-}
-
-class _RealtimeRoutePainter extends CustomPainter {
-  _RealtimeRoutePainter({required this.route});
-
-  final List<Offset> route;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (route.length < 2) {
-      return;
-    }
-
-    final path = Path()..moveTo(route.first.dx, route.first.dy);
-    for (final point in route.skip(1)) {
-      path.lineTo(point.dx, point.dy);
-    }
-
-    final routePaint = Paint()
-      ..color = const Color(0xFFFF6B00)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final glowPaint = Paint()
-      ..color = const Color(0x22FF6B00)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 10
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    canvas.drawPath(path, glowPaint);
-    canvas.drawPath(path, routePaint);
-
-    final dotPaint = Paint()
-      ..color = const Color(0xFFFF6B00)
-      ..style = PaintingStyle.fill;
-
-    for (final point in route) {
-      canvas.drawCircle(point, 2, dotPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _RealtimeRoutePainter oldDelegate) {
-    return oldDelegate.route != route;
-  }
-}
-
-class _MapPin extends StatelessWidget {
-  final String label;
-  final Color markerColor;
-  final Color badgeColor;
-  final IconData icon;
-
-  const _MapPin({
-    required this.label,
-    required this.markerColor,
-    required this.badgeColor,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 8.w(context),
-            vertical: 4.h(context),
-          ),
-          decoration: BoxDecoration(
-            color: markerColor,
-            borderRadius: BorderRadius.circular(8.r(context)),
-          ),
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.white,
-              fontSize: 10.sp(context),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        SizedBox(height: 4.h(context)),
-        Center(
-          child: Container(
-            width: 24.w(context),
-            height: 24.w(context),
-            decoration: BoxDecoration(
-              color: badgeColor,
-              shape: BoxShape.circle,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x24000000),
-                  blurRadius: 8,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Icon(icon, color: Colors.white, size: 16.sp(context)),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MapPainter extends CustomPainter {
-  const _MapPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bg = Paint()..color = const Color(0xFFF3F4F6);
-    canvas.drawRect(Offset.zero & size, bg);
-
-    final road = Paint()
-      ..color = const Color(0xFFD9E0E6)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
-
-    final majorRoad = Paint()
-      ..color = const Color(0xFFC7D0D7)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    final path1 = Path()
-      ..moveTo(0, size.height * .25)
-      ..quadraticBezierTo(
-        size.width * .2,
-        size.height * .18,
-        size.width * .45,
-        size.height * .22,
-      )
-      ..quadraticBezierTo(
-        size.width * .7,
-        size.height * .28,
-        size.width,
-        size.height * .18,
-      );
-    canvas.drawPath(path1, majorRoad);
-
-    final path2 = Path()
-      ..moveTo(size.width * .12, 0)
-      ..lineTo(size.width * .22, size.height)
-      ..moveTo(size.width * .42, 0)
-      ..lineTo(size.width * .58, size.height)
-      ..moveTo(size.width * .74, 0)
-      ..lineTo(size.width * .88, size.height);
-    canvas.drawPath(path2, road);
-
-    for (double y = 46; y < size.height; y += 34) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y + 6), road);
-    }
-    for (double x = 24; x < size.width; x += 48) {
-      canvas.drawLine(Offset(x, 0), Offset(x + 18, size.height), road);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _RoutePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..moveTo(size.width * .17, size.height * .52)
-      ..quadraticBezierTo(
-        size.width * .29,
-        size.height * .64,
-        size.width * .45,
-        size.height * .52,
-      )
-      ..quadraticBezierTo(
-        size.width * .63,
-        size.height * .38,
-        size.width * .78,
-        size.height * .24,
-      );
-
-    final routePaint = Paint()
-      ..color = const Color(0xFFFF6B00)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
-
-    final dottedPaint = Paint()
-      ..color = const Color(0xFFFF6B00)
-      ..style = PaintingStyle.fill;
-
-    for (final metric in path.computeMetrics()) {
-      for (double d = 0; d < metric.length; d += 8) {
-        final tangent = metric.getTangentForOffset(d);
-        if (tangent != null) {
-          canvas.drawCircle(tangent.position, 1.4, dottedPaint);
-        }
-      }
-    }
-
-    canvas.drawPath(path, routePaint..color = const Color(0x44FF6B00));
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-extension _LastOrNullExtension<T> on List<T> {
-  T? get lastOrNull => isEmpty ? null : last;
 }

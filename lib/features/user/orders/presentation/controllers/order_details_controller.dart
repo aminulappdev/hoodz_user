@@ -162,45 +162,86 @@ class OrderDetailsController extends GetxController {
     await showLoadingOverLay(
       msg: 'Loading order details...',
       asyncFunction: () async {
-        isLoading.value = true;
-
-        try {
-          final response = await _networkCaller.getRequest(
-            Urls.getOrderDetailsUrlById(resolvedOrderId),
-            accessToken: accessToken,
-          );
-
-          if (!response.isSuccess) {
-            showAppToast(message: response.errorMessage, isError: true);
-            return;
-          }
-
-          final responseData = response.responseData;
-          if (responseData is! Map<String, dynamic>) {
-            showAppToast(
-              message: 'Invalid order details response.',
-              isError: true,
-            );
-            return;
-          }
-
-          _orderDetailsModel.value =
-              order_details.OrderDetailsModel.fromJson(responseData);
-          _loadedOrderId = resolvedOrderId;
-          _pendingOrderId = resolvedOrderId;
-          isSuccess = true;
-        } finally {
-          isLoading.value = false;
-        }
+        isSuccess = await _fetchOrderDetailsResolved(
+          resolvedOrderId: resolvedOrderId,
+          accessToken: accessToken,
+          showLoaderState: true,
+          showErrorMessages: true,
+        );
       },
     );
 
     return isSuccess;
   }
 
+  Future<bool> refreshOrderDetailsSilently({String? orderId}) async {
+    final resolvedOrderId = orderId ?? _pendingOrderId;
+    if (resolvedOrderId == null || resolvedOrderId.isEmpty) {
+      return false;
+    }
+
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      return false;
+    }
+
+    return _fetchOrderDetailsResolved(
+      resolvedOrderId: resolvedOrderId,
+      accessToken: accessToken,
+      showLoaderState: false,
+      showErrorMessages: false,
+    );
+  }
+
   void clearOrderDetails() {
     _orderDetailsModel.value = null;
     _loadedOrderId = null;
+  }
+
+  Future<bool> _fetchOrderDetailsResolved({
+    required String resolvedOrderId,
+    required String accessToken,
+    required bool showLoaderState,
+    required bool showErrorMessages,
+  }) async {
+    if (showLoaderState) {
+      isLoading.value = true;
+    }
+
+    try {
+      final response = await _networkCaller.getRequest(
+        Urls.getOrderDetailsUrlById(resolvedOrderId),
+        accessToken: accessToken,
+      );
+
+      if (!response.isSuccess) {
+        if (showErrorMessages) {
+          showAppToast(message: response.errorMessage, isError: true);
+        }
+        return false;
+      }
+
+      final responseData = response.responseData;
+      if (responseData is! Map<String, dynamic>) {
+        if (showErrorMessages) {
+          showAppToast(
+            message: 'Invalid order details response.',
+            isError: true,
+          );
+        }
+        return false;
+      }
+
+      _orderDetailsModel.value =
+          order_details.OrderDetailsModel.fromJson(responseData);
+      _loadedOrderId = resolvedOrderId;
+      _pendingOrderId = resolvedOrderId;
+      return true;
+    } finally {
+      if (showLoaderState) {
+        isLoading.value = false;
+      }
+    }
   }
 
   String _formatDateTime(DateTime? dateTime) {

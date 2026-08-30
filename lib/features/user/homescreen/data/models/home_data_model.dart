@@ -6,9 +6,9 @@ class HomeDataModel {
     required this.data,
   });
 
-  final bool? success;
+  final bool? success; 
   final int? statusCode;
-  final String? message; 
+  final String? message;  
   final Data? data;
 
   factory HomeDataModel.fromJson(Map<String, dynamic> json) {
@@ -52,7 +52,7 @@ class Data {
   final Profile? profile;
   final int? unreadNotification;
   final List<SectionBanner> firstSectionBanner;
-  final dynamic lastOrder;
+  final LastOrder? lastOrder;
   final List<NearbyBrand> nearbyBrands;
   final List<Product> recentlyViwed;
   final List<Product> trandingProducts;
@@ -71,7 +71,8 @@ class Data {
           : List<SectionBanner>.from(
               json["firstSectionBanner"]!.map((x) => SectionBanner.fromJson(x)),
             ),
-      lastOrder: json["lastOrder"],
+      lastOrder:
+          json["lastOrder"] == null ? null : LastOrder.fromJson(json["lastOrder"]),
       nearbyBrands: json["nearbyBrands"] == null
           ? []
           : List<NearbyBrand>.from(
@@ -113,7 +114,7 @@ class Data {
     Profile? profile,
     int? unreadNotification,
     List<SectionBanner>? firstSectionBanner,
-    dynamic lastOrder,
+    LastOrder? lastOrder,
     List<NearbyBrand>? nearbyBrands,
     List<Product>? recentlyViwed,
     List<Product>? trandingProducts,
@@ -133,6 +134,110 @@ class Data {
       aiRecommandedProducts:
           aiRecommandedProducts ?? this.aiRecommandedProducts,
       homePageCategories: homePageCategories ?? this.homePageCategories,
+    );
+  }
+}
+
+class LastOrder {
+  LastOrder({
+    required this.id,
+    required this.items,
+    required this.amount,
+    required this.status,
+    required this.createdAt,
+  });
+
+  final String? id;
+  final List<LastOrderItem> items;
+  final int? amount;
+  final String? status;
+  final DateTime? createdAt;
+
+  factory LastOrder.fromJson(Map<String, dynamic> json) {
+    return LastOrder(
+      id: json["_id"]?.toString() ?? json["id"]?.toString(),
+      items: json["items"] == null
+          ? []
+          : List<LastOrderItem>.from(
+              json["items"]!.map((x) => LastOrderItem.fromJson(x)),
+            ),
+      amount: json["amount"] as int?,
+      status: json["status"]?.toString(),
+      createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+    );
+  }
+}
+
+class LastOrderItem {
+  LastOrderItem({
+    required this.id,
+    required this.orderId,
+    required this.product,
+    required this.author,
+    required this.quantity,
+    required this.price,
+    required this.totalPrice,
+    required this.size,
+    required this.color,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  final String? id;
+  final String? orderId;
+  final LastOrderProduct? product;
+  final String? author;
+  final int? quantity;
+  final int? price;
+  final int? totalPrice;
+  final dynamic size;
+  final dynamic color;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  factory LastOrderItem.fromJson(Map<String, dynamic> json) {
+    return LastOrderItem(
+      id: json["_id"]?.toString(),
+      orderId: json["order"]?.toString(),
+      product: json["product"] == null
+          ? null
+          : LastOrderProduct.fromJson(
+              Map<String, dynamic>.from(json["product"]),
+            ),
+      author: json["author"]?.toString(),
+      quantity: json["quantity"] as int?,
+      price: json["price"] as int?,
+      totalPrice: json["totalPrice"] as int?,
+      size: json["size"],
+      color: json["color"],
+      createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+      updatedAt: DateTime.tryParse(json["updatedAt"]?.toString() ?? ""),
+    );
+  }
+}
+
+class LastOrderProduct {
+  LastOrderProduct({
+    required this.id,
+    required this.title,
+    required this.banner,
+    required this.price,
+    required this.discountPrice,
+  });
+
+  final String? id;
+  final String? title;
+  final String? banner;
+  final int? price;
+  final int? discountPrice;
+
+  factory LastOrderProduct.fromJson(Map<String, dynamic> json) {
+    return LastOrderProduct(
+      id: json["_id"]?.toString(),
+      title: json["title"]?.toString(),
+      banner: json["banner"]?.toString(),
+      price: json["price"] as int?,
+      discountPrice: json["discountPrice"] as int?,
     );
   }
 }
@@ -162,6 +267,7 @@ class Product {
     required this.id,
     required this.title,
     required this.image,
+    required this.banner,
     required this.collectionType,
     required this.price,
     required this.discountPrice,
@@ -174,6 +280,7 @@ class Product {
   final String? id;
   final String? title;
   final String? image;
+  final String? banner;
   final String? collectionType;
   final int? price;
   final int? discountPrice;
@@ -183,10 +290,15 @@ class Product {
   final bool? inStock;
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    final banner = json["banner"]?.toString();
     return Product(
       id: json["_id"],
       title: json["title"],
-      image: json["image"] ?? json["thumbnail"] ?? json["productImage"],
+      image: json["image"] ??
+          banner ??
+          json["thumbnail"] ??
+          json["productImage"],
+      banner: banner,
       collectionType: json["collectionType"],
       price: json["price"],
       discountPrice: json["discountPrice"],
@@ -201,6 +313,7 @@ class Product {
     String? id,
     String? title,
     String? image,
+    String? banner,
     String? collectionType,
     int? price,
     int? discountPrice,
@@ -213,6 +326,7 @@ class Product {
       id: id ?? this.id,
       title: title ?? this.title,
       image: image ?? this.image,
+      banner: banner ?? this.banner,
       collectionType: collectionType ?? this.collectionType,
       price: price ?? this.price,
       discountPrice: discountPrice ?? this.discountPrice,

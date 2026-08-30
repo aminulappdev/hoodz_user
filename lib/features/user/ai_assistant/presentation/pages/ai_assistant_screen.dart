@@ -43,7 +43,7 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
             Expanded(
               child: ListView(
                 padding: EdgeInsets.fromLTRB(
-                  16.w(context),
+                  16.w(context), 
                   20.h(context),
                   16.w(context),
                   20.h(context),
