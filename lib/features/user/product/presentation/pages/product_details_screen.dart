@@ -470,12 +470,9 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 20.w(context)),
-            child: SizedBox(
-              height: height,
-              width: width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 // ================= PRODUCT IMAGE =================
                 if (topImageUrl == null)
                   SizedBox(
@@ -933,8 +930,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 ],
 
                 SizedBox(height: 20.h(context)),
-                ],
-              ),
+              ],
             ),
           ),
         );

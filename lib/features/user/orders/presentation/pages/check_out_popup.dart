@@ -34,13 +34,13 @@ class OrderItem {
 // just applied to a function that triggers UI instead of a widget that
 // renders it.
 // ============================================================================
-Future<void> showConfirmOrderSheet(
+  Future<void> showConfirmOrderSheet(
   BuildContext context, {
   required String deliveryAddress,
   required List<OrderItem> items,
   required VoidCallback onContinue,
   required VoidCallback onEditOrder,
-  int secondsToConfirm = 30,
+  int secondsToConfirm = 15,
 }) {
   return showModalBottomSheet(
     context: context,
@@ -85,7 +85,7 @@ class ConfirmOrderSheet extends StatefulWidget {
     required this.items,
     required this.onContinue,
     required this.onEditOrder,
-    this.secondsToConfirm = 30,
+    this.secondsToConfirm = 15,
   });
 
   @override
@@ -165,7 +165,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: [ 
           const Text( 
             'Confirm Your Order',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
