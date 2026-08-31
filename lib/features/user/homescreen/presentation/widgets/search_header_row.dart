@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/circle_icon.dart';
 
@@ -113,7 +115,7 @@ class SearchHeaderRow extends StatelessWidget {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          'Search',
+                          Strings.search.tr,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 fontSize: 15.sp(context),

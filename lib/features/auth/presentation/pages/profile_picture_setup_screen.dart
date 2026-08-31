@@ -1,6 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
@@ -24,7 +25,7 @@ class ProfilePictureSetupScreen extends GetView<ProfileSetupController> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: const CustomAppBar(label: 'Profile Picture'),
+      appBar: CustomAppBar(label: Strings.profilePicture.tr),
       body: SizedBox(
         height: height,
         width: width,
@@ -85,8 +86,8 @@ class ProfilePictureSetupScreen extends GetView<ProfileSetupController> {
                     Obx(
                       () => CustomButton(
                         text: controller.isSubmitting.value
-                            ? 'Please wait...'
-                            : 'Continue',
+                            ? Strings.pleaseWait.tr
+                            : Strings.continueButton.tr,
                         onPressed: controller.isSubmitting.value
                             ? null
                             : () => controller.submitUserProfileSetup(
@@ -95,28 +96,28 @@ class ProfilePictureSetupScreen extends GetView<ProfileSetupController> {
                                 ),
                       ),
                     ),
-                    SizedBox(height: 16.h(context)),
+                    // SizedBox(height: 16.h(context)),
 
-                    Obx(
-                      () => GestureDetector(
-                        onTap: controller.isSubmitting.value
-                            ? null
-                            : () => controller.submitUserProfileSetup(
-                                  context,
-                                  withImage: false,
-                                ),
-                        child: Text(
-                          'Skip',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: LightThemeColors.primaryColor,
-                                fontSize: 14,
-                                fontFamily: 'Geist',
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                    ),
+                    // Obx(
+                    //   () => GestureDetector(
+                    //     onTap: controller.isSubmitting.value
+                    //         ? null
+                    //         : () => controller.submitUserProfileSetup(
+                    //               context,
+                    //               withImage: false,
+                    //             ),
+                    //     child: Text(
+                    //       'Skip',
+                    //       style: Theme.of(context).textTheme.bodyMedium
+                    //           ?.copyWith(
+                    //             color: LightThemeColors.primaryColor,
+                    //             fontSize: 14,
+                    //             fontFamily: 'Geist',
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 20.h(context)),
                   ],
                 ),

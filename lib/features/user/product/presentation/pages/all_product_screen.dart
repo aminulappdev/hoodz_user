@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/ai_recommended_product_controller.dart';
@@ -60,7 +61,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
             _AllProductScreenHeader(controller: controller),
             Expanded(
               child: controller.products.isEmpty
-                  ? const Center(child: Text('No products found'))
+                  ? Center(child: Text(Strings.noProductsFound.tr))
                   : GridView.builder(
                       padding: EdgeInsets.fromLTRB(
                         20.w(context),

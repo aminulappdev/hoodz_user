@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_card.dart';
@@ -10,7 +12,7 @@ class ShipingButtomBar extends StatelessWidget {
     required this.onTap,
     this.subTotal,
     this.deliveryCharge,
-    this.buttonText = 'Pay Now',
+    this.buttonText = '',
   });
 
   final double? subTotal;
@@ -64,12 +66,17 @@ class ShipingButtomBar extends StatelessWidget {
                       // const Divider(color: Color(0xffEAEAEA), height: 1),
                       
                       SummaryRow(
-                        title: 'Total cost',
+                        title: Strings.totalCost.tr,
                         value: '\$${total.toStringAsFixed(2)}',
                         isBold: true,
                       ),
                       SizedBox(height: 26.h(context)),
-                      CustomButton(text: buttonText, onPressed: onTap),
+                      CustomButton(
+                        text: buttonText.isEmpty
+                            ? Strings.payNow.tr
+                            : buttonText,
+                        onPressed: onTap,
+                      ),
                     ],
                   ),
                 ),
@@ -83,7 +90,7 @@ class ShipingButtomBar extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Price:',
+                          Strings.priceLabel.tr,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 fontSize: 14.sp(context),

@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 
@@ -24,7 +25,7 @@ class CartAndBuy extends StatelessWidget {
       children: [
         Expanded(
           child: CustomButton( 
-            text: 'Add to cart',
+            text: Strings.addToCart.tr,
             height: 48.h(context),
             onPressed: onTapAddToCart,
             enabled: isAddToCartEnabled,
@@ -41,7 +42,7 @@ class CartAndBuy extends StatelessWidget {
         Expanded(
           child: CustomButton(
             
-            text: 'Buy now',
+            text: Strings.buyNow.tr,
             height: 48.h(context),
             onPressed: onTapBuyNow,
             enabled: isBuyNowEnabled,

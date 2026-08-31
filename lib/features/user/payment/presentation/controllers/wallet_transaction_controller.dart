@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -37,7 +38,7 @@ class WalletTransactionController extends GetxController {
         transaction.note,
         transaction.referenceType,
         transaction.type,
-      ]) ?? 'Wallet transaction';
+      ]) ?? Strings.walletTransaction.tr;
 
       return TransactionItem(
         title: titleText,
@@ -53,7 +54,7 @@ class WalletTransactionController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
@@ -62,7 +63,7 @@ class WalletTransactionController extends GetxController {
     bool isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Loading wallet history...',
+      msg: Strings.loadingWalletHistory.tr,
       asyncFunction: () async {
         isLoading.value = true;
 
@@ -80,7 +81,7 @@ class WalletTransactionController extends GetxController {
           final responseData = response.responseData;
           if (responseData is! Map<String, dynamic>) {
             showAppToast(
-              message: 'Invalid wallet transaction response.',
+              message: Strings.invalidWalletTransactionResponse.tr,
               isError: true,
             );
             return;
@@ -100,7 +101,7 @@ class WalletTransactionController extends GetxController {
 
   String _formatDate(DateTime? dateTime) {
     if (dateTime == null) {
-      return 'N/A';
+      return Strings.notAvailable.tr;
     }
 
     return DateFormat('MMM d, y - h:mm a').format(dateTime.toLocal());

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
@@ -34,8 +36,8 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
-                'Voucher & Points',
+              Text(
+                '${Strings.vouchers.tr} & ${Strings.points.tr}',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -46,7 +48,7 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
               InkWell(
                 onTap: onApplyVoucher,
                 child: Text(
-                  'Voucher Apply',
+                  Strings.addVoucher.tr,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -63,7 +65,7 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
           const SizedBox(height: 10),
           CustomTextField(
             controller: voucherController,
-            hintText: 'Enter voucher code',
+            hintText: Strings.enterVoucherCode.tr,
           ),
           const SizedBox(height: 10),
           const Divider(height: 1, color: Color(0xFFF0F0F0)),
@@ -75,8 +77,8 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Use points',
+                    Text(
+                      Strings.usePoints.tr,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -129,7 +131,7 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
               AppRoutes.points,
             ),
             child: Text(
-              'About coin rules',
+              Strings.aboutCoinRules.tr,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontSize: 10,
                 fontWeight: FontWeight.w400,

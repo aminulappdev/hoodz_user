@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
@@ -88,7 +90,7 @@ class RecommendationCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(999.r(context)),
                         ),
                         child: Text(
-                          'View',
+                          Strings.view.tr,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/shimmer/wishlist_shimmer_card.dart';
@@ -50,7 +51,7 @@ class WishlistScreen extends GetView<WishlistController> {
               )
             : null,
         title: Text(
-          'Wishlist',
+          Strings.wishlistTitle.tr,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
       ),
@@ -73,7 +74,7 @@ class WishlistScreen extends GetView<WishlistController> {
         }
 
         if (controller.items.isEmpty) {
-          return const Center(child: Text('No wishlist items found'));
+          return Center(child: Text(Strings.noWishlistItemsFound.tr));
         }
 
         return Padding(
@@ -92,7 +93,7 @@ class WishlistScreen extends GetView<WishlistController> {
 
               return WishListCard(
                 imageUrl: product?.banner ?? '',
-                name: product?.title ?? 'Unnamed product',
+                name: product?.title ?? Strings.unnamedProduct.tr,
                 price: '\$${product?.discountPrice ?? product?.price ?? 0}',
                 onTap: () async {
                   final productId = product?.id;

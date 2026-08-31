@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
@@ -53,7 +54,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Add Review',
+                          Strings.addReview.tr,
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontSize: 18.sp(context),
@@ -82,7 +83,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                   ),
                   SizedBox(height: 18.h(context)),
                   Text(
-                    'Rating',
+                    Strings.ratingLabel.tr,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontSize: 14.sp(context),
                           fontWeight: FontWeight.w700,
@@ -109,7 +110,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                       controller.rating.value <= 0) ...[
                     SizedBox(height: 8.h(context)),
                     Text(
-                      'Rating is required.',
+                      Strings.pleaseSelectARating.tr,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.red,
                             fontSize: 12.sp(context),
@@ -118,7 +119,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                   ],
                   SizedBox(height: 18.h(context)),
                   Text(
-                    'Your review',
+                    Strings.yourReview.tr,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontSize: 14.sp(context),
                           fontWeight: FontWeight.w700,
@@ -132,7 +133,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                     maxLines: 4,
                     textInputAction: TextInputAction.newline,
                     decoration: InputDecoration(
-                      hintText: 'Write your feedback here...',
+                      hintText: Strings.writeYourFeedbackHere.tr,
                       filled: true,
                       fillColor: const Color(0xFFF7F7F8),
                       contentPadding: EdgeInsets.symmetric(
@@ -155,7 +156,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                   ),
                   SizedBox(height: 18.h(context)),
                   Text(
-                    'Upload images',
+                    Strings.uploadImages.tr,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontSize: 14.sp(context),
                           fontWeight: FontWeight.w700,
@@ -189,8 +190,8 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                           SizedBox(height: 10.h(context)),
                           Text(
                             controller.isPickingImages.value
-                                ? 'Picking images...'
-                                : 'Tap to add multiple photos',
+                                ? Strings.pickingImages.tr
+                                : Strings.tapToAddMultiplePhotos.tr,
                             textAlign: TextAlign.center,
                             style:
                                 Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -201,7 +202,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                           ),
                           SizedBox(height: 6.h(context)),
                           Text(
-                            'You can choose multiple images from gallery',
+                            Strings.chooseMultipleImages.tr,
                             textAlign: TextAlign.center,
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -217,7 +218,7 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                       controller.attachments.isEmpty) ...[
                     SizedBox(height: 8.h(context)),
                     Text(
-                      'Please upload at least one image.',
+                      Strings.pleaseUploadAtLeastOneImage.tr,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.red,
                             fontSize: 12.sp(context),
@@ -289,8 +290,8 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                   CustomButton(
                     height: 48.h(context),
                     text: controller.isSubmitting.value
-                        ? 'Submitting...'
-                        : 'Submit Review',
+                        ? Strings.submittingReview.tr
+                        : Strings.submitReview.tr,
                     enabled: !controller.isSubmitting.value,
                     onPressed: controller.submitReview,
                   ),

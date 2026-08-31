@@ -1,5 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/cart_quantity.dart';
@@ -108,7 +110,7 @@ class CartItemCard extends StatelessWidget {
                   ),
                   SizedBox(height: 6.h(context)),
                   Text(
-                    'Size: $size    Color: $color',
+                    '${Strings.size.tr}: $size    ${Strings.color.tr}: $color',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 14.sp(context),
                       fontWeight: FontWeight.w400,

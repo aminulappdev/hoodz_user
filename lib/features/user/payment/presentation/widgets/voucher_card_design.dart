@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/payment/presentation/models/voucher_model.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/voucher_screen.dart';
@@ -28,7 +30,7 @@ class VoucherCardDesign extends StatelessWidget {
     final bool isActionable = isActive && !showUsedState;
     final bool showCopyCode = isActive && !showUsedState;
     final String footerText = showUsedState
-        ? 'Used at ${usedAtText ?? 'N/A'}'
+        ? '${Strings.used.tr} ${usedAtText ?? Strings.notAvailable.tr}'
         : voucher.expiryText;
     final TextDecoration textDecoration =
         showUsedState ? TextDecoration.lineThrough : TextDecoration.none;
@@ -156,8 +158,8 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = isUsed
-        ? 'Used'
-        : (status == VoucherStatus.used ? 'Used' : 'Expired');
+        ? Strings.used.tr
+        : (status == VoucherStatus.used ? Strings.used.tr : Strings.expired.tr);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(

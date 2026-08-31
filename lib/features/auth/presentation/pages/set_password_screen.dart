@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -24,8 +24,8 @@ class SetPasswordScreen extends GetView<SetPasswordController> {
     return Scaffold(
       body: AuthBackground(
         isBack: true,
-        title: 'Set new password',
-        subtitle: 'Please create a new password for your account',
+        title: Strings.createNewPassword.tr,
+        subtitle: Strings.createNewPasswordSubtitle.tr,
         contentColumn: Form(
           key: controller.formKey,
           child: SingleChildScrollView(
@@ -34,7 +34,7 @@ class SetPasswordScreen extends GetView<SetPasswordController> {
               children: [
                 SizedBox(height: 40.h(context)),
 
-                const LabelText(label: 'New Password'),
+                LabelText(label: Strings.newPassword.tr),
                 SizedBox(height: 8.h(context)),
                 Obx(
                   () => CustomTextField(
@@ -49,7 +49,7 @@ class SetPasswordScreen extends GetView<SetPasswordController> {
                   ),
                 ),
                 SizedBox(height: 20.h(context)),
-                const LabelText(label: 'Confirm Password'),
+                LabelText(label: Strings.confirmPassword.tr),
                 SizedBox(height: 8.h(context)),
                 Obx(
                   () => CustomTextField(
@@ -70,7 +70,7 @@ class SetPasswordScreen extends GetView<SetPasswordController> {
                 ),
                 SizedBox(height: 30.h(context)),
                 CustomButton(
-                  text: 'Save Changes',
+                  text: Strings.continueButton.tr,
                   onPressed: () async {
                     final isSuccess = await controller.resetPassword();
                     if (!isSuccess) {

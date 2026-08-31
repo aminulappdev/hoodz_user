@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -52,7 +53,7 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Order Timeline',
+                          Strings.orderTimeline.tr,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 fontSize: 18.sp(context),
@@ -81,7 +82,7 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
               ),
               SizedBox(height: 12.h(context)),
               CustomButton(
-                text: 'Order Details',
+                text: Strings.orderDetails.tr,
                 onPressed: () async { 
                   final successController =
                       Get.find<PaymentSuccessfullController>();
@@ -97,7 +98,7 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
 
                   if (orderId == null || orderId.isEmpty) {
                     showAppToast(
-                      message: 'Order id not found.',
+                      message: Strings.orderIdNotFound.tr,
                       isError: true, 
                     );
                     return;
@@ -120,7 +121,7 @@ class PaymentSuccessfullScreen extends GetView<PaymentSuccessfullController> {
                   );
                 },
                 child: Text(
-                  'Back to Homepage',
+                  Strings.backToHomepage.tr,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 15.sp(context),
                     fontWeight: FontWeight.w600,

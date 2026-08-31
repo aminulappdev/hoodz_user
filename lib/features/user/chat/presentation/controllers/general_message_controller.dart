@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -19,8 +20,8 @@ class GeneralMessageController extends GetxController {
   final RxBool isLoadingMore = false.obs;
   final Rx<GeneralMessageModel?> _messageModel = Rx<GeneralMessageModel?>(null);
   final RxString chatId = ''.obs;
-  final RxString chatTitle = 'Customer support'.obs;
-  final RxString chatSubtitle = 'Powered by AI'.obs;
+  final RxString chatTitle = Strings.customerSupportChat.tr.obs;
+  final RxString chatSubtitle = Strings.poweredByAI.tr.obs;
   final RxString receiverName = ''.obs;
   final RxString receiverAvatar = ''.obs;
 
@@ -137,7 +138,7 @@ class GeneralMessageController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -166,7 +167,10 @@ class GeneralMessageController extends GetxController {
         ..addAll(mappedMessages);
       socketService.messageList.refresh();
     } catch (e) {
-      showAppToast(message: 'Failed to load messages: $e', isError: true);
+      showAppToast(
+        message: '${Strings.failedToLoadMessages.tr}$e',
+        isError: true,
+      );
     } finally {
       isLoading.value = false;
     }

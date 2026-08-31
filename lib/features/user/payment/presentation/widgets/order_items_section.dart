@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/features/user/orders/data/models/order_details_model.dart'
@@ -23,7 +25,7 @@ class OrderItemsSection extends StatelessWidget {
           final product = item.product;
           final quantity = item.quantity ?? 1;
           final price = item.totalPrice ?? item.price ?? 0;
-          final sizeText = _formatValue(item.size, fallback: 'N/A');
+          final sizeText = _formatValue(item.size, fallback: Strings.notAvailable.tr);
           final colorText = _formatColor(item.color);
 
           return Padding(
@@ -66,7 +68,7 @@ class OrderItemsSection extends StatelessWidget {
     }
 
     final text = value == null ? null : value.toString().trim();
-    return text == null || text.isEmpty ? 'N/A' : text;
+    return text == null || text.isEmpty ? Strings.notAvailable.tr : text;
   }
 }
 

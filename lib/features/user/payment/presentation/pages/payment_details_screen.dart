@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
@@ -171,7 +172,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold( 
       backgroundColor: const Color(0xFFF8F8F8),
-      appBar: CustomAppBar(label: 'Order Details'),
+      appBar: CustomAppBar(label: Strings.orderDetails.tr),
       body: SafeArea(
         child: Obx(() {
           final List<order_details.Item> orderItems =
@@ -217,7 +218,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Order Timeline',
+                                Strings.orderTimeline.tr,
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
                                       fontSize: 18.sp(context),
@@ -317,7 +318,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                         ),
                         SizedBox(height: 20.h(context)), 
                         CustomButton(
-                          text: 'Customer Service',
+                        text: Strings.customerSupport.tr,
                           onPressed: () {
                             final orderId =
                                 _controller.orderDetailsData?.id ??

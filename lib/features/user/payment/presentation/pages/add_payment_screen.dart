@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
@@ -19,7 +20,7 @@ class AddPaymentScreen extends GetView<AddPaymentController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(label: 'Add Payment Method'),
+      appBar: CustomAppBar(label: Strings.addPaymentMethodTitle.tr),
       backgroundColor: Colors.white,
       bottomNavigationBar: SafeArea(
         top: false,
@@ -31,7 +32,7 @@ class AddPaymentScreen extends GetView<AddPaymentController> {
             24.h(context),
           ),
           child: CustomButton(
-            text: 'Add card',
+            text: Strings.addCard.tr,
             onPressed: () {
               Navigator.pop(context);
             },
@@ -53,7 +54,7 @@ class AddPaymentScreen extends GetView<AddPaymentController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Select your payment method',
+                Strings.selectYourPaymentMethod.tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 14.sp(context),
                   fontWeight: FontWeight.w500,
@@ -81,17 +82,17 @@ class AddPaymentScreen extends GetView<AddPaymentController> {
                 ],
               ),
               SizedBox(height: 20.h(context)),
-              const PaymentFormLabel(text: 'Card Holder Name'),
+              PaymentFormLabel(text: Strings.cardHolderName.tr),
               SizedBox(height: 10.h(context)),
               CustomTextField(
-                hintText: 'Your name',
+                hintText: Strings.yourName.tr,
                 prefixIcon: Assets.icons.idCard.path,
               ),
               SizedBox(height: 18.h(context)),
-              const PaymentFormLabel(text: 'Card Number'),
+              PaymentFormLabel(text: Strings.cardNumber.tr),
               SizedBox(height: 10.h(context)),
               CustomTextField(
-                hintText: 'Id#%^&*^',
+                hintText: Strings.cardNumber.tr,
                 prefixIcon: selectedType == PaymentMethodType.stripe
                     ? Assets.icons.stripe.path
                     : Assets.icons.payPal.path,
@@ -103,9 +104,9 @@ class AddPaymentScreen extends GetView<AddPaymentController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const PaymentFormLabel(text: 'Valid Until'),
+                        PaymentFormLabel(text: Strings.validUntil.tr),
                         SizedBox(height: 10.h(context)),
-                        CustomTextField(hintText: 'Month/Year'),
+                        CustomTextField(hintText: Strings.monthYear.tr),
                       ],
                     ),
                   ),
@@ -114,9 +115,9 @@ class AddPaymentScreen extends GetView<AddPaymentController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const PaymentFormLabel(text: 'CVV'),
+                        PaymentFormLabel(text: Strings.cvv.tr),
                         SizedBox(height: 10.h(context)),
-                        CustomTextField(hintText: '***'),
+                        CustomTextField(hintText: Strings.cvv.tr),
                       ],
                     ),
                   ),

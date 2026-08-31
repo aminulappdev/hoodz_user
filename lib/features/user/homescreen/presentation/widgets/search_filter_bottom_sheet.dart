@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -114,7 +115,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                         ),
                       ),
                       Text(
-                        'Filter Result',
+                        Strings.filterResult.tr,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontSize: 18.sp(context),
                           fontWeight: FontWeight.w700,
@@ -122,7 +123,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                         ),
                       ),
                       SizedBox(height: 16.h(context)),
-                      _SectionLabel(text: 'Category'),
+                      _SectionLabel(text: Strings.category.tr),
                       SizedBox(height: 10.h(context)),
                       Wrap(
                         spacing: 8.w(context),
@@ -142,7 +143,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                             .toList(),
                       ),
                       SizedBox(height: 16.h(context)),
-                      _SectionLabel(text: 'Brand'),
+                      _SectionLabel(text: Strings.brand.tr),
                       SizedBox(height: 10.h(context)),
                       Wrap(
                         spacing: 8.w(context),
@@ -158,7 +159,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                             .toList(),
                       ),
                       SizedBox(height: 16.h(context)),
-                      _SectionLabel(text: 'Color'),
+                      _SectionLabel(text: Strings.color.tr),
                       SizedBox(height: 10.h(context)),
                       Wrap(
                         spacing: 8.w(context),
@@ -176,7 +177,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                             .toList(),
                       ),
                       SizedBox(height: 16.h(context)),
-                      _SectionLabel(text: 'Size'),
+                      _SectionLabel(text: Strings.size.tr),
                       SizedBox(height: 10.h(context)),
                       Wrap(
                         spacing: 8.w(context),
@@ -192,7 +193,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                             .toList(),
                       ),
                       SizedBox(height: 16.h(context)),
-                      _SectionLabel(text: 'Gender'),
+                      _SectionLabel(text: Strings.gender.tr),
                       SizedBox(height: 10.h(context)),
                       Wrap(
                         spacing: 8.w(context),
@@ -200,7 +201,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                         children: genders
                             .map(
                               (item) => FilterOptionChip(
-                                label: item,
+                                label: _displayGenderLabel(item),
                                 isSelected: gender == item,
                                 onTap: () => controller.selectGender(item),
                               ),
@@ -209,7 +210,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                       ),
                       SizedBox(height: 18.h(context)),
                       _SliderHeader(
-                        label: 'Price Range:',
+                        label: Strings.priceRange.tr,
                         value:
                             '\$${_priceRange!.start.round()} - \$${_priceRange!.end.round()}',
                       ),
@@ -227,8 +228,9 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                       ),
                       SizedBox(height: 6.h(context)),
                       _SliderHeader(
-                        label: 'Max Distance:',
-                        value: '${distance.end.round()} km',
+                        label: Strings.maxDistance.tr,
+                        value:
+                            '${distance.end.round()} ${Strings.kilometer.tr}',
                       ),
                       RangeSlider(
                         values: distance,
@@ -242,8 +244,8 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                       Row(
                         children: [
                           Expanded(
-                            child: CustomButton(
-                              text: 'Clear all',
+                              child: CustomButton(
+                              text: Strings.clearAll.tr,
                               backgroundColor: const Color(0xFFFFEADF),
                               textStyle: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
@@ -257,7 +259,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                           SizedBox(width: 14.w(context)),
                           Expanded(
                             child: CustomButton(
-                              text: 'Apply filter',
+                              text: Strings.applyFilter.tr,
                               onPressed: () async {
                                 await controller.fetchSearchProductsWithFilters(
                                   query: controller.searchTextController.text,
@@ -288,6 +290,21 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
         ),
       ),
     );
+  }
+
+  String _displayGenderLabel(String value) {
+    switch (value.trim().toLowerCase()) {
+      case 'all':
+        return Strings.all.tr;
+      case 'men':
+        return Strings.men.tr;
+      case 'women':
+        return Strings.women.tr;
+      case 'unisex':
+        return Strings.unisex.tr;
+      default:
+        return value;
+    }
   }
 }
 

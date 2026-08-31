@@ -6,6 +6,7 @@ import 'package:hoodz/features/auth/presentation/pages/profile_setup_screen.dart
 import 'package:hoodz/features/auth/presentation/pages/set_password_screen.dart';
 import 'package:hoodz/features/auth/presentation/pages/sign_in_screen.dart';
 import 'package:hoodz/features/auth/presentation/pages/sign_up_screen.dart';
+import 'package:hoodz/features/auth/presentation/pages/verify_email_screen.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/pages/ai_assistant_screen.dart';
 import 'package:hoodz/features/user/dashboard/presentation/pages/dashboard_screen.dart';
 import 'package:hoodz/features/user/chat/presentation/pages/customer_support_message_screen.dart';
@@ -87,6 +88,7 @@ Map<String, WidgetBuilder> getAppRoutes() {
     AppRoutes.signIn: (_) => const SignInScreen(),
     AppRoutes.signUp: (_) => const SignUpScreen(),
     AppRoutes.forgotPassword: (_) => const ForgotPasswordScreen(),
+    AppRoutes.verifyEmail: (_) => const VerifyEmailScreen(),
     AppRoutes.setPassword: (_) => const SetPasswordScreen(),
     AppRoutes.profileSetup: (_) => const ProfileSetupScreen(),
     AppRoutes.profilePictureSetup: (_) => const ProfilePictureSetupScreen(),

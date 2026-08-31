@@ -1,3 +1,4 @@
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:get/get.dart';
 
 class PaymentSuccessfullController extends GetxController {
@@ -26,33 +27,33 @@ class PaymentSuccessfullController extends GetxController {
 
   final List<OrderTimelineItem> timelineItems = [
     OrderTimelineItem(
-      title: 'Order Confirmed',
+      title: Strings.orderConfirmed.tr,
       timeLabel: '',
       state: OrderTimelineState.upcoming,
     ),
     OrderTimelineItem(
-      title: 'Order Prepared',
-      timeLabel: 'Upcoming', 
+      title: Strings.orderPrepared.tr,
+      timeLabel: Strings.upcoming.tr,
       state: OrderTimelineState.upcoming,
     ),
     OrderTimelineItem(
-      title: 'Rider Assigned',
-      timeLabel: 'Upcoming',
+      title: Strings.riderAssigned.tr,
+      timeLabel: Strings.upcoming.tr,
       state: OrderTimelineState.upcoming,
     ),
     OrderTimelineItem(
-      title: 'On the way',
-      timeLabel: 'Upcoming',
+      title: Strings.onTheWay.tr,
+      timeLabel: Strings.upcoming.tr,
       state: OrderTimelineState.upcoming,
     ),
     OrderTimelineItem(
-      title: 'Nearby',
-      timeLabel: 'Upcoming',
+      title: Strings.nearby.tr,
+      timeLabel: Strings.upcoming.tr,
       state: OrderTimelineState.upcoming,
     ),
     OrderTimelineItem(
-      title: 'Delivered',
-      timeLabel: 'Upcoming',
+      title: Strings.delivered.tr,
+      timeLabel: Strings.upcoming.tr,
       state: OrderTimelineState.upcoming,
     ),
   ];

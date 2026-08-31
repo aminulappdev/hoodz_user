@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 
@@ -44,7 +46,7 @@ class PaymentSummaryBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Price:',
+                    Strings.priceLabel.tr,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontSize: 13.sp(context),
                       fontWeight: FontWeight.w500,
@@ -66,7 +68,7 @@ class PaymentSummaryBar extends StatelessWidget {
             SizedBox(
               width: 154.w(context),
               child: CustomButton(
-                text: 'Pay Now',
+                text: Strings.payNow.tr,
                 onPressed: onPayNow,
               ),
             ),

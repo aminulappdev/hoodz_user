@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_transaction_controller.dart';
@@ -48,7 +49,7 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(label: 'Wallet'),
+      appBar: CustomAppBar(label: Strings.wallet.tr),
       body: SafeArea(
         child: Obx(() {
           final recentTransactions = _paymentController.recentTransactionItems;
@@ -59,7 +60,7 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
                 child: BalanceCard(
-                  label: 'Available Balance',
+                  label: Strings.availableBalance.tr,
                   amount: _walletController.walletBalanceText,
                   onTapAddBalance: () => _showAddBalanceSheet(context),
                 ),
@@ -110,7 +111,7 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24),
                         child: Text(
-                          'No recent transactions found.',
+                          Strings.noRecentTransactionsFound.tr,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,
@@ -129,7 +130,7 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24),
                         child: Text(
-                          'No wallet history found.',
+                          Strings.noWalletHistoryFound.tr,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,

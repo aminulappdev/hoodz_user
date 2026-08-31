@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/content_controller.dart';
@@ -21,11 +22,11 @@ class _ContentScreenState extends State<ContentScreen> {
     super.didChangeDependencies();
     _controller = Get.find<ContentController>();
 
-    if (!_initialized) {
-      _initialized = true;
-      final arguments =
+      if (!_initialized) {
+        _initialized = true;
+        final arguments =
           ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      final title = arguments?['title']?.toString() ?? 'Content';
+      final title = arguments?['title']?.toString() ?? Strings.content.tr;
       final key = arguments?['key']?.toString() ?? 'userTermsAndConditions';
       _controller.loadContent(key: key, title: title);
     }
@@ -47,7 +48,7 @@ class _ContentScreenState extends State<ContentScreen> {
         }
 
         if (_controller.htmlContent.value.isEmpty) {
-          return const Center(child: Text('Content not found'));
+          return Center(child: Text(Strings.contentNotFound.tr));
         }
 
         return SafeArea(

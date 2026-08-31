@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -52,7 +53,7 @@ class SearchScreen extends GetView<SearchScreenController> {
                   SearchHeaderRow(
                     leadingIconPath: Assets.icons.arrow.path,
                     trailingIconPath: Assets.icons.filter02.path,
-                    hintText: 'Search...',
+                    hintText: Strings.search.tr,
                     controller: controller.searchTextController,
                     onChanged: controller.updateSearchQuery,
                     onTapLeading: () => Navigator.pop(context),
@@ -119,11 +120,11 @@ class SearchScreen extends GetView<SearchScreenController> {
     }
 
     if (searchProducts.isEmpty) {
-      return [_buildEmptyMessage(context, 'No products found')];
+      return [_buildEmptyMessage(context, Strings.noProductsFound.tr)];
     }
 
     return [
-      _buildSectionTitle(context, 'Products'),
+      _buildSectionTitle(context, Strings.products.tr),
       SizedBox(height: 14.h(context)),
       GridView.builder(
         shrinkWrap: true,
@@ -161,7 +162,8 @@ class SearchScreen extends GetView<SearchScreenController> {
           '${product.avgRating?.toStringAsFixed(1) ?? '0.0'} (${product.ratingCount ?? 0})',
       subtitle: product.collectionType ?? product.brand ?? '',
       oldPrice: oldPrice,
-      stockLabel: product.inStock == true ? 'In stock' : 'Out of stock',
+      stockLabel:
+          product.inStock == true ? Strings.inStock.tr : Strings.outOfStock.tr,
       onTapFavourite: () {},
       onTap: () {
         PageNavigationService.to(
@@ -183,7 +185,7 @@ class SearchScreen extends GetView<SearchScreenController> {
     }
 
     if (suggestions.isEmpty) {
-      return [_buildEmptyMessage(context, 'No suggestions found')];
+      return [_buildEmptyMessage(context, Strings.noSuggestionsFound.tr)];
     }
 
     return [
@@ -236,14 +238,14 @@ class SearchScreen extends GetView<SearchScreenController> {
       ],
       SizedBox(height: 24.h(context)),
       SearchSectionHeader(
-        title: 'Search History',
-        actionText: 'Clear All',
+        title: Strings.searchHistory.tr,
+        actionText: Strings.clearAll.tr,
         actionIcon: Icons.delete_outline_rounded,
         onActionTap: controller.clearSearchHistory,
       ),
       SizedBox(height: 12.h(context)),
       if (histories.isEmpty)
-        _buildEmptyMessage(context, 'No recent searches')
+        _buildEmptyMessage(context, Strings.noRecentSearches.tr)
       else
         Wrap(
           spacing: 10.w(context),
@@ -259,7 +261,7 @@ class SearchScreen extends GetView<SearchScreenController> {
         ),
       if (featuredVendors.isNotEmpty) ...[
         SizedBox(height: 26.h(context)),
-        _buildSectionTitle(context, 'Featured vendors'),
+        _buildSectionTitle(context, Strings.featuredVendors.tr),
         SizedBox(height: 16.h(context)),
         _buildFeaturedVendorList(context, featuredVendors),
       ],
@@ -315,9 +317,11 @@ class SearchScreen extends GetView<SearchScreenController> {
             name: vendor.name ?? '',
             rating: '$avgRating ($ratingCount)',
             distance: distanceKm == null
-                ? 'N/A'
-                : '${distanceKm.toStringAsFixed(1)} km',
-            time: durationMinutes == null ? 'N/A' : '$durationMinutes min',
+                ? Strings.notAvailable.tr
+                : '${distanceKm.toStringAsFixed(1)} ${Strings.kilometer.tr}',
+            time: durationMinutes == null
+                ? Strings.notAvailable.tr
+                : '$durationMinutes ${Strings.minute.tr}',
             onTap: () {
               PageNavigationService.to(
                 context,

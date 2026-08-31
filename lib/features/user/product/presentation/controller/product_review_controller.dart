@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/image_picker_service.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
@@ -91,7 +92,7 @@ class ProductReviewController extends GetxController {
     final selectedRating = rating.value.round();
     if (selectedRating <= 0) {
       showAppToast(
-        message: 'Please select a rating.',
+        message: Strings.pleaseSelectARating.tr,
         isError: true,
       );
       return false;
@@ -100,7 +101,7 @@ class ProductReviewController extends GetxController {
     final review = reviewCtrl.text.trim();
     if (review.isEmpty) {
       showAppToast(
-        message: 'Please write your review.',
+        message: Strings.pleaseWriteYourReview.tr,
         isError: true,
       );
       return false;
@@ -108,7 +109,7 @@ class ProductReviewController extends GetxController {
 
     if (attachments.isEmpty) {
       showAppToast(
-        message: 'Please upload at least one image.',
+        message: Strings.pleaseUploadAtLeastOneImage.tr,
         isError: true,
       );
       return false;
@@ -117,7 +118,7 @@ class ProductReviewController extends GetxController {
     final resolvedReference = reference.trim();
     if (resolvedReference.isEmpty) {
       showAppToast(
-        message: 'Reference not found.',
+        message: Strings.referenceNotFound.tr,
         isError: true,
       );
       return false;
@@ -126,7 +127,7 @@ class ProductReviewController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
@@ -139,7 +140,7 @@ class ProductReviewController extends GetxController {
     final uploadedFiles = <String>[];
 
     await showLoadingOverLay(
-      msg: 'Submitting review...',
+      msg: Strings.submittingReview.tr,
       asyncFunction: () async {
         isSubmitting.value = true;
         try {
@@ -150,7 +151,7 @@ class ProductReviewController extends GetxController {
             );
             if (uploadedUrl == null || uploadedUrl.isEmpty) {
               showAppToast(
-                message: 'Image upload failed. Please try again.',
+                message: Strings.imageUploadFailed.tr,
                 isError: true,
               );
               return;
@@ -180,7 +181,7 @@ class ProductReviewController extends GetxController {
           }
 
           Get.back();
-          showAppToast(message: 'Review submitted successfully.');
+          showAppToast(message: Strings.reviewSubmittedSuccessfully.tr);
           reset();
         } finally {
           isSubmitting.value = false;

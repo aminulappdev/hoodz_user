@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/voucher_card_design.dart';
@@ -22,7 +23,7 @@ class AllVouchersScreen extends GetView<AllVouchersController> {
           () => controller.vouchers.isEmpty
               ? Center(
                   child: Text(
-                    'No vouchers available',
+                    Strings.noVouchersAvailable.tr,
                     style: TextStyle(
                       fontSize: 14.sp(context),
                       color: const Color(0xFF6B6B6B),

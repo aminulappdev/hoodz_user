@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -36,7 +37,7 @@ class PaymentTransactionController extends GetxController {
         transaction.paymentIntentId,
         transaction.transactionId,
         transaction.paymentMethod,
-      ]) ?? 'Payment transaction';
+      ]) ?? Strings.paymentTransaction.tr;
 
       final dateText = _formatDate(transaction.createdAt);
       final amountText = _formatAmount(transaction.amount, transaction.isPaid);
@@ -60,7 +61,7 @@ class PaymentTransactionController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
@@ -69,7 +70,7 @@ class PaymentTransactionController extends GetxController {
     bool isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Loading recent transactions...',
+      msg: Strings.loadingRecentTransactions.tr,
       asyncFunction: () async {
         isLoading.value = true;
 
@@ -87,7 +88,7 @@ class PaymentTransactionController extends GetxController {
           final responseData = response.responseData;
           if (responseData is! Map<String, dynamic>) {
             showAppToast(
-              message: 'Invalid payment transaction response.',
+              message: Strings.invalidPaymentTransactionResponse.tr,
               isError: true,
             );
             return;
@@ -107,7 +108,7 @@ class PaymentTransactionController extends GetxController {
 
   String _formatDate(DateTime? dateTime) {
     if (dateTime == null) {
-      return 'N/A';
+      return Strings.notAvailable.tr;
     }
 
     return DateFormat('MMM d, y - h:mm a').format(dateTime.toLocal());

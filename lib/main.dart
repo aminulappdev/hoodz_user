@@ -8,7 +8,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MySharedPref.init();
   await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitUp, 
     DeviceOrientation.portraitDown,
   ]);
   runApp(const HoodzApp());

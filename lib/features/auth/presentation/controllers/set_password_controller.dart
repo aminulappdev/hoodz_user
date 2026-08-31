@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -49,8 +50,8 @@ class SetPasswordController extends GetxController {
 
     if (accessToken.value.isEmpty) {
       Get.snackbar(
-        'Reset Failed',
-        'Reset token missing. Please start the forgot password flow again.',
+        Strings.resetFailed.tr,
+        Strings.verificationTokenNotFound.tr,
       );
       return false;
     }
@@ -58,7 +59,7 @@ class SetPasswordController extends GetxController {
     var isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Updating password...',
+      msg: Strings.updatingPassword.tr,
       asyncFunction: () async {
         final response = await _networkCaller.postRequest(
           Urls.resetPasswordUrl,
@@ -70,7 +71,7 @@ class SetPasswordController extends GetxController {
         );
 
         if (!response.isSuccess) {
-          Get.snackbar('Reset Failed', response.errorMessage);
+          Get.snackbar(Strings.resetFailed.tr, response.errorMessage);
           return;
         }
 

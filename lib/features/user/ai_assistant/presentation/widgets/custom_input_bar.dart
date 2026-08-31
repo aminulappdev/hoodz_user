@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/image_picker_service.dart';
 import 'package:hoodz/core/services/upload_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -51,8 +52,8 @@ class _CustomInputBarState extends State<CustomInputBar> {
       final accessToken = MySharedPref.getAccessToken();
       if (accessToken == null || accessToken.isEmpty) {
         Get.snackbar(
-          'Upload Failed',
-          'Access token not found. Please login again.',
+          Strings.uploadFailed.tr,
+          Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         );
         return;
       }
@@ -154,8 +155,8 @@ class _CustomInputBarState extends State<CustomInputBar> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   _isUploadingAttachments
-                      ? 'Uploading attachments...'
-                      : 'Attachments',
+                      ? Strings.uploadingAttachments.tr
+                      : Strings.attachments.tr,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF7B7B7B),
                     fontFamily: 'Poppins',
@@ -273,8 +274,8 @@ class _CustomInputBarState extends State<CustomInputBar> {
                               isDense: true,
                               border: InputBorder.none,
                               hintText:
-                                  widget.hintText ??
-                                  'Ask me anything about fashion...',
+                                  widget.hintText ?? 
+                                  Strings.askMeAnythingAboutFashion.tr,
                               hintStyle: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: const Color(0xFF9F8A81),

@@ -1,5 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/gen/assets.gen.dart';
@@ -15,11 +17,11 @@ class LogoutButton extends StatelessWidget {
   const LogoutButton({
     super.key,
     this.onTap,
-    this.buttonText = 'Log out',
-    this.dialogTitle = 'Are You Sure?',
-    this.dialogMessage = 'Are you sure you want to Logout from your account',
-    this.cancelText = 'Cancel',
-    this.confirmText = 'Logout',
+    this.buttonText = '',
+    this.dialogTitle = '',
+    this.dialogMessage = '',
+    this.cancelText = '',
+    this.confirmText = '',
   });
 
   void _showLogoutDialog(BuildContext context) {
@@ -50,7 +52,7 @@ class LogoutButton extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h(context)),
                 Text(
-                  dialogTitle,
+                  dialogTitle.isNotEmpty ? dialogTitle : Strings.logoutConfirmTitle.tr,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 20.sp(context),
                     fontWeight: FontWeight.w800,
@@ -59,7 +61,9 @@ class LogoutButton extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h(context)),
                 Text(
-                  dialogMessage,
+                  dialogMessage.isNotEmpty
+                      ? dialogMessage
+                      : Strings.logoutConfirmMessage.tr,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 12.sp(context),
@@ -84,7 +88,7 @@ class LogoutButton extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              cancelText,
+                              cancelText.isNotEmpty ? cancelText : Strings.cancel.tr,
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     fontSize: 14.sp(context),
@@ -110,7 +114,9 @@ class LogoutButton extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              confirmText,
+                              confirmText.isNotEmpty
+                                  ? confirmText
+                                  : Strings.logout.tr,
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     fontSize: 14.sp(context),
@@ -161,7 +167,7 @@ class LogoutButton extends StatelessWidget {
             ),
             SizedBox(width: 8.w(context)),
             Text(
-              buttonText,
+              buttonText.isNotEmpty ? buttonText : Strings.logout.tr,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 14.sp(context),
                 color: LightThemeColors.primaryColor,

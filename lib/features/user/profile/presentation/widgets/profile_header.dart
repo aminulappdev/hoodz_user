@@ -1,6 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -18,10 +19,10 @@ class ProfileHeader extends GetView<ProfileController> {
       final profileAvatar = user?.profileAvatar;
       final displayName = user?.name?.trim().isNotEmpty == true
           ? user!.name!
-          : 'User';
+          : Strings.user.tr;
       final displayAddress = controller.currentAddress.value.trim().isNotEmpty
           ? controller.currentAddress.value
-          : 'Address not added';
+          : Strings.addressNotAdded.tr;
 
       return Column(
         children: [
@@ -56,15 +57,15 @@ class ProfileHeader extends GetView<ProfileController> {
                     ),
                     SizedBox(height: 14.h(context)),
                     Text(
-                      'My Profile',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    Strings.profileTitle.tr,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: LightThemeColors.backgroundColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 18.sp(context),
                       ),
                     ),
                     Text(
-                      'Manage your personal information',
+                    Strings.managePersonalInformation.tr,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: LightThemeColors.backgroundColor,

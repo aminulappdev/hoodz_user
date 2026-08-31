@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/banner_card.dart';
@@ -26,7 +28,7 @@ class ProductSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'High Recommended',
+                Strings.highRecommended.tr,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontSize: 16.sp(context),
                   fontWeight: FontWeight.w800,
@@ -58,11 +60,11 @@ class ProductSection extends StatelessWidget {
               ),
               SizedBox(height: 20.h(context)),
               ViewAllList(
-                title: 'All Products',
+                title: Strings.allProducts.tr,
                 onTap: () => PageNavigationService.to(
                   context,
                   AppRoutes.allProduct,
-                  arguments: {'title': 'All Products'},
+                  arguments: {'title': Strings.allProducts.tr},
                 ),
               ),
               SizedBox(height: 8.h(context)),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -22,8 +24,8 @@ class SignUpScreen extends GetView<SignUpController> {
     return Scaffold(
       body: AuthBackground(
         isBack: true,
-        title: 'Create your account',
-        subtitle: 'Register to continue your journey with us',
+        title: Strings.createYourAccount.tr,
+        subtitle: Strings.signUpSubtitle.tr,
         contentColumn: Form(
           key: controller.formKey,
           child: SingleChildScrollView(
@@ -31,16 +33,16 @@ class SignUpScreen extends GetView<SignUpController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 40.h(context)), 
-                const LabelText(label: 'Email Address'),
+                LabelText(label: Strings.emailAddress.tr),
                 SizedBox(height: 8.h(context)),
                 CustomTextField(
                   controller: controller.emailCtrl,
-                  hintText: 'Enter your email',
+                  hintText: Strings.enterYourEmail.tr,
                   keyboardType: TextInputType.emailAddress,
                   validator: ValidatorService.validateEmailAddress,
                 ),
                 SizedBox(height: 20.h(context)),
-                const LabelText(label: 'Password'),
+                LabelText(label: Strings.password.tr),
                 SizedBox(height: 8.h(context)),
 
                 Obx(
@@ -56,7 +58,7 @@ class SignUpScreen extends GetView<SignUpController> {
                   ),
                 ),
                 SizedBox(height: 20.h(context)),
-                const LabelText(label: 'Confirm Password'),
+                LabelText(label: Strings.confirmPassword.tr),
                 SizedBox(height: 8.h(context)),
 
                 Obx(
@@ -78,7 +80,7 @@ class SignUpScreen extends GetView<SignUpController> {
                 ),
                 SizedBox(height: 40.h(context)),
                 CustomButton(
-                  text: 'Sign Up',
+                  text: Strings.signUp.tr,
                   onPressed: () async {
                     final signUpData = await controller.signUp();
                     if (signUpData == null) {
@@ -95,8 +97,8 @@ class SignUpScreen extends GetView<SignUpController> {
                 OthersAuth(onApplePressed: () {}, onGooglePressed: () {}),
                 SizedBox(height: 32.h(context)),
                 HaveAnAccount(
-                  content: 'Already have an account?',
-                  buttonTitle: 'Sign In',
+                  content: Strings.alreadyHaveAccount.tr,
+                  buttonTitle: Strings.signIn.tr,
                   onPressed: () {
                     PageNavigationService.to(context, AppRoutes.signIn);
                   },

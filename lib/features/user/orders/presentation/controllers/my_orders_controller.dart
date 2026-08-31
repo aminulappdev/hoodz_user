@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -17,11 +18,11 @@ class MyOrdersController extends GetxController {
   final Map<String, MyOrderModel> _cachedModels = {};
   int _requestSerial = 0;
  
-  final List<String> orderStatuses = const [
-    'Active',
-    'Completed',
-    'Cancelled',
-  ];
+  List<String> get orderStatuses => [
+        Strings.active.tr,
+        Strings.completed.tr,
+        Strings.cancelled.tr,
+      ];
 
   final List<String> _filters = const [
     'active',
@@ -68,7 +69,7 @@ class MyOrdersController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -215,14 +216,14 @@ class MyOrdersController extends GetxController {
   String orderType(Datum order) {
     final status = (order.status ?? '').toLowerCase();
     if (status.contains('cancel')) {
-      return 'Cancelled';
+      return 'cancelled';
     }
 
     if (status.contains('complete') || status.contains('deliver')) {
-      return 'Completed';
+      return 'completed';
     }
 
-    return 'Processing';
+    return 'processing';
   }
 
   int orderItemCount(Datum order) {

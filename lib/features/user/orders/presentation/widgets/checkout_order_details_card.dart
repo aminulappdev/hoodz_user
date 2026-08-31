@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_section_card.dart';
 
 class CheckoutOrderDetailsCard extends StatelessWidget {
@@ -25,8 +27,8 @@ class CheckoutOrderDetailsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
-                'Order Details',
+              Text(
+                Strings.orderDetails.tr,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -36,8 +38,8 @@ class CheckoutOrderDetailsCard extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: onChangeTap,
-                child: const Text(
-                  'Change',
+                child: Text(
+                  Strings.change.tr,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -51,17 +53,17 @@ class CheckoutOrderDetailsCard extends StatelessWidget {
           const SizedBox(height: 10),
           const Divider(height: 1, color: Color(0xFFF0F0F0)),
           const SizedBox(height: 8),
-          CheckoutOrderInfoRow(label: 'Name:', value: name),
+          CheckoutOrderInfoRow(label: Strings.name.tr, value: name),
           CheckoutOrderInfoRow(
-            label: 'Phone:',
+            label: Strings.phone.tr,
             value: phone,
           ),
           CheckoutOrderInfoRow(
-            label: 'Delivery Type:',
+            label: Strings.deliveryType.tr,
             value: deliveryType,
           ),
           CheckoutOrderInfoRow(
-            label: 'Address:',
+            label: Strings.address.tr,
             value: address,
             isLast: true,
           ),

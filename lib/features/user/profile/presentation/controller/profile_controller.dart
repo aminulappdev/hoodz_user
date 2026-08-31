@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/localization_service.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/profile/data/models/user_profile_model.dart';
@@ -16,16 +18,23 @@ class ProfileController extends GetxController {
   Data? get userData => _userProfileModel.value?.data;
   bool get hasCustomerSupport => userData?.hasCustomerSupport ?? false;
 
-  final List<String> languages = const ['en', 'bn'];
- 
+  final List<String> languages = const ['en', 'ar'];
+
   @override
   void onInit() {
     super.onInit();
+    final savedLanguage = MySharedPref.getLocale().languageCode;
+    selectedLanguage.value = LocalizationService.isLanguageSupported(
+      savedLanguage,
+    )
+        ? savedLanguage
+        : 'en';
     loadUserProfile();
   }
 
-  void onLanguageChanged(String value) {
+  Future<void> onLanguageChanged(String value) async {
     selectedLanguage.value = value;
+    await LocalizationService.updateLanguage(value);
   }
 
   Future<void> loadUserProfile({bool force = false}) async {
@@ -40,8 +49,8 @@ class ProfileController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Profile Load Failed',
-        'Access token not found. Please login again.',
+        Strings.profileLoadFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return;
     }
@@ -68,7 +77,7 @@ class ProfileController extends GetxController {
       return;
     }
 
-    Get.snackbar('Profile Load Failed', response.errorMessage);
+    Get.snackbar(Strings.profileLoadFailed.tr, response.errorMessage);
   }
 
   void updateAddressRealtime(String address) {

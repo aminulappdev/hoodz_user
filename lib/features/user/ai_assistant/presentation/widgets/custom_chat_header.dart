@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/circle_icon.dart';
 import 'package:hoodz/gen/assets.gen.dart';
@@ -51,7 +53,7 @@ class CustomChatHeader extends StatelessWidget implements PreferredSizeWidget {
           ),
           SizedBox(height: 2.h(context)),
           Text(
-            subtitle ?? 'Powered by AI',
+            subtitle ?? Strings.poweredByAI.tr,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: const Color(0xFFB0B0B0),
               fontFamily: 'Poppins',

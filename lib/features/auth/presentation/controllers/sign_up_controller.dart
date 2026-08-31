@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -35,7 +36,7 @@ class SignUpController extends GetxController {
 
     try {
       await showLoadingOverLay(
-        msg: 'Creating account...',
+        msg: Strings.creatingAccount.tr,
         asyncFunction: () async {
           final response = await _networkCaller.postRequest(
             Urls.signUpWithEmailUrl,
@@ -49,15 +50,15 @@ class SignUpController extends GetxController {
           );
 
           if (!response.isSuccess) {
-            Get.snackbar('Sign Up Failed', response.errorMessage);
+            Get.snackbar(Strings.signUpFailed.tr, response.errorMessage);
             return;
           }
 
           verificationToken = _extractVerificationToken(response.responseData);
           if (verificationToken == null) {
             Get.snackbar(
-              'Sign Up Failed',
-              'Verification token not found. Please try again.',
+              Strings.signUpFailed.tr,
+              Strings.verificationTokenNotFound.tr,
             );
             return;
           }

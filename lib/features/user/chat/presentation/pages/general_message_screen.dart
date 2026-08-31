@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/general_message_controller.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_chat_header.dart';
@@ -27,10 +28,10 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
         arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
     final resolvedTitle = controller.chatTitle.value.isNotEmpty
         ? controller.chatTitle.value
-        : arguments?['title'] as String? ?? title ?? 'Customer support';
+        : arguments?['title'] as String? ?? title ?? Strings.customerSupportChat.tr;
     final resolvedSubtitle = controller.chatSubtitle.value.isNotEmpty
         ? controller.chatSubtitle.value
-        : arguments?['subtitle'] as String? ?? subtitle ?? 'Powered by AI';
+        : arguments?['subtitle'] as String? ?? subtitle ?? Strings.poweredByAI.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -48,16 +49,16 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
           if (controller.messages.isEmpty) {
             return Column(
               children: [
-                const Expanded(
+                 Expanded(
                   child: Center(
                     child: Text(
-                      'No messages found',
+                      Strings.noMessagesFound.tr,
                       style: TextStyle(color: Colors.black54),
                     ),
                   ),
                 ),
                 CustomInputBar(
-                  hintText: 'Type a message...',
+                  hintText: Strings.typeAMessage.tr,
                   onSend: controller.sendMessage,
                 ),
               ],
@@ -92,7 +93,7 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
                 ),
               ),
               CustomInputBar(
-                hintText: 'Type a message...',
+                hintText: Strings.typeAMessage.tr,
                 onSend: controller.sendMessage,
               ),
             ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 
 class WalletTransactionTabs extends StatelessWidget {
   const WalletTransactionTabs({
@@ -12,7 +14,7 @@ class WalletTransactionTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tabs = ['Recent Transaction', 'Wallet History'];
+    final tabs = [Strings.recentTransaction.tr, Strings.walletHistory.tr];
 
     return Column(
       children: [

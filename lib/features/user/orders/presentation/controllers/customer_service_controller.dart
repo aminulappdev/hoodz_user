@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/image_picker_service.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
@@ -27,28 +28,28 @@ class CustomerServiceController extends GetxController {
   final RxString orderId = ''.obs;
   final RxList<File> attachments = <File>[].obs;
 
-  final List<CustomerServiceIssueOption> issueOptions = const [
-    CustomerServiceIssueOption(
-      label: 'Missing or wrong item',
-      issueType: 'missing_or_wrong_item',
-    ),
-    CustomerServiceIssueOption(
-      label: 'Item quality issues',
-      issueType: 'item_quality_issues',
-    ),
-    CustomerServiceIssueOption(
-      label: 'Received the wrong order',
-      issueType: 'wrong_order_received',
-    ),
-    CustomerServiceIssueOption(
-      label: 'Refunds and payments',
-      issueType: 'refunds_and_payments',
-    ),
-    CustomerServiceIssueOption(
-      label: 'It\'s something else',
-      issueType: 'something_else',
-    ),
-  ];
+  List<CustomerServiceIssueOption> get issueOptions => [
+        CustomerServiceIssueOption(
+          label: Strings.missingOrWrongItem.tr,
+          issueType: 'missing_or_wrong_item',
+        ),
+        CustomerServiceIssueOption(
+          label: Strings.itemQualityIssues.tr,
+          issueType: 'item_quality_issues',
+        ),
+        CustomerServiceIssueOption(
+          label: Strings.receivedTheWrongOrder.tr,
+          issueType: 'wrong_order_received',
+        ),
+        CustomerServiceIssueOption(
+          label: Strings.refundsAndPayments.tr,
+          issueType: 'refunds_and_payments',
+        ),
+        CustomerServiceIssueOption(
+          label: Strings.somethingElse.tr,
+          issueType: 'something_else',
+        ),
+      ];
 
   @override
   void onInit() {
@@ -112,7 +113,7 @@ class CustomerServiceController extends GetxController {
     final selectedIndex = selectedIssueIndex.value;
     if (selectedIndex == null) {
       showAppToast(
-        message: 'Please select an issue first.',
+        message: Strings.pleaseSelectAnIssueFirst.tr,
         isError: true,
       );
       return false;
@@ -121,7 +122,7 @@ class CustomerServiceController extends GetxController {
     final description = noteCtrl.text.trim();
     if (description.isEmpty) {
       showAppToast(
-        message: 'Please write a note first.',
+        message: Strings.pleaseWriteANoteFirst.tr,
         isError: true,
       );
       return false;
@@ -130,7 +131,7 @@ class CustomerServiceController extends GetxController {
     final resolvedOrderId = orderId.value.trim();
     if (resolvedOrderId.isEmpty) {
       showAppToast(
-        message: 'Order id not found.',
+        message: Strings.orderIdNotFound.tr,
         isError: true,
       );
       return false;
@@ -139,7 +140,7 @@ class CustomerServiceController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
@@ -149,7 +150,7 @@ class CustomerServiceController extends GetxController {
     final uploadedFiles = <String>[];
 
     await showLoadingOverLay(
-      msg: 'Submitting grievance...',
+      msg: Strings.submittingGrievance.tr,
       asyncFunction: () async {
         isSubmitting.value = true;
 
@@ -166,7 +167,7 @@ class CustomerServiceController extends GetxController {
 
           if (attachments.isNotEmpty && uploadedFiles.isEmpty) {
             showAppToast(
-              message: 'Image upload failed. Please try again.',
+              message: Strings.imageUploadFailed.tr,
               isError: true,
             );
             return;

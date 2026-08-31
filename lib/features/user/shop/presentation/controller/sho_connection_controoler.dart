@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/urls.dart';
@@ -32,7 +33,7 @@ class ShoConnectionControoler extends GetxController {
   Future<void> toggleFollow() async {
     final shopId = _boundShopId;
     if (shopId == null || shopId.isEmpty) {
-      Get.snackbar('Action Failed', 'Shop ID not found.');
+      Get.snackbar(Strings.actionFailed.tr, Strings.shopIdNotFound.tr);
       return;
     }
 
@@ -43,8 +44,8 @@ class ShoConnectionControoler extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Action Failed',
-        'Access token not found. Please login again.',
+        Strings.actionFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return;
     }
@@ -66,11 +67,11 @@ class ShoConnectionControoler extends GetxController {
 
       if (!response.isSuccess) {
         isFollowing.value = previousValue;
-        Get.snackbar('Action Failed', response.errorMessage);
+        Get.snackbar(Strings.actionFailed.tr, response.errorMessage);
       }
     } catch (e) {
       isFollowing.value = previousValue;
-      Get.snackbar('Action Failed', e.toString());
+      Get.snackbar(Strings.actionFailed.tr, e.toString());
     } finally {
       isLoading.value = false;
     }

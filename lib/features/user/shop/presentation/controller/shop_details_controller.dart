@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/shop/data/models/shop_details_model.dart';
@@ -46,7 +47,7 @@ class ShopDetailsController extends GetxController {
   }
 
   void _showShopIdError() {
-    Get.snackbar('Shop Load Failed', 'Shop ID not found.');
+    Get.snackbar(Strings.shopLoadFailed.tr, Strings.shopIdNotFound.tr);
   }
 
   String? _extractShopId(dynamic rawValue) {
@@ -83,8 +84,8 @@ class ShopDetailsController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Shop Load Failed',
-        'Access token not found. Please login again.',
+        Strings.shopLoadFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return;
     }
@@ -102,10 +103,10 @@ class ShopDetailsController extends GetxController {
           response.responseData,
         );
       } else {
-        Get.snackbar('Shop Load Failed', response.errorMessage);
+        Get.snackbar(Strings.shopLoadFailed.tr, response.errorMessage);
       }
     } catch (e) {
-      Get.snackbar('Shop Load Failed', e.toString());
+      Get.snackbar(Strings.shopLoadFailed.tr, e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -161,17 +162,17 @@ class ShopDetailsController extends GetxController {
     final items = <String>[];
 
     if (policies.isInstantDeliveryAvailable == true) {
-      items.add('Instant delivery available');
+      items.add(Strings.instantDeliveryAvailable.tr);
     }
 
     final openingTime = _formatTime(policies.openingTime);
     final closingTime = _formatTime(policies.closingTime);
     if (openingTime.isNotEmpty || closingTime.isNotEmpty) {
-      items.add('Open $openingTime - $closingTime');
+      items.add('${Strings.openPrefix.tr} $openingTime - $closingTime');
     }
 
     if (policies.weekends.isNotEmpty) {
-      items.add('Weekend: ${policies.weekends.join(', ')}');
+      items.add('${Strings.weekend.tr}: ${policies.weekends.join(', ')}');
     }
 
     final returnPolicy = _formatTime(
@@ -179,7 +180,7 @@ class ShopDetailsController extends GetxController {
       unit: policies.returnPolicyTime?.unit,
     );
     if (returnPolicy.isNotEmpty) {
-      items.add('Return policy: $returnPolicy');
+      items.add('${Strings.returnPolicy.tr}: $returnPolicy');
     }
 
     return items;

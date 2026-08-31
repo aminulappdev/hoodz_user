@@ -4,6 +4,7 @@ import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/services/others/image_picker_service.dart';
@@ -97,7 +98,10 @@ class ProfileSetupController extends GetxController {
     }
 
     if (selectedAddress.value.trim().isEmpty) {
-      Get.snackbar('Validation', 'Please select your address');
+      Get.snackbar(
+        Strings.validation.tr,
+        Strings.pleaseSelectYourAddress.tr,
+      );
       return false;
     }
 
@@ -117,12 +121,18 @@ class ProfileSetupController extends GetxController {
     }
 
     if (selectedAddress.value.trim().isEmpty) {
-      Get.snackbar('Validation', 'Please select your address');
+      Get.snackbar(
+        Strings.validation.tr,
+        Strings.pleaseSelectYourAddress.tr,
+      );
       return;
     }
 
     if (withImage && profileImage.value == null) {
-      Get.snackbar('Validation', 'Please choose a profile picture or tap skip');
+      Get.snackbar(
+        Strings.validation.tr,
+        Strings.pleaseChooseProfilePictureOrTapSkip.tr,
+      );
       return;
     }
 
@@ -130,13 +140,13 @@ class ProfileSetupController extends GetxController {
 
     try {
       await showLoadingOverLay(
-        msg: 'Updating profile...',
+        msg: Strings.updatingProfile.tr,
         asyncFunction: () async {
           final accessToken = MySharedPref.getAccessToken();
           if (accessToken == null || accessToken.isEmpty) {
             Get.snackbar(
-              'Profile Update Failed',
-              'Access token missing. Please verify OTP again.',
+              Strings.profileUpdateFailed.tr,
+              Strings.accessTokenMissing.tr,
             );
             return;
           }
@@ -174,14 +184,14 @@ class ProfileSetupController extends GetxController {
 
           if (!updateProfileResponse.isSuccess) {
             Get.snackbar(
-              'Profile Update Failed',
+              Strings.profileUpdateFailed.tr,
               updateProfileResponse.errorMessage,
             );
             return;
           }
 
           _resetFlow();
-          Get.snackbar('Success', 'Profile setup completed successfully');
+          Get.snackbar(Strings.profileSetup.tr, Strings.profileSetupCompleted.tr);
           PageNavigationService.offAll(context, AppRoutes.signIn);
         },
       );

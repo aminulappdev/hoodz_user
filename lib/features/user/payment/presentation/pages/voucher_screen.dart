@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/payment/presentation/models/voucher_model.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/voucher_card_design.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/voucher_tab.dart';
@@ -18,31 +20,31 @@ class VouchersScreen extends StatefulWidget {
 
 class _VouchersScreenState extends State<VouchersScreen> {
   int _selectedTabIndex = 0;
-  final List<Voucher> _allVouchers = const [
+  final List<Voucher> _allVouchers = [
     Voucher(
-      title: '30% Off',
-      subtitle: 'Get 30% off your first order',
+      title: Strings.voucherThirtyPercentOff.tr,
+      subtitle: Strings.getThirtyPercentOffYourFirstOrder.tr,
       code: 'WELCOME30',
       expiryText: 'End Aug 15, 2026',
       status: VoucherStatus.active,
     ),
     Voucher(
-      title: '30% Off',
-      subtitle: 'Get 30% off your first order',
+      title: Strings.voucherThirtyPercentOff.tr,
+      subtitle: Strings.getThirtyPercentOffYourFirstOrder.tr,
       code: 'WELCOME30',
       expiryText: 'End Aug 15, 2026',
       status: VoucherStatus.active,
     ),
     Voucher(
       title: '20% Off',
-      subtitle: 'Used on your last order',
+      subtitle: Strings.usedOnYourLastOrder.tr,
       code: 'SAVE20',
       expiryText: 'Used Jul 02, 2026',
       status: VoucherStatus.used,
     ),
     Voucher(
       title: '15% Off',
-      subtitle: 'Seasonal offer',
+      subtitle: Strings.seasonalOffer.tr,
       code: 'SPRING15',
       expiryText: 'Expired Jun 01, 2026',
       status: VoucherStatus.expired,
@@ -59,9 +61,9 @@ class _VouchersScreenState extends State<VouchersScreen> {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      VoucherTab(label: 'Active', count: _activeVouchers.length),
-      VoucherTab(label: 'Used', count: _usedVouchers.length),
-      VoucherTab(label: 'Expired', count: _expiredVouchers.length),
+      VoucherTab(label: Strings.active.tr, count: _activeVouchers.length),
+      VoucherTab(label: Strings.used.tr, count: _usedVouchers.length),
+      VoucherTab(label: Strings.expired.tr, count: _expiredVouchers.length),
     ];
     final visibleVouchers = switch (_selectedTabIndex) {
       0 => _activeVouchers,
@@ -71,7 +73,7 @@ class _VouchersScreenState extends State<VouchersScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(label: 'Vouchers'),
+      appBar: CustomAppBar(label: Strings.vouchers.tr),
 
       body: SafeArea(
         child: Column(

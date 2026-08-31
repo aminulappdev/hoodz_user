@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
@@ -89,7 +91,7 @@ class OrderCard extends StatelessWidget {
                             ),
                       ),
                       Text(
-                        '$item items',
+                        '$item ${Strings.items.tr}',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontSize: 12.sp(context),
                             ),
@@ -121,12 +123,12 @@ class OrderCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16.h(context)),
-            if (type == 'Processing')
+            if (type == 'processing')
               Row(
                 children: [
                   Expanded(
                     child: CustomButton(
-                      text: 'View Order',
+                      text: Strings.viewOrder.tr,
                       onPressed: onTap,
                     ),
                   ),
@@ -136,14 +138,14 @@ class OrderCard extends StatelessWidget {
                   ),
                 ],
               )
-            else if (type == 'Completed')
+            else if (type == 'completed')
               Row(
                 children: [
                   Expanded(
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       borderColor: LightThemeColors.primaryColor,
-                      text: 'Reorder',
+                      text: Strings.reorder.tr,
                       textStyle: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(color: LightThemeColors.primaryColor),
                       onPressed: onReorder ?? optionalOnTap,
@@ -160,7 +162,7 @@ class OrderCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: CustomButton(
-                      text: 'Order Again',
+                      text: Strings.orderAgain.tr,
                       onPressed: onTap,
                     ),
                   ),
@@ -184,19 +186,19 @@ class _StatusLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (type == 'Processing') {
+    if (type == 'processing') {
       return LabelContainer(
         icon: Assets.icons.box01.path,
-        name: 'Processing',
+        name: Strings.processing.tr,
         contentColor: LightThemeColors.primaryColor,
         backgroundColor: LightThemeColors.primaryColor,
       );
     }
 
-    if (type == 'Completed') {
+    if (type == 'completed') {
       return LabelContainer(
         icon: Assets.icons.checkMark.path,
-        name: 'Delivered',
+        name: Strings.delivered.tr,
         contentColor: const Color(0xff12B76A),
         backgroundColor: const Color(0xff12B76A),
       );
@@ -204,7 +206,7 @@ class _StatusLabel extends StatelessWidget {
 
     return LabelContainer(
       icon: Assets.icons.cross.path,
-      name: 'Cancelled',
+      name: Strings.cancelled.tr,
       contentColor: LightThemeColors.primaryColor,
       backgroundColor: LightThemeColors.primaryColor,
     );
@@ -237,7 +239,7 @@ class _HelpButton extends StatelessWidget {
             ),
             SizedBox(width: 4.w(context)),
             Text(
-              'Help',
+              Strings.help.tr,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 13.sp(context),
                     fontWeight: FontWeight.w600,

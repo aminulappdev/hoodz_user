@@ -1,5 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
@@ -36,7 +38,7 @@ class UserDashboardBottomNavBar extends StatelessWidget {
             children: [
               Expanded(
                 child: _NavItem(
-                  label: 'Home',
+                  label: Strings.home.tr,
                   iconPath: Assets.icons.home.path,
                   isSelected: currentIndex == 0,
                   showTopIndicator: true,
@@ -45,7 +47,7 @@ class UserDashboardBottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _NavItem(
-                  label: 'Orders',
+                  label: Strings.orders.tr,
                   iconPath: Assets.icons.order.path,
                   isSelected: currentIndex == 1,
                   showTopIndicator: true,
@@ -55,7 +57,7 @@ class UserDashboardBottomNavBar extends StatelessWidget {
               const Expanded(child: SizedBox()),
               Expanded(
                 child: _NavItem(
-                  label: 'Wishlist',
+                  label: Strings.wishlist.tr,
                   iconData: Icons.favorite_border_rounded,
                   isSelected: currentIndex == 3,
                   showTopIndicator: true,
@@ -64,7 +66,7 @@ class UserDashboardBottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _NavItem(
-                  label: 'Profile',
+                  label: Strings.profile.tr,
                   iconPath: Assets.icons.user.path,
                   isSelected: currentIndex == 4,
                   showTopIndicator: true,
@@ -78,7 +80,7 @@ class UserDashboardBottomNavBar extends StatelessWidget {
         Positioned(
           bottom: 22.5,
           child: _CenterNavItem(
-            label: 'AI Stylist',
+            label: Strings.aiStylist.tr,
             iconPath: Assets.icons.aiChat.path,
             isSelected: currentIndex == 2,
             onTap: () => onTap(2),

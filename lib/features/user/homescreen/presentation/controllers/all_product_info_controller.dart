@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -94,7 +95,7 @@ class AllProductInfoController extends GetxController {
   }
 
   void initialize(Map<String, dynamic>? arguments) {
-    title.value = arguments?['title'] as String? ?? 'Men';
+    title.value = arguments?['title'] as String? ?? Strings.men.tr;
     image.value = arguments?['image'] as String? ?? '';
     shopId.value =
         _extractShopId(arguments?['shopId'] ?? arguments?['reference']) ?? '';

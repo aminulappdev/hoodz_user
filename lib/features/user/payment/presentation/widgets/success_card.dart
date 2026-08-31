@@ -1,6 +1,8 @@
 
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
@@ -19,7 +21,7 @@ class SuccessCard extends StatelessWidget {
         ),
         
         Text(
-          'Order Placed Successfully!',
+          Strings.orderPlacedSuccessfully.tr,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineSmall
               ?.copyWith(
@@ -30,7 +32,7 @@ class SuccessCard extends StatelessWidget {
         ),
         SizedBox(height: 8.h(context)),
         Text(
-          'Thank you for your purchase',
+          Strings.thankYouForYourPurchase.tr,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: 13.sp(context),
             fontWeight: FontWeight.w500,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/orders/data/models/payment_model.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/delivery_card_container.dart';
 
@@ -12,7 +14,7 @@ class PaymentSummaryCard extends StatelessWidget {
     super.key,
     required this.items,
     required this.total,
-    this.title = 'Payment summary',
+    this.title = '',
   });
 
   @override
@@ -21,7 +23,10 @@ class PaymentSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+          Text(
+            title.isEmpty ? Strings.paymentSummary.tr : title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 16),
           for (final item in items) ...[
             SummaryRow(item: item),

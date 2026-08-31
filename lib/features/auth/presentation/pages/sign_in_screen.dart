@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -22,9 +23,9 @@ class SignInScreen extends GetView<SignInController> {
     return Scaffold(
       body: AuthBackground( 
         isBack: true,
-        title: 'Welcome Back',
-        subtitle:
-            'It is quick and easy to log in. Enter your email and password below.',
+        backLabel: Strings.back.tr,
+        title: Strings.welcomeBack.tr,
+        subtitle: Strings.signInSubtitle.tr,
         contentColumn: Form(
           key: controller.formKey,
           child: SingleChildScrollView(
@@ -32,16 +33,16 @@ class SignInScreen extends GetView<SignInController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 40.h(context)),
-                const LabelText(label: 'Email'),
+                LabelText(label: Strings.email.tr),
                 SizedBox(height: 8.h(context)), 
                 CustomTextField(
                   controller: controller.emailController,
-                  hintText: 'Enter your email',
+                  hintText: Strings.enterYourEmail.tr,
                   keyboardType: TextInputType.emailAddress,
                   validator: ValidatorService.validateEmailAddress,
                 ),
                 SizedBox(height: 20.h(context)),
-                const LabelText(label: 'Password'),
+                LabelText(label: Strings.password.tr),
                 SizedBox(height: 8.h(context)),
                 Obx(
                   () => CustomTextField(
@@ -59,6 +60,8 @@ class SignInScreen extends GetView<SignInController> {
                 Obx(
                   () => RememberMe(
                     value: controller.rememberMe.value,
+                    rememberMeText: Strings.rememberMe.tr,
+                    forgotPasswordText: Strings.forgotPassword.tr,
                     onToggle: controller.toggleRememberMe,
                     onForgotPassword: () {
                       PageNavigationService.to(
@@ -70,7 +73,7 @@ class SignInScreen extends GetView<SignInController> {
                 ),
                 SizedBox(height: 40.h(context)),
                 CustomButton(
-                  text: 'Sign In',
+                  text: Strings.signIn.tr,
                   onPressed: () async {
                     final signInData = await controller.signIn();
                     if (signInData == null) {
@@ -81,7 +84,7 @@ class SignInScreen extends GetView<SignInController> {
                       await showDialog<void>(
                         context: context,
                         builder: (dialogContext) => AlertDialog(
-                          title: const Text('Request Pending'),
+                          title: Text(Strings.requestPending.tr),
                           content: Text(
                             (signInData['message'] ?? '').toString(),
                           ),
@@ -90,7 +93,7 @@ class SignInScreen extends GetView<SignInController> {
                               onPressed: () { 
                                 Navigator.of(dialogContext).pop();
                               },
-                              child: const Text('OK'),
+                              child: Text(Strings.ok.tr),
                             ),
                           ],
                         ),
@@ -117,8 +120,8 @@ class SignInScreen extends GetView<SignInController> {
                 OthersAuth(onApplePressed: () {}, onGooglePressed: () {}),
                 SizedBox(height: 32.h(context)),
                 HaveAnAccount(
-                  content: 'Don\'t have an account?',
-                  buttonTitle: 'Sign Up',
+                  content: Strings.dontHaveAccount.tr,
+                  buttonTitle: Strings.signUp.tr,
                   onPressed: () {
                     PageNavigationService.to(context, AppRoutes.signUp);
                   },
@@ -127,7 +130,7 @@ class SignInScreen extends GetView<SignInController> {
             ),
           ),
         ),
-      ),
+      ), 
     );
   }
 }

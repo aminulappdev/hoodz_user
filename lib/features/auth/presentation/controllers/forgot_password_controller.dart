@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -21,7 +22,7 @@ class ForgotPasswordController extends GetxController {
     String? verificationToken;
 
     await showLoadingOverLay(
-      msg: 'Sending OTP...',
+      msg: Strings.sendingOtp.tr,
       asyncFunction: () async {
         final response = await _networkCaller.postRequest(
           Urls.forgotPasswordUrl,
@@ -29,15 +30,15 @@ class ForgotPasswordController extends GetxController {
         );
 
         if (!response.isSuccess) {
-          Get.snackbar('Request Failed', response.errorMessage);
+          Get.snackbar(Strings.requestFailed.tr, response.errorMessage);
           return;
         }
 
         verificationToken = _extractVerificationToken(response.responseData);
         if (verificationToken == null) {
           Get.snackbar(
-            'Request Failed',
-            'Verification token not found. Please try again.',
+            Strings.requestFailed.tr,
+            Strings.verificationTokenNotFound.tr,
           );
         }
       },

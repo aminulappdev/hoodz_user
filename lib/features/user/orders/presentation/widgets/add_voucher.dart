@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class AddVoucherRow extends StatelessWidget {
@@ -10,7 +12,7 @@ class AddVoucherRow extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'Save on your order',
+          Strings.saveOnYourOrder.tr,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontSize: 16.sp(context),
             fontWeight: FontWeight.w700,
@@ -21,7 +23,7 @@ class AddVoucherRow extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Text(
-            'Add voucher',
+            Strings.addVoucher.tr,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 14.sp(context),
               fontWeight: FontWeight.w600,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class LocationSelectionSheet extends StatelessWidget {
@@ -44,8 +46,8 @@ class LocationSelectionSheet extends StatelessWidget {
             SizedBox(height: 20.h(context)),
             _LocationOptionTile( 
               icon: Icons.my_location_rounded,
-              iconColor: const Color(0xFFFF6A00), 
-              title: 'Deliver to Current Location',
+              iconColor: const Color(0xFFFF6A00),
+              title: Strings.deliverToCurrentLocation.tr,
               borderColor: const Color(0xFFFFD6BD),
               backgroundColor: const Color(0xFFFFFAF6),
               isLoading: isLoadingCurrentLocation,
@@ -54,8 +56,8 @@ class LocationSelectionSheet extends StatelessWidget {
             SizedBox(height: 12.h(context)),
             _LocationOptionTile(
               icon: Icons.location_on_outlined,
-              iconColor: const Color(0xFF9C9C9C), 
-              title: 'Deliver to Different Location',
+              iconColor: const Color(0xFF9C9C9C),
+              title: Strings.deliverToDifferentLocation.tr,
               borderColor: const Color(0xFFEDEDED),
               backgroundColor: const Color(0xFFF9F9F9),
               onTap: onTapDifferentLocation,

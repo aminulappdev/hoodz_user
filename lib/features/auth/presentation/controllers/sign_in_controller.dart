@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -37,7 +38,7 @@ class SignInController extends GetxController {
     Map<String, dynamic>? signInData;
 
     await showLoadingOverLay(
-      msg: 'Signing in...',
+      msg: Strings.signingIn.tr,
       asyncFunction: () async {
         final response = await _networkCaller.postRequest(
           Urls.loginWithEmailUrl,
@@ -48,7 +49,7 @@ class SignInController extends GetxController {
         );
 
         if (!response.isSuccess) {
-          Get.snackbar('Login Failed', response.errorMessage);
+          Get.snackbar(Strings.loginFailed.tr, response.errorMessage);
           return;
         }
 
@@ -57,8 +58,8 @@ class SignInController extends GetxController {
 
         if (user == null || accessToken == null) {
           Get.snackbar(
-            'Login Failed',
-            'Invalid login response. Please try again.',
+            Strings.loginFailed.tr,
+            Strings.invalidLoginResponse.tr,
           );
           return;
         }
@@ -67,8 +68,7 @@ class SignInController extends GetxController {
         if (status == 'pending') {
           signInData = {
             'isPending': true,
-            'message':
-                'Tomar request pending e ache. Approval er jonno wait korun.',
+            'message': Strings.requestPendingMessage.tr,
           };
           return;
         }

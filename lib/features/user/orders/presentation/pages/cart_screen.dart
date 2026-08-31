@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/services/others/app_route_observer.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
@@ -72,19 +73,19 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Remove item?'),
+          title: Text(Strings.removeItem.tr),
           content: Text(
-            'Do you want to remove "${item.product?.title ?? 'this item'}" from cart?',
+            '${Strings.doYouWantToRemoveFromCart.tr} "${item.product?.title ?? Strings.item.tr}" ${Strings.fromLabel.tr} ${Strings.myCart.tr}?',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+              child: Text(Strings.cancel.tr),
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, true),
-              child: const Text(
-                'Delete',
+              child: Text(
+                Strings.delete.tr,
                 style: TextStyle(color: Colors.red),
               ),
             ),
@@ -122,8 +123,8 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
             onTap: () => PageNavigationService.back(context),
           ),
         ),
-        title: Text(
-          'My Cart',
+          title: Text(
+          Strings.myCart.tr,
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.w700,
             color: const Color(0xff3F3F3F),
@@ -149,11 +150,11 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
         ],
       ),
       bottomNavigationBar: Obx(
-        () => ShipingButtomBar(
+          () => ShipingButtomBar(
           subTotal: _controller.subTotal,
           deliveryCharge: _controller.deliveryCharge,
           total: _controller.totalCost,
-          buttonText: 'Checkout',
+          buttonText: Strings.checkout.tr,
           onTap: () async {
             final isSuccess = await _orderSummaryController.createOrderSummary(
               voucherCode: null,
@@ -182,7 +183,7 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
                   (18.h(context) * (visibleItemCount - 1));
 
         if (cartItems.isEmpty) {
-          return const Center(child: Text('No cart items found'));
+          return Center(child: Text(Strings.noCartItemsFound.tr));
         }
 
         return SingleChildScrollView(
@@ -240,7 +241,7 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
                 ),
               SizedBox(height: 24.h(context)),
               Text(
-                'Recommended for you',
+                Strings.recommendedForYou.tr,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 16.sp(context), 
                   fontWeight: FontWeight.w700,

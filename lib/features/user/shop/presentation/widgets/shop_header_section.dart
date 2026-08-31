@@ -1,5 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/image_preview_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
@@ -205,7 +207,9 @@ class ShopHeader extends StatelessWidget {
                             ),
                           ),
                           CustomButton(
-                            text: isFollowing ? 'Unfollow' : 'Follow',
+                            text: isFollowing
+                                ? Strings.unfollow.tr
+                                : Strings.follow.tr,
                             height: 40.h(context),
                             width: 100.w(context),
                             onPressed: isFollowLoading ? null : onTapFollow,

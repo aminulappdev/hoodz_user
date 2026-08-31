@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -23,8 +24,8 @@ class CustomerSupportMessageController extends GetxController {
       Rx<CustomerSupportChatListResponse?>(null);
   final Rx<GeneralMessageModel?> _messageModel = Rx<GeneralMessageModel?>(null);
   final RxString chatId = ''.obs;
-  final RxString chatTitle = 'Customer Support'.obs;
-  final RxString chatSubtitle = 'Online'.obs;
+  final RxString chatTitle = Strings.customerSupportChat.tr.obs;
+  final RxString chatSubtitle = Strings.online.tr.obs;
   final RxString receiverName = ''.obs;
   final RxString receiverAvatar = ''.obs;
   final RxList<Map<String, dynamic>> supportMessages =
@@ -145,7 +146,7 @@ class CustomerSupportMessageController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -165,7 +166,7 @@ class CustomerSupportMessageController extends GetxController {
 
       if (response.responseData is! Map) {
         showAppToast(
-          message: 'Customer support chat response is invalid.',
+          message: Strings.customerSupportChatResponseInvalid.tr,
           isError: true,
         );
         return;
@@ -187,7 +188,7 @@ class CustomerSupportMessageController extends GetxController {
           : null;
       if (chat == null || (chat.id ?? '').trim().isEmpty) {
         showAppToast(
-          message: 'Customer support chat not available.',
+          message: Strings.customerSupportChatNotAvailable.tr,
           isError: true,
         );
         return;
@@ -205,7 +206,7 @@ class CustomerSupportMessageController extends GetxController {
       }
     } catch (e) {
       showAppToast(
-        message: 'Failed to load customer support chat: $e',
+        message: '${Strings.failedToLoadCustomerSupportChat.tr}$e',
         isError: true,
       );
     }
@@ -247,7 +248,7 @@ class CustomerSupportMessageController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -278,7 +279,10 @@ class CustomerSupportMessageController extends GetxController {
         ..addAll(mappedMessages);
       supportMessages.refresh();
     } catch (e) {
-      showAppToast(message: 'Failed to load messages: $e', isError: true);
+      showAppToast(
+        message: '${Strings.failedToLoadMessages.tr}$e',
+        isError: true,
+      );
     } finally {
       isLoading.value = false;
     }

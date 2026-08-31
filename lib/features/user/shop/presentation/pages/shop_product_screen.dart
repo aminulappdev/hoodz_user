@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/shimmer/shop_product_shimmer.dart';
@@ -55,7 +56,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _SectionTitle(
-                      title: 'Recommendation',
+                      title: Strings.recommendation.tr,
                       onTapViewAll: null,
                     ),
                     SizedBox(height: 12.h(context)),
@@ -63,7 +64,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                       const ShopProductRecommendationShimmer()
                     else if (recommends.isEmpty)
                       _EmptyState(
-                        text: 'No recommendation found',
+                        text: Strings.noRecommendationFound.tr,
                         height: 170.h(context),
                       )
                     else
@@ -86,14 +87,17 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                                 product.discountPrice ?? product.price,
                               ),
                               rating: _formatRating(product.avgRating),
-                              subtitle: product.brand ?? product.collectionType ?? '',
+                              subtitle:
+                                  product.brand ??
+                                  product.collectionType ??
+                                  '',
                               oldPrice: _oldPriceText(
                                 product.price,
                                 product.discountPrice,
                               ),
                               stockLabel: product.inStock == true
-                                  ? 'In Stock'
-                                  : 'Out of Stock',
+                                  ? Strings.inStock.tr
+                                  : Strings.outOfStock.tr,
                               isWishlisted: isWishlisted,
                               onTap: () {
                                 PageNavigationService.to(
@@ -127,7 +131,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                       ),
                     SizedBox(height: 18.h(context)),
                     _SectionTitle(
-                      title: 'All Products',
+                      title: Strings.allProducts.tr,
                       onTapViewAll: null,
                     ),
                     SizedBox(height: 12.h(context)),
@@ -135,7 +139,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                       const ShopProductGridShimmer()
                     else if (allProducts.isEmpty)
                       _EmptyState(
-                        text: 'No product found',
+                        text: Strings.noProductFound.tr,
                         height: 220.h(context),
                       )
                     else
@@ -169,8 +173,8 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                             ),
                             rating: _formatRating(product.avgRating),
                             stockLabel: product.inStock == true
-                                ? 'In Stock'
-                                : 'Out of Stock',
+                                ? Strings.inStock.tr
+                                : Strings.outOfStock.tr,
                             isWishlisted: isWishlisted,
                             onTap: () {
                               PageNavigationService.to(
@@ -287,7 +291,7 @@ class _SectionTitle extends StatelessWidget {
           GestureDetector(
             onTap: onTapViewAll,
             child: Text(
-              'View all',
+              Strings.viewAll.tr,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 13.sp(context),
                 fontWeight: FontWeight.w500,

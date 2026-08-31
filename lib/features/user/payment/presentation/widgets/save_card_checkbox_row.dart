@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class SaveCardCheckboxRow extends StatelessWidget {
@@ -31,7 +33,7 @@ class SaveCardCheckboxRow extends StatelessWidget {
         SizedBox(width: 8.w(context)),
         Expanded(
           child: Text(
-            'Save card data for future payments',
+            Strings.walletBalanceUpdatedInstantly.tr,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 14.sp(context),
               fontWeight: FontWeight.w500,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class BalanceCard extends StatelessWidget {
@@ -91,7 +93,7 @@ class BalanceCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Add Balance',
+                    Strings.addBalance.tr,
                     style: TextStyle(
                       fontSize: 16.sp(context),
                       fontWeight: FontWeight.w600,

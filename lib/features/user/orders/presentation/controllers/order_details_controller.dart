@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -36,7 +37,7 @@ class OrderDetailsController extends GetxController {
   String get orderNumber {
     final id = orderDetailsData?.id ?? orderDetailsData?.dataId;
     if (id == null || id.isEmpty) {
-      return '#N/A';
+      return '#${Strings.notAvailable.tr}';
     }
 
     return '#$id';
@@ -46,19 +47,19 @@ class OrderDetailsController extends GetxController {
     final count = orderDetailsData?.totalOrderItems ??
         orderDetailsData?.items.length ??
         0;
-    return '$count items';
+    return '$count ${Strings.items.tr}';
   }
 
   String get paymentMethod {
     final paymentStatus =
         orderDetailsData?.paymentStatus?.toLowerCase() ?? '';
     if (paymentStatus.contains('paid')) {
-      return 'Card';
+      return Strings.debitCreditCard.tr;
     }
     if (paymentStatus.contains('wallet')) {
-      return 'Wallet';
+      return Strings.wallet.tr;
     }
-    return 'Cash on Delivery';
+    return Strings.cashOnDelivery.tr;
   }
 
   String get totalAmount =>
@@ -90,28 +91,28 @@ class OrderDetailsController extends GetxController {
 
     return billing?.address?.trim().isNotEmpty == true
         ? billing!.address!
-        : 'N/A';
+        : Strings.notAvailable.tr;
   }
 
   String get addressNote =>
-      orderDetailsData?.billingDetails?.note?.toString() ?? 'N/A';
+      orderDetailsData?.billingDetails?.note?.toString() ?? Strings.notAvailable.tr;
 
   bool get hasGrievance => orderDetailsData?.hasGrievance ?? false;
 
   List<tracking.TrackingTimelineItem> get timelineItems {
     final data = orderDetailsData;
     final steps = <_TimelineStep>[
-      _TimelineStep('Order Confirmed', _toDateTime(data?.confirmedAt)),
-      _TimelineStep('Order Prepared', _toDateTime(data?.processedAt)),
-      _TimelineStep('Rider Assigned', _toDateTime(data?.riderAssignedAt)),
-      _TimelineStep('Picked Up', _toDateTime(data?.pickedUpAt)),
-      _TimelineStep('On the Way', _toDateTime(data?.onTheWayAt)),
-      _TimelineStep('Delivered', _toDateTime(data?.deliveredAt)),
+      _TimelineStep(Strings.orderConfirmed.tr, _toDateTime(data?.confirmedAt)),
+      _TimelineStep(Strings.orderPrepared.tr, _toDateTime(data?.processedAt)),
+      _TimelineStep(Strings.riderAssigned.tr, _toDateTime(data?.riderAssignedAt)),
+      _TimelineStep(Strings.onTheWay.tr, _toDateTime(data?.pickedUpAt)),
+      _TimelineStep(Strings.onTheWay.tr, _toDateTime(data?.onTheWayAt)),
+      _TimelineStep(Strings.delivered.tr, _toDateTime(data?.deliveredAt)),
     ];
 
     final cancelledAt = _toDateTime(data?.cancelledAt);
     if (cancelledAt != null) {
-      steps.add(_TimelineStep('Order Cancelled', cancelledAt));
+      steps.add(_TimelineStep(Strings.cancelled.tr, cancelledAt));
     }
 
     final activeIndex = steps.lastIndexWhere((step) => step.date != null);
@@ -131,7 +132,7 @@ class OrderDetailsController extends GetxController {
 
       return tracking.TrackingTimelineItem(
         title: step.title,
-        trailingText: hasDate ? _formatDateTime(step.date) : 'Upcoming',
+        trailingText: hasDate ? _formatDateTime(step.date) : Strings.upcoming.tr,
         state: state,
       );
     }).toList();
@@ -144,14 +145,14 @@ class OrderDetailsController extends GetxController {
   Future<bool> fetchOrderDetails({String? orderId}) async {
     final resolvedOrderId = orderId ?? _pendingOrderId;
     if (resolvedOrderId == null || resolvedOrderId.isEmpty) {
-      showAppToast(message: 'Order id not found.', isError: true);
+      showAppToast(message: Strings.orderIdNotFound.tr, isError: true);
       return false;
     }
 
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
@@ -160,7 +161,7 @@ class OrderDetailsController extends GetxController {
     bool isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Loading order details...',
+      msg: Strings.loading.tr,
       asyncFunction: () async {
         isSuccess = await _fetchOrderDetailsResolved(
           resolvedOrderId: resolvedOrderId,
@@ -225,7 +226,7 @@ class OrderDetailsController extends GetxController {
       if (responseData is! Map<String, dynamic>) {
         if (showErrorMessages) {
           showAppToast(
-            message: 'Invalid order details response.',
+            message: Strings.requestFailed.tr,
             isError: true,
           );
         }

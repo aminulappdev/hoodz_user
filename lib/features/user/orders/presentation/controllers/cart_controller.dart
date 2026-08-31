@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
@@ -29,7 +30,7 @@ class CartController extends GetxController {
   double get totalCost => subTotal + deliveryCharge;
 
   String get itemLabel =>
-      '${cartItems.length} ${cartItems.length == 1 ? 'item' : 'items'}';
+      '${cartItems.length} ${cartItems.length == 1 ? Strings.item.tr : Strings.items.tr}';
 
   @override
   void onInit() {
@@ -46,21 +47,21 @@ class CartController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
     }
 
     if (productId.isEmpty) {
-      showAppToast(message: 'Product ID not found.', isError: true);
+      showAppToast(message: Strings.productIdNotFound.tr, isError: true);
       return false;
     }
 
     bool isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Adding to cart...',
+      msg: Strings.addingToCart.tr,
       asyncFunction: () async {
         final body = <String, dynamic>{
           'productId': productId,
@@ -95,7 +96,7 @@ class CartController extends GetxController {
           return;
         }
 
-        showAppToast(message: 'Added to cart successfully');
+        showAppToast(message: Strings.addToCartSuccess.tr);
         isSuccess = true;
       },
     );
@@ -112,21 +113,21 @@ class CartController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
     }
 
     if (productId.isEmpty) {
-      showAppToast(message: 'Product ID not found.', isError: true);
+      showAppToast(message: Strings.productIdNotFound.tr, isError: true);
       return false;
     }
 
     bool isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Updating cart...',
+      msg: Strings.updatingCart.tr,
       asyncFunction: () async {
         final body = <String, dynamic>{
           'productId': productId,
@@ -162,7 +163,7 @@ class CartController extends GetxController {
         }
 
         await getCartData();
-        showAppToast(message: 'Cart updated successfully');
+        showAppToast(message: Strings.cartUpdatedSuccessfully.tr);
         isSuccess = true;
       },
     );
@@ -177,14 +178,14 @@ class CartController extends GetxController {
       final accessToken = MySharedPref.getAccessToken();
       if (accessToken == null || accessToken.isEmpty) {
         showAppToast(
-          message: 'Access token not found. Please login again.',
+          message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
           isError: true,
         );
         return null;
       }
 
       if (productId.isEmpty) {
-        showAppToast(message: 'Product ID not found.', isError: true);
+        showAppToast(message: Strings.productIdNotFound.tr, isError: true);
         return null;
       }
 
@@ -223,7 +224,7 @@ class CartController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -304,21 +305,21 @@ class CartController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
     }
 
     if (productId.isEmpty) {
-      showAppToast(message: 'Product ID not found.', isError: true);
+      showAppToast(message: Strings.productIdNotFound.tr, isError: true);
       return false;
     }
 
     bool isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Removing item...',
+      msg: Strings.removingItem.tr,
       asyncFunction: () async {
         final body = <String, dynamic>{
           'productId': productId,
@@ -353,7 +354,7 @@ class CartController extends GetxController {
         }
 
         await getCartData();
-        showAppToast(message: 'Item removed from cart');
+        showAppToast(message: Strings.itemRemovedFromCart.tr);
         isSuccess = true;
       },
     );
@@ -384,17 +385,19 @@ class CartController extends GetxController {
   }
 
   String cartItemName(Item item) {
-    return item.product?.title ?? 'Unnamed product';
+    return item.product?.title ?? Strings.unnamedProduct.tr;
   }
 
   String cartItemSize(Item item) {
     final size = item.size?.trim();
-    return (size == null || size.isEmpty) ? 'N/A' : size;
+    return (size == null || size.isEmpty) ? Strings.notAvailable.tr : size;
   }
 
   String cartItemColor(Item item) {
     final colorName = item.color?.name?.trim();
-    return (colorName == null || colorName.isEmpty) ? 'N/A' : colorName;
+    return (colorName == null || colorName.isEmpty)
+        ? Strings.notAvailable.tr
+        : colorName;
   }
 
   double cartItemPrice(Item item) {
@@ -406,7 +409,7 @@ class CartController extends GetxController {
   }
 
   String recommendedName(RecommendedProduct item) {
-    return item.title ?? 'Unnamed product';
+    return item.title ?? Strings.unnamedProduct.tr;
   }
 
   List<String> _extractUniqueSizes(List<dynamic> variants) {

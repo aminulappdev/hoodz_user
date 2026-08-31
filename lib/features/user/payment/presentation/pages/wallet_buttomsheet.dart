@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/payment_webview_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -42,7 +43,7 @@ class _AddBalanceBottomSheetContentState
     final paymentUrl = response.data?.paymentUrl;
     if (paymentUrl == null || paymentUrl.trim().isEmpty) {
       showAppToast(
-        message: 'Payment URL not found. Please try again.',
+        message: Strings.paymentUrlNotFound.tr,
         isError: true,
       );
       return;
@@ -81,7 +82,7 @@ class _AddBalanceBottomSheetContentState
               Row(
                 children: [
                   Text(
-                    'Add Balance',
+                    Strings.addBalance.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 18.sp(context),
                       fontWeight: FontWeight.w600,
@@ -97,7 +98,7 @@ class _AddBalanceBottomSheetContentState
               ),
               SizedBox(height: 16.h(context)),
               Text(
-                'Amount',
+                Strings.amount.tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 14.sp(context),
                   fontWeight: FontWeight.w600,
@@ -108,13 +109,13 @@ class _AddBalanceBottomSheetContentState
               CustomTextField(
                 controller: _controller.amountController,
                 borderRadius: 10,
-                hintText: 'Enter amount',
+                hintText: Strings.enterAmount.tr,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
               SizedBox(height: 10.h(context)),
               Text(
-                'Quick Add:',
+                Strings.quickAdd.tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 14.sp(context),
                   fontWeight: FontWeight.w600,
@@ -168,7 +169,7 @@ class _AddBalanceBottomSheetContentState
               ),
               SizedBox(height: 16.h(context)),
               Text(
-                'Select Payment Method',
+                Strings.selectPaymentMethod.tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 14.sp(context),
                   fontWeight: FontWeight.w600,
@@ -179,8 +180,8 @@ class _AddBalanceBottomSheetContentState
               Obx(
                 () => BottomSheetPaymentOption(
                   isSelected: _controller.selectedMethodIndex.value == 0,
-                  title: 'Visa **** **** **** 1111',
-                  subtitle: 'Saved Card',
+                  title: Strings.savedCard.tr,
+                  subtitle: Strings.savedCard.tr,
                   leading: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 6,
@@ -206,8 +207,8 @@ class _AddBalanceBottomSheetContentState
               Obx(
                 () => BottomSheetPaymentOption(
                   isSelected: _controller.selectedMethodIndex.value == 1,
-                  title: 'Credit / Debit Card',
-                  subtitle: 'Pay via Paymob Gateway',
+                  title: Strings.debitCreditCard.tr,
+                  subtitle: Strings.payViaPaymobGateway.tr,
                   leading: const SizedBox.shrink(),
                   onTap: () => _controller.selectMethod(1),
                 ),
@@ -246,8 +247,8 @@ class _AddBalanceBottomSheetContentState
               Obx(
                 () => CustomButton(
                   text: _controller.isLoading.value
-                      ? 'Please wait...'
-                      : 'Pay Now',
+                      ? Strings.pleaseWait.tr
+                      : Strings.payNow.tr,
                   onPressed: _controller.isLoading.value ? null : _handlePayNow,
                 ),
               ),

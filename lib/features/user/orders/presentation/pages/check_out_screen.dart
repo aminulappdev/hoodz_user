@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/services/others/payment_webview_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -100,14 +101,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _showCoinRulePopup() async {
     if (_hasVoucherCode) {
       showAppToast(
-        message: 'Voucher already added. Coin enable korte parbe na.',
+        message: Strings.voucherAlreadyAddedCoinEnableNotAllowed.tr,
         isError: true,
       );
       return;
     }
 
     showAppToast(
-      message: 'You are not eligible. Check coin rules.',
+      message: Strings.youAreNotEligibleCheckCoinRules.tr,
       isError: true,
     );
   }
@@ -179,10 +180,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final paymentData = _paymentInitiateController.cardPaymentData;
       final paymentUrl = paymentData?.paymentUrl;
       if (paymentUrl == null || paymentUrl.trim().isEmpty) {
-        showAppToast(
-          message: 'Payment URL not found. Please try again.',
-          isError: true,
-        );
+      showAppToast(
+        message: Strings.paymentUrlNotFound.tr,
+        isError: true,
+      );
         return;
       }
 
@@ -205,7 +206,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _applyVoucherAndPoints() async {
     if (_usePoints) {
       showAppToast(
-        message: 'Already coin enabled. Voucher apply korte parbe na.',
+        message: Strings.alreadyCoinEnabledVoucherApplyNotAllowed.tr,
         isError: true,
       );
       return;
@@ -217,33 +218,39 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   List<SummaryItem> get _summaryItems {
     final data = _orderSummaryController.orderSummaryData;
     if (data == null) {
-      return const [
-        SummaryItem('Subtotal', '\$0.00'),
-        SummaryItem('Discount', '-\$0.00'),
-        SummaryItem('Delivery fee', '\$0.00'),
+      return [
+        SummaryItem(Strings.subtotal.tr, '\$0.00'),
+        SummaryItem(Strings.discount.tr, '-\$0.00'),
+        SummaryItem(Strings.deliveryFee.tr, '\$0.00'),
       ];
     }
 
     final items = <SummaryItem>[
-      SummaryItem('Subtotal', _formatCurrency(data.amount)),
+      SummaryItem(Strings.subtotal.tr, _formatCurrency(data.amount)),
     ];
 
     final voucherDiscount = data.voucherDiscount ?? 0;
     if (voucherDiscount != 0) {
       items.add(
-        SummaryItem('Voucher discount', '-${_formatCurrency(voucherDiscount)}'),
+        SummaryItem(
+          Strings.voucherDiscount.tr,
+          '-${_formatCurrency(voucherDiscount)}',
+        ),
       );
     }
 
     final coinDiscount = data.coinDiscount ?? 0;
     if (coinDiscount != 0) {
       items.add(
-        SummaryItem('Coin discount', '-${_formatCurrency(coinDiscount)}'),
+        SummaryItem(
+          Strings.coinDiscount.tr,
+          '-${_formatCurrency(coinDiscount)}',
+        ),
       );
     }
 
     items.add(
-      SummaryItem('Delivery fee', _formatCurrency(data.deliveryCharge)),
+      SummaryItem(Strings.deliveryFee.tr, _formatCurrency(data.deliveryCharge)),
     );
 
     return items;
@@ -251,7 +258,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   SummaryItem get _summaryTotal {
     final totalAmount = _orderSummaryController.orderSummaryData?.totalAmount;
-    return SummaryItem('Total Amount', _formatCurrency(totalAmount));
+    return SummaryItem(Strings.totalAmount.tr, _formatCurrency(totalAmount));
   }
 
   int get _availablePoints =>
@@ -262,19 +269,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   String get _orderName {
     final billing = _orderSummaryController.orderSummaryData?.billingDetails;
-    return billing?.name?.trim().isNotEmpty == true ? billing!.name! : 'N/A';
+    return billing?.name?.trim().isNotEmpty == true
+        ? billing!.name!
+        : Strings.notAvailable.tr;
   }
 
   String get _orderPhone {
     final billing = _orderSummaryController.orderSummaryData?.billingDetails;
     return billing?.phoneNumber?.trim().isNotEmpty == true
         ? billing!.phoneNumber!
-        : 'N/A';
+        : Strings.notAvailable.tr;
   }
 
   String get _orderDeliveryType {
     final normalized = _selectedDeliveryType.trim().toLowerCase();
-    return normalized == 'instant' ? 'Instant Delivery' : 'Regular Delivery';
+    return normalized == 'instant'
+        ? Strings.instantDelivery.tr
+        : Strings.regularDelivery.tr;
   }
 
   String get _orderAddress {
@@ -285,11 +296,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             .map((part) => part.trim())
             .toList();
 
-    return pieces.isEmpty ? 'N/A' : pieces.join(', ');
+    return pieces.isEmpty ? Strings.notAvailable.tr : pieces.join(', ');
   }
 
-  String get _availablePointsLabel => 'Available points: $_availablePoints';
-  String get _walletLabel => 'Wallet ($_walletBalance)';
+  String get _availablePointsLabel =>
+      '${Strings.availablePoints.tr} $_availablePoints';
+  String get _walletLabel => '${Strings.wallet.tr} ($_walletBalance)';
 
   String get _selectedPaymentMethodValue {
     switch (_selectedPaymentIndex) {
@@ -316,7 +328,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           final product = item.product;
           final name = product?.title?.trim().isNotEmpty == true
               ? product!.title!
-              : (item.productId ?? 'Item');
+              : (item.productId ?? Strings.item.tr);
           final imageUrl = product?.banner?.trim().isNotEmpty == true
               ? product!.banner
               : null;
@@ -324,7 +336,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           return OrderItem(
             name: name,
-            size: item.size ?? 'N/A',
+            size: item.size ?? Strings.notAvailable.tr,
             quantity: item.quantity ?? 1,
             price: price.toDouble(),
             imageUrl: imageUrl,
@@ -351,7 +363,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return billing?.address?.trim().isNotEmpty == true
         ? billing!.address!
-        : 'N/A';
+        : Strings.notAvailable.tr;
   }
 
   Future<void> _showConfirmOrderPopup() async {
@@ -377,7 +389,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBgGrey,
-      appBar: CustomAppBar(label: 'Checkout'),
+      appBar: CustomAppBar(label: Strings.checkout.tr),
       body: Column(
         children: [
           Expanded(
@@ -413,14 +425,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                
                 const SizedBox(height: 14),
                 _CheckoutSection(
-                  title: 'Delivery Type',
+                  title: Strings.deliveryType.tr,
                   child: CustomTextField(
-                    hintText: 'Select',
+                    hintText: Strings.select.tr,
                     value: _selectedDeliveryType == 'regular'
-                        ? 'Regular Delivery'
-                        : 'Instant Delivery',
+                        ? Strings.regularDelivery.tr
+                        : Strings.instantDelivery.tr,
                     onChanged: (value) async {
-                      final nextDeliveryType = value == 'Instant Delivery'
+                      final nextDeliveryType = value == Strings.instantDelivery.tr
                           ? 'instant'
                           : 'regular';
 
@@ -432,9 +444,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     },
                     items: [
                       DropdownMenuItem<String>(
-                        value: 'Regular Delivery',
+                        value: Strings.regularDelivery.tr,
                         child: Text(
-                          'Regular Delivery',
+                          Strings.regularDelivery.tr,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 fontSize: 15.sp(context),
@@ -443,9 +455,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ),
                       DropdownMenuItem<String>(
-                        value: 'Instant Delivery',
+                        value: Strings.instantDelivery.tr,
                         child: Text(
-                          'Instant Delivery',
+                          Strings.instantDelivery.tr,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 fontSize: 15.sp(context),
@@ -465,10 +477,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
                 const SizedBox(height: 10),
                 _CheckoutSection(
-                  title: 'Note',
+                  title: Strings.note.tr,
                   child: CustomTextField(
                     controller: _noteController,
-                    hintText: 'Write your note here...',
+                    hintText: Strings.writeYourNoteHere.tr,
                     maxLines: 4,
                   ),
                 ),
@@ -486,7 +498,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: CustomButton(
-              text: 'Place Order',
+              text: Strings.placeOrder.tr,
               onPressed: _handlePlaceOrder,
               ),
           ),

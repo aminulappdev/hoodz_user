@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/customer_support_message_controller.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_chat_header.dart';
@@ -28,10 +29,10 @@ class CustomerSupportMessageScreen
         arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
     final resolvedTitle = controller.chatTitle.value.isNotEmpty
         ? controller.chatTitle.value
-        : arguments?['title'] as String? ?? title ?? 'Customer Support';
+        : arguments?['title'] as String? ?? title ?? Strings.customerSupportChat.tr;
     final resolvedSubtitle = controller.chatSubtitle.value.isNotEmpty
         ? controller.chatSubtitle.value
-        : arguments?['subtitle'] as String? ?? subtitle ?? 'Online';
+        : arguments?['subtitle'] as String? ?? subtitle ?? Strings.online.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -50,16 +51,16 @@ class CustomerSupportMessageScreen
           if (controller.messages.isEmpty) {
             return Column(
               children: [
-                const Expanded(
+                 Expanded(
                   child: Center(
                     child: Text(
-                      'No messages found',
+                      Strings.noMessagesFound.tr,
                       style: TextStyle(color: Colors.black54),
                     ),
                   ),
                 ),
                 CustomInputBar(
-                  hintText: 'Type a message...',
+                  hintText: Strings.typeAMessage.tr,
                   onSend: controller.sendMessage,
                 ),
               ],
@@ -94,7 +95,7 @@ class CustomerSupportMessageScreen
                 ),
               ),
               CustomInputBar(
-                hintText: 'Type a message...',
+                hintText: Strings.typeAMessage.tr,
                 onSend: controller.sendMessage,
               ),
             ],

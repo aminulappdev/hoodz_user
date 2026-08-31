@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_card.dart';
 
@@ -29,7 +31,7 @@ class ShipingPriceCard extends StatelessWidget {
       child: Column(
         children: [
           SummaryRow(
-            title: 'Price:',
+            title: Strings.priceLabel.tr,
             value: '\$${price.toStringAsFixed(2)}',
             titleColor: const Color(0xff6A6A6A),
           ),
@@ -37,7 +39,7 @@ class ShipingPriceCard extends StatelessWidget {
           const Divider(color: Color(0xffD9D9D9), height: 1),
           SizedBox(height: 8.h(context)),
           SummaryRow(
-            title: 'Delivery charge:',
+            title: Strings.deliveryChargeLabel.tr,
             value: '\$${deliveryCharge.toStringAsFixed(2)}',
             titleColor: const Color(0xff6A6A6A),
           ),
@@ -45,7 +47,7 @@ class ShipingPriceCard extends StatelessWidget {
           const Divider(color: Color(0xffD9D9D9), height: 1),
           SizedBox(height: 8.h(context)),
           SummaryRow(
-            title: 'Total cost',
+            title: Strings.totalCost.tr,
             value: '\$${totalCost.toStringAsFixed(2)}',
             isBold: true,
           ),

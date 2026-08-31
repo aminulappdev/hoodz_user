@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
@@ -78,7 +79,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       _buildSectionCard(
                         context,
-                        title: 'General settings',
+                        title: Strings.generalSettings.tr,
                         child: Column(
                           children: [
                             ProfileSettingsTile(
@@ -86,26 +87,26 @@ class ProfileScreen extends GetView<ProfileController> {
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.editProfile,
-                                );
+                              );
                               },
                               icon: Icons.person_outline,
-                              title: 'Edit Profile',
+                              title: Strings.editProfile.tr,
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
                               onTap: () {
                                 PageNavigationService.to(
                                   context,
-                                  AppRoutes.changePassword,
+                                  AppRoutes.changePassword, 
                                 );
                               },
                               icon: Icons.lock_outline,
-                              title: 'Change Password',
+                              title: Strings.changePassword.tr,
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
                               icon: Icons.account_balance_wallet_outlined,
-                              title: 'Wallet',
+                              title: Strings.wallet.tr,
                               onTap: () {
                                 Get.to(UserWalletScreen());
                               },
@@ -125,7 +126,7 @@ class ProfileScreen extends GetView<ProfileController> {
                                     .createCustomerSupportChat();
                               },
                               icon: Icons.support_agent_outlined,
-                              title: 'Customer Support',
+                              title: Strings.customerSupport.tr,
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
@@ -136,7 +137,7 @@ class ProfileScreen extends GetView<ProfileController> {
                                 );
                               },
                               icon: Icons.receipt_long_outlined,
-                              title: 'Points',
+                              title: Strings.points.tr,
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
@@ -148,7 +149,7 @@ class ProfileScreen extends GetView<ProfileController> {
                                 );
                               },
                               icon: Icons.favorite_border,
-                              title: 'Wishlist',
+                              title: Strings.wishlist.tr,
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
@@ -157,13 +158,13 @@ class ProfileScreen extends GetView<ProfileController> {
                                   context,
                                   AppRoutes.content,
                                   arguments: {
-                                    'title': 'Terms & Conditions',
+                                    'title': Strings.termsAndConditions.tr,
                                     'key': 'userTermsAndConditions',
                                   },
                                 );
                               },
                               icon: Icons.description_outlined,
-                              title: 'Terms & Conditions',
+                              title: Strings.termsAndConditions.tr,
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
@@ -172,13 +173,13 @@ class ProfileScreen extends GetView<ProfileController> {
                                   context,
                                   AppRoutes.content,
                                   arguments: {
-                                    'title': 'Privacy Policy',
+                                    'title': Strings.privacyPolicy.tr,
                                     'key': 'userPrivacyAndPolicy',
                                   },
                                 );
                               },
                               icon: Icons.privacy_tip_outlined,
-                              title: 'Privacy Policy',
+                              title: Strings.privacyPolicy.tr,
                             ),
                           ],
                         ),
@@ -186,10 +187,10 @@ class ProfileScreen extends GetView<ProfileController> {
                       SizedBox(height: 14.h(context)),
                       _buildSectionCard(
                         context,
-                        title: 'Language settings',
+                        title: Strings.languageSettings.tr,
                         child: Obx(
                           () => CustomTextField(
-                            hintText: 'Select Language',
+                            hintText: Strings.selectLanguage.tr,
                             hintStyle: languageTextStyle,
                             value: controller.selectedLanguage.value,
                             onChanged: controller.onLanguageChanged,
@@ -199,7 +200,9 @@ class ProfileScreen extends GetView<ProfileController> {
                                   (language) => DropdownMenuItem(
                                     value: language,
                                     child: Text(
-                                      language == 'en' ? 'English' : 'Bangla',
+                                      language == 'en'
+                                          ? Strings.english.tr
+                                          : Strings.arabic.tr,
                                       style: languageTextStyle,
                                     ),
                                   ),

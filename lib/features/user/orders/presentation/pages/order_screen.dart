@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -56,7 +57,7 @@ class OrderScreen extends GetView<MyOrdersController> {
     final items = _buildReorderItemsPayload(order);
     if (items.isEmpty) {
       showAppToast(
-        message: 'Reorder items not found for this order.',
+        message: Strings.reorderItemsNotFoundForThisOrder.tr,
         isError: true,
       );
       return;
@@ -82,7 +83,7 @@ class OrderScreen extends GetView<MyOrdersController> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(
-            'Orders',
+            Strings.orders.tr,
             style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
@@ -146,7 +147,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                     if (orders.isEmpty) {
                       return Center(
                         child: Text(
-                          'No orders here yet',
+                          Strings.noOrdersHereYet.tr,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       );
@@ -173,7 +174,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                             onTap: () {
                               final orderType = controller.orderType(order);
 
-                              if (orderType == 'Processing') {
+                              if (orderType == 'processing') {
                                 final orderId = controller.orderRawId(order);
                                 if (orderId.isEmpty) {
                                   return;
@@ -187,7 +188,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                                 return;
                               }
 
-                              if (orderType == 'Cancelled') {
+                              if (orderType == 'cancelled') {
                                 _handleReorder(order);
                               }
                             },
@@ -196,7 +197,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                               final orderId = controller.orderRawId(order);
                               if (orderId.isEmpty) {
                                 showAppToast(
-                                  message: 'Order id not found.',
+                                  message: Strings.orderIdNotFound.tr,
                                   isError: true,
                                 );
                                 return;

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class AddPaymentMethodButton extends StatelessWidget {
@@ -46,7 +48,7 @@ class AddPaymentMethodButton extends StatelessWidget {
             ),
             SizedBox(width: 10.w(context)),
             Text( 
-              'Add payment method',
+              Strings.addPaymentMethodTitle.tr,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 15.sp(context),
                 fontWeight: FontWeight.w600,

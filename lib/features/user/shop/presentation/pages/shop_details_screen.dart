@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/about_row_info.dart';
@@ -25,7 +26,7 @@ class ShopDetailsScreen extends GetView<ShopDetailsController> {
         final policies = controller.storePolicies;
 
         if (shop == null) {
-          return const Center(child: Text('No shop details found'));
+          return Center(child: Text(Strings.noShopDetailsFound.tr));
         }
 
         return SafeArea(
@@ -126,28 +127,28 @@ class ShopDetailsScreen extends GetView<ShopDetailsController> {
                       ),
                       SizedBox(height: 20.h(context)),
                       AboutInfoRow(
-                        label: 'Established',
+                        label: Strings.established.tr,
                         value: controller.shopData?.shop?.createdAt == null
                             ? '-'
                             : controller.shopData!.shop!.createdAt!.year
                                   .toString(),
                       ),
                       AboutInfoRow(
-                        label: 'Location',
+                        label: Strings.location.tr,
                         value: controller.shopData?.shop?.address ?? '-',
                       ),
                       AboutInfoRow(
-                        label: 'Rating',
+                        label: Strings.rating.tr,
                         value:
                             '${controller.ratingText} (${controller.shopData?.shop?.ratingCount ?? 0})',
                       ),
                       AboutInfoRow(
-                        label: 'Followers',
+                        label: Strings.followersLabel.tr,
                         value: controller.followersText,
                       ),
                       SizedBox(height: 20.h(context)),
                       Text(
-                        'Category',
+                        Strings.category.tr,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 15.sp(context),
                           fontWeight: FontWeight.w600,
@@ -156,7 +157,7 @@ class ShopDetailsScreen extends GetView<ShopDetailsController> {
                       ),
                       SizedBox(height: 12.h(context)),
                       categories.isEmpty
-                          ? const Text('No categories available')
+                          ? Text(Strings.noCategoriesAvailable.tr)
                           : Wrap(
                               spacing: 10.w(context),
                               runSpacing: 10.h(context),
@@ -168,7 +169,7 @@ class ShopDetailsScreen extends GetView<ShopDetailsController> {
                             ),
                       SizedBox(height: 24.h(context)),
                       Text(
-                        'Store policies',
+                        Strings.storePolicies.tr,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 15.sp(context),
                           fontWeight: FontWeight.w600,
@@ -177,7 +178,7 @@ class ShopDetailsScreen extends GetView<ShopDetailsController> {
                       ),
                       SizedBox(height: 10.h(context)),
                       policies.isEmpty
-                          ? const Text('No store policies available')
+                          ? Text(Strings.noStorePoliciesAvailable.tr)
                           : Column(
                               children: policies
                                   .map(

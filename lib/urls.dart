@@ -7,6 +7,7 @@ class Urls {
   static const String forgotPasswordUrl = '$_baseUrl/auth/forgot-password';
   static const String verifyOtpUrl = '$_baseUrl/otp/verify';
   static const String resetPasswordUrl = '$_baseUrl/auth/reset-password';
+  static const String changePasswordUrl = '$_baseUrl/auth/change-password';
   static const String uploadMultipleUrl = '$_baseUrl/upload/multiple';
   static const String currentUserUrl = '$_baseUrl/users/me';
   static const String userLocationUrl = '$_baseUrl/users/location';

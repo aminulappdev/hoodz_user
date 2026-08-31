@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -18,8 +19,8 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
   Future<void> _showLocationSheet(BuildContext context) async {
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => Obx(
+              backgroundColor: Colors.transparent,
+              builder: (_) => Obx(
         () => LocationSelectionSheet(
           isLoadingCurrentLocation: controller.isLoadingCurrentLocation.value,
           onTapCurrentLocation: () async {
@@ -28,7 +29,7 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
               await controller.useCurrentLocation();
             } on LocationServiceException catch (error) {
               Get.snackbar(
-                'Location unavailable',
+                Strings.locationUnavailable.tr,
                 error.message,
                 snackPosition: SnackPosition.BOTTOM,
               );
@@ -59,7 +60,7 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
       context,
     ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF757575));
     return Scaffold(
-      appBar: const CustomAppBar(label: 'Profile Setup'),
+      appBar: CustomAppBar(label: Strings.profileSetup.tr),
       body: SizedBox(
         height: height,
         width: width,
@@ -72,19 +73,19 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20.h(context)),
-                  const LabelText(label: 'Full Name'),
+                  LabelText(label: Strings.fullName.tr),
                   SizedBox(height: 8.h(context)),
                   CustomTextField(
                     controller: controller.nameController,
-                    hintText: 'Enter your name',
+                    hintText: Strings.enterYourName.tr,
                     validator: ValidatorService.validateFullName,
                   ),
                   SizedBox(height: 20.h(context)),
-                  const LabelText(label: 'Phone Number'),
+                  LabelText(label: Strings.phoneNumber.tr),
                   SizedBox(height: 8.h(context)),
                   CustomTextField(
                     controller: controller.phoneController,
-                    hintText: 'Enter your phone number',
+                    hintText: Strings.enterYourPhoneNumber.tr,
                     keyboardType: TextInputType.phone,
                     validator: ValidatorService.validateSimpleField,
                   ),
@@ -96,12 +97,12 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const LabelText(label: 'Gender'),
+                            LabelText(label: Strings.gender.tr),
                             SizedBox(height: 8.h(context)),
                             SizedBox(
                               child: Obx(
                                 () => CustomTextField(
-                                  hintText: 'Select',
+                                  hintText: Strings.select.tr,
                                   hintStyle: fieldTextStyle,
                                   value: controller.selectedGender.value,
                                   onChanged: controller.onGenderChanged,
@@ -132,11 +133,11 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const LabelText(label: 'Date of Birth'),
+                            LabelText(label: Strings.dateOfBirth.tr),
                             SizedBox(height: 8.h(context)),
                             CustomTextField(
                               controller: controller.dateOfBirthController,
-                              hintText: 'DD/MM/YYYY',
+                              hintText: Strings.dateFormatHint.tr,
                               hintStyle: fieldTextStyle,
                               readOnly: true,
                               validator: ValidatorService.validateSimpleField,
@@ -156,12 +157,12 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                   SizedBox(height: 20.h(context)),
                   Row(
                     children: [
-                      LabelText(label: 'Address'),
+                      LabelText(label: Strings.address.tr),
                       Spacer(),
                       GestureDetector(
                         onTap: () => _showLocationSheet(context),
                         child: Text(
-                          'change',
+                          Strings.change.tr,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: const Color(0xFF757575),
@@ -178,14 +179,14 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                   SizedBox(height: 8.h(context)),
                   CustomTextField(
                     controller: controller.addressController,
-                    hintText: 'Select your address',
+                    hintText: Strings.selectYourAddress.tr,
                     readOnly: true,
                     maxLines: 3,
                     validator: ValidatorService.validateSimpleField,
                   ),
                   SizedBox(height: 20.h(context)),
                   CustomButton(
-                    text: 'Continue',
+                    text: Strings.continueButton.tr,
                     onPressed: () {
                       if (!controller.continueToProfilePicture(context)) {
                         return;

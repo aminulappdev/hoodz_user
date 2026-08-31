@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class ShopCategoryTabBar extends StatelessWidget {
@@ -31,7 +33,7 @@ class ShopCategoryTabBar extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return _CategoryTab(
-                    label: 'All',
+                    label: Strings.allProducts.tr,
                     isSelected: isAllSelected,
                     onTap: onTapAll,
                   );

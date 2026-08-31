@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
@@ -107,30 +108,30 @@ class ShippingInformationController extends GetxController {
       return false;
     }
     if (fullAddress.isEmpty) {
-      showAppToast(message: 'Full address is required.', isError: true);
+      showAppToast(message: Strings.fullAddressRequired.tr, isError: true);
       return false;
     }
     if (city.isEmpty) {
-      showAppToast(message: 'City is required.', isError: true);
+      showAppToast(message: Strings.cityRequired.tr, isError: true);
       return false;
     }
     if (buildingNo == null) {
-      showAppToast(message: 'Building number is required.', isError: true);
+      showAppToast(message: Strings.buildingNumberRequired.tr, isError: true);
       return false;
     }
     if (floorNo == null) {
-      showAppToast(message: 'Floor number is required.', isError: true);
+      showAppToast(message: Strings.floorNumberRequired.tr, isError: true);
       return false;
     }
     if (apartment == null) {
-      showAppToast(message: 'Apartment number is required.', isError: true);
+      showAppToast(message: Strings.apartmentNumberRequired.tr, isError: true);
       return false;
     }
 
     var isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Saving delivery location...',
+      msg: Strings.savingDeliveryLocation.tr,
       asyncFunction: () async {
         final response = await _networkCaller.putRequest(
           Urls.deliveryLocationUrl,

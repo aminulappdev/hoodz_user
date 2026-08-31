@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/details_section_card.dart';
 
@@ -19,13 +21,13 @@ class OrderDetailsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailsSectionCard(
-      title: 'Order Details',
+      title: Strings.orderDetails.tr,
       child: Column(
         children: [
-          DetailsInfoRow(label: 'Order Number', value: orderNumber),
-          DetailsInfoRow(label: 'Items', value: itemsCount),
+          DetailsInfoRow(label: Strings.orderNumber.tr, value: orderNumber),
+          DetailsInfoRow(label: Strings.items.tr, value: itemsCount),
           DetailsInfoRow(
-            label: 'Payment',
+            label: Strings.payment.tr,
             value: paymentMethod,
             showDivider: false,
           ),
@@ -35,7 +37,7 @@ class OrderDetailsCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Total Amount',
+                    Strings.totalAmount.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 15.sp(context),
                       fontWeight: FontWeight.w600,
@@ -79,19 +81,19 @@ class DeliveryAddressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailsSectionCard(
-      title: 'Delivery Address',
+      title: Strings.deliveryAddress.tr,
       child: Column(
         children: [
-          DetailsInfoRow(label: 'Building:', value: buildingNumber),
-          DetailsInfoRow(label: 'Floor:', value: floorNumber),
-          DetailsInfoRow(label: 'Apartment:', value: apartmentNumber),
-          DetailsInfoRow(label: 'Address:', value: addressLine),
+          DetailsInfoRow(label: Strings.buildingNo.tr, value: buildingNumber),
+          DetailsInfoRow(label: Strings.floorNo.tr, value: floorNumber),
+          DetailsInfoRow(label: Strings.apartment.tr, value: apartmentNumber),
+          DetailsInfoRow(label: Strings.address.tr, value: addressLine),
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.only(top: 2.h(context)),
               child: Text(
-                'Note:',
+                Strings.note.tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 14.sp(context),
                   fontWeight: FontWeight.w500,

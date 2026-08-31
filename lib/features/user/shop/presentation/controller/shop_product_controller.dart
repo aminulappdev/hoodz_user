@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/shop/data/models/shop_product_model.dart';
@@ -121,7 +122,7 @@ class ShopProductController extends GetxController {
   }
 
   void _showShopIdError() {
-    Get.snackbar('Shop Load Failed', 'Shop ID not found.');
+    Get.snackbar(Strings.shopLoadFailed.tr, Strings.shopIdNotFound.tr);
   }
 
   String? _extractShopId(dynamic rawValue) {
@@ -162,8 +163,8 @@ class ShopProductController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Shop Load Failed',
-        'Access token not found. Please login again.',
+        Strings.shopLoadFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return;
     }
@@ -201,10 +202,10 @@ class ShopProductController extends GetxController {
 
         _allProducts.assignAll(model.data?.allProducts ?? const []);
       } else {
-        Get.snackbar('Shop Load Failed', response.errorMessage);
+        Get.snackbar(Strings.shopLoadFailed.tr, response.errorMessage);
       }
     } catch (e) {
-      Get.snackbar('Shop Load Failed', e.toString());
+      Get.snackbar(Strings.shopLoadFailed.tr, e.toString());
     } finally {
       isProductsLoading.value = false;
       isLoading.value = false;

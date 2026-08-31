@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
@@ -14,7 +15,7 @@ class DeliveryMethodScreen extends GetView<DeliveryMethodController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(label: 'Delivery Method'),
+      appBar: CustomAppBar(label: Strings.deliveryMethod.tr),
       backgroundColor: Colors.white,
       bottomNavigationBar: SafeArea(
         top: false,
@@ -26,7 +27,7 @@ class DeliveryMethodScreen extends GetView<DeliveryMethodController> {
             20.h(context),
           ),
           child: CustomButton(
-            text: 'Continue',
+            text: Strings.continueButton.tr,
             onPressed: () {
               PageNavigationService.to(context, AppRoutes.paymentMethod);
             },

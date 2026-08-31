@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
@@ -47,7 +48,7 @@ class _MapLocationPickerScreenState extends State<MapLocationPickerScreen> {
       });
     } on LocationServiceException catch (error) {
       Get.snackbar(
-        'Location unavailable',
+        Strings.locationUnavailable.tr,
         error.message,
         snackPosition: SnackPosition.BOTTOM,
       );
@@ -112,7 +113,7 @@ class _MapLocationPickerScreenState extends State<MapLocationPickerScreen> {
                   SizedBox(width: 12.w(context)),
                   Expanded(
                     child: Text(
-                      'Delivery Address',
+                      Strings.deliveryAddress.tr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFF333333),
                         fontSize: 18.sp(context),
@@ -272,7 +273,7 @@ class _MapLocationPickerScreenState extends State<MapLocationPickerScreen> {
                           ),
                           SizedBox(width: 8.w(context)),
                           Text(
-                            'Updating selected address...',
+                            Strings.updatingSelectedAddress.tr,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
                                   color: const Color(0xFF8B8B8B),
@@ -303,7 +304,7 @@ class _MapLocationPickerScreenState extends State<MapLocationPickerScreen> {
                         Navigator.pop(context, selectedLocation);
                       },
                       child: Text(
-                        'Confirm pin location',
+                        Strings.confirmPinLocation.tr,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.white,
                           fontSize: 15.sp(context),

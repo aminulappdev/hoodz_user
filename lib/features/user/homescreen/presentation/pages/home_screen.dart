@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -167,7 +168,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                 address: homeData?.profile?.deliveryAddress?.name?.isNotEmpty ==
                         true
                     ? homeData!.profile!.deliveryAddress!.name!
-                    : 'No address added',
+                    : Strings.noAddressAdded.tr,
                 notificationCount: controller.notificationCount.value,
                 onTapEdit: () {
                   PageNavigationService.to(
@@ -197,8 +198,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                               decoration: const BoxDecoration(
                                 color: Colors.white,
                               ),
-                              child: const Center(
-                                child: Text('No category found'),
+                              child: Center(
+                                child: Text(Strings.noCategoryFound.tr),
                               ),
                             )
                           : SizedBox(
@@ -216,7 +217,9 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   );
                                   return BrandList(
                                     image: category['image'] ?? "",
-                                    name: category['name'] ?? "",
+                                    name:
+                                        (category['nameKey'] ?? category['name'] ?? '')
+                                            .tr,
                                     onTap: () {
                                       PageNavigationService.to(
                                         context,
@@ -238,7 +241,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                         _buildBannerSkeleton(context),
                         SizedBox(height: 16.h(context)),
                       ] else if ((homeData?.firstSectionBanner ?? const []).isNotEmpty) ...[
-                        const Text('First Section'),
+                        Text(Strings.firstSection.tr),
                         SizedBox(height: 16.h(context)),
                         CarouselBanner(
                           homeData?.firstSectionBanner ?? const [],
@@ -251,7 +254,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                       showInitialLoaders
                           ? _buildSectionTitleSkeleton(context)
                           : Text(
-                              'Near by Brands',
+                              Strings.nearbyBrands.tr,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -274,7 +277,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 },
                               )
                             : nearbyBrands.isEmpty
-                            ? const Center(child: Text('No nearby brands'))
+                            ? Center(child: Text(Strings.noNearbyBrands.tr))
                             : ListView.separated(
                                 itemCount: nearbyBrands.length,
                                 separatorBuilder: (context, index) =>
@@ -304,7 +307,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                       showInitialLoaders
                           ? _buildSectionTitleSkeleton(context)
                           : Text(
-                              'Recently Viewed',
+                              Strings.recentlyViewed.tr,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -341,8 +344,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   color: const Color(0xFFE5E5E5),
                                 ),
                               ),
-                              child: const Center(
-                                child: Text('No recently viewed'),
+                              child:  Center(
+                                child: Text(Strings.noRecentlyViewed.tr),
                               ),
                             )
                           : SizedBox(
@@ -395,13 +398,13 @@ class HomeScreen extends GetView<HomeScreenController> {
                       showInitialLoaders
                           ? _buildSectionTitleSkeleton(context)
                           : ViewAllList(
-                              title: 'Trending Now',
+                              title: Strings.trendingNow.tr,
                               onTap: () {
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.allProduct,
                                   arguments: {
-                                    'title': 'Trending Now',
+                                    'title': Strings.trendingNow.tr,
                                     'source': 'trending',
                                   },
                                 );
@@ -421,7 +424,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 },
                               )
                             : trendingProducts.isEmpty
-                            ? const Center(child: Text('No trending products'))
+                            ? Center(child: Text(Strings.noTrendingProducts.tr))
                             : ListView.separated(
                                 itemCount: trendingProducts.length,
                                 separatorBuilder: (context, index) =>
@@ -490,13 +493,13 @@ class HomeScreen extends GetView<HomeScreenController> {
                       showInitialLoaders
                           ? _buildSectionTitleSkeleton(context)
                           : ViewAllList(
-                              title: 'AI Recommended for you',
+                              title: Strings.aiRecommendedForYou.tr,
                               onTap: () {
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.allProduct,
                                   arguments: {
-                                    'title': 'AI Recommended for you',
+                                    'title': Strings.aiRecommendedForYou.tr,
                                     'source': 'ai',
                                   },
                                 );
@@ -516,8 +519,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 },
                               )
                             : aiRecommendedProducts.isEmpty
-                            ? const Center(
-                                child: Text('No recommended products'),
+                            ? Center(
+                                child: Text(Strings.noRecommendedProducts.tr),
                               )
                             : ListView.separated(
                                 itemCount: aiRecommendedProducts.length,

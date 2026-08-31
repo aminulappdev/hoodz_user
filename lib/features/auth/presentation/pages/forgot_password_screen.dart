@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
@@ -17,9 +19,8 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
     return Scaffold(
       body: AuthBackground( 
         isBack: true, 
-        title: 'Forgot Password',
-        subtitle:
-            'Please enter your email address which was used to create your account.',
+        title: Strings.forgotPasswordTitle.tr,
+        subtitle: Strings.forgotPasswordSubtitle.tr,
         contentColumn: Form(
           key: controller.formKey,
           child: SingleChildScrollView(
@@ -27,17 +28,17 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 40.h(context)),
-                const LabelText(label: 'Email'),
+                LabelText(label: Strings.email.tr),
                 SizedBox(height: 8.h(context)),
                 CustomTextField(
                   controller: controller.emailCtrl,
-                  hintText: 'Enter your email',
+                  hintText: Strings.enterYourEmail.tr,
                   keyboardType: TextInputType.emailAddress,
                   validator: ValidatorService.validateEmailAddress,
                 ),
                 SizedBox(height: 32.h(context)),
                 CustomButton(
-                  text: 'Continue',
+                  text: Strings.continueButton.tr,
                   onPressed: () async {
                     final resetData = await controller.sendResetOtp();
                     if (resetData == null) {

@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart';
-import 'package:hoodz/gen/assets.gen.dart';
 import 'package:hoodz/urls.dart';
+import 'package:hoodz/gen/assets.gen.dart';
 
 class HomeScreenController extends GetxController { 
   HomeScreenController(this._locationService);
@@ -17,13 +18,26 @@ class HomeScreenController extends GetxController {
   final RxBool isLoadingCurrentLocation = false.obs;
 
   final List<Map<String, String>> categoryList = [
-    {'image': Assets.icons.egypt.keyName, 'name': 'Local Brand'},
+    {
+      'image': Assets.icons.egypt.keyName,
+      'name': Strings.localBrand,
+      'nameKey': Strings.localBrand,
+    },
     {
       'image': Assets.icons.international.keyName,
-      'name': 'International Brand',
+      'name': Strings.internationalBrand,
+      'nameKey': Strings.internationalBrand,
     },
-    {'image': Assets.icons.trendingNow.keyName, 'name': 'Trending Now'},
-    {'image': Assets.icons.egypt.keyName, 'name': 'New Arrivals'},
+    {
+      'image': Assets.icons.trendingNow.keyName,
+      'name': Strings.trendingNow,
+      'nameKey': Strings.trendingNow,
+    },
+    {
+      'image': Assets.icons.egypt.keyName,
+      'name': Strings.newArrivals,
+      'nameKey': Strings.newArrivals,
+    },
   ];
 
   final List<Map<String, String>> brandList = [
@@ -38,15 +52,15 @@ class HomeScreenController extends GetxController {
   final List<Map<String, String>> productList = [
     {
       'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab',
-      'name': 'Classic Black T-Shirt',
+      'name': Strings.classicBlackTShirt,
       'price': '\$45.00',
       'oldPrice': '\$50',
       'rating': '4.7',
-      'subtitle': 'Women',
-      'stockLabel': 'In Stock',
-      'category': 'Men',
-      'brand': 'Nike',
-      'color': 'Black',
+      'subtitle': Strings.women,
+      'stockLabel': Strings.inStock,
+      'category': Strings.men,
+      'brand': Strings.nike,
+      'color': Strings.black,
       'size': 'M',
       'isFavorite': 'false',
       'imageUrl':
@@ -126,7 +140,7 @@ class HomeScreenController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;

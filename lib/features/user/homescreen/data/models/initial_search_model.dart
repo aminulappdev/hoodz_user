@@ -16,7 +16,7 @@ class InitialSearchModel {
     factory InitialSearchModel.fromJson(Map<String, dynamic> json){ 
         return InitialSearchModel(
             success: json["success"],
-            statusCode: json["statusCode"],
+            statusCode: _toInt(json["statusCode"]),
             message: json["message"],
             meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
             data: json["data"] == null ? null : Data.fromJson(json["data"]),
@@ -89,8 +89,8 @@ class FeaturedVendor {
             id: json["_id"],
             name: json["name"],
             profileAvatar: json["profileAvatar"],
-            avgRating: json["avgRating"],
-            ratingCount: json["ratingCount"],
+            avgRating: _toDouble(json["avgRating"]),
+            ratingCount: _toInt(json["ratingCount"]),
             distance: json["distance"] == null ? null : Distance.fromJson(json["distance"]),
         );
     }
@@ -108,8 +108,8 @@ class Distance {
 
     factory Distance.fromJson(Map<String, dynamic> json){ 
         return Distance(
-            distanceKm: json["distanceKm"],
-            durationMinutes: json["durationMinutes"],
+            distanceKm: _toDouble(json["distanceKm"]),
+            durationMinutes: _toInt(json["durationMinutes"]),
         );
     }
 
@@ -151,11 +151,29 @@ class Meta {
 
     factory Meta.fromJson(Map<String, dynamic> json){ 
         return Meta(
-            page: json["page"],
-            limit: json["limit"],
-            total: json["total"],
-            totalPage: json["totalPage"],
+            page: _toInt(json["page"]),
+            limit: _toInt(json["limit"]),
+            total: _toInt(json["total"]),
+            totalPage: _toInt(json["totalPage"]),
         );
     }
 
+}
+
+double? _toDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
+}
+
+int? _toInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
 }

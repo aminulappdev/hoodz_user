@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/rating_row.dart';
@@ -21,7 +22,7 @@ class ReviewSummaryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Review',
+            Strings.reviewTitle.tr,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 15.sp(context),
               fontWeight: FontWeight.w600,
@@ -34,7 +35,7 @@ class ReviewSummaryCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Total Reviews(${controller.totalReviews})',
+                '${Strings.totalReviews.tr}(${controller.totalReviews})',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 13.sp(context),
                   fontWeight: FontWeight.w600,
@@ -69,7 +70,7 @@ class ReviewSummaryCard extends StatelessWidget {
                   SizedBox(
                     width: 52.w(context),
                     child: Text(
-                      '$star Stars',
+                      '$star ${Strings.stars.tr}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 12.sp(context),
                         color: star >= 4

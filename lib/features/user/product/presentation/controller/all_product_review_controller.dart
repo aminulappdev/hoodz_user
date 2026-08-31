@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/urls.dart';
@@ -10,7 +11,7 @@ class AllProductReviewController extends GetxController {
 
   final NetworkCaller _networkCaller;
 
-  final RxString title = 'Reviews'.obs;
+  final RxString title = Strings.reviewTitle.tr.obs;
   final RxString selectedSort = 'latest'.obs;
   final RxBool isLoading = false.obs;
   final Rxn<AllReviewModel> allReviewModel = Rxn<AllReviewModel>();
@@ -114,7 +115,7 @@ class AllProductReviewController extends GetxController {
 
     return reviews.map((review) {
       return UserFeedbackModel(
-        userName: review.user?.name ?? 'Anonymous',
+        userName: review.user?.name ?? Strings.anonymous.tr,
         date: review.createdAt ?? DateTime.now(),
         rating: (review.rating ?? 0).toDouble(),
         comment: review.review ?? '',

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -29,19 +30,21 @@ class WalletTopUpController extends GetxController {
   }
 
   String get selectedMethodLabel =>
-      selectedMethodIndex.value == 0 ? 'Saved Card' : 'Credit / Debit Card';
+      selectedMethodIndex.value == 0
+          ? Strings.savedCard.tr
+          : Strings.debitCreditCard.tr;
 
   Future<top_up.WalletTopUpModel?> addWalletMoney() async {
     final amount = int.tryParse(amountController.text.trim());
     if (amount == null || amount <= 0) {
-      showAppToast(message: 'Please enter a valid amount.', isError: true);
+      showAppToast(message: Strings.pleaseEnterAValidAmount.tr, isError: true);
       return null;
     }
 
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return null;
@@ -50,7 +53,7 @@ class WalletTopUpController extends GetxController {
     top_up.WalletTopUpModel? result;
 
     await showLoadingOverLay(
-      msg: 'Initiating wallet top-up...',
+      msg: Strings.addBalance.tr,
       asyncFunction: () async {
         isLoading.value = true;
 
@@ -72,7 +75,7 @@ class WalletTopUpController extends GetxController {
           final responseData = response.responseData;
           if (responseData is! Map<String, dynamic>) {
             showAppToast(
-              message: 'Invalid wallet top-up response.',
+              message: Strings.invalidWalletTransactionResponse.tr,
               isError: true,
             );
             return;

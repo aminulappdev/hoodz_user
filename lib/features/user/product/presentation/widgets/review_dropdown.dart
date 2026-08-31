@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class ReviewDropdown extends StatelessWidget {
@@ -33,12 +34,16 @@ class ReviewDropdown extends StatelessWidget {
             color: const Color(0xFF2C2C2C),
           ),
           onChanged: onChanged,
-          items: items
-              .map(
-                (item) =>
-                    DropdownMenuItem<String>(value: item, child: Text(item)),
-              )
-              .toList(),
+          items: items.map((item) {
+            final label = item == Strings.latest
+                ? Strings.latest.tr
+                : item == Strings.highest
+                    ? Strings.highest.tr
+                    : item == Strings.lowest
+                        ? Strings.lowest.tr
+                        : item;
+            return DropdownMenuItem<String>(value: item, child: Text(label));
+          }).toList(),
         ),
       ),
     );

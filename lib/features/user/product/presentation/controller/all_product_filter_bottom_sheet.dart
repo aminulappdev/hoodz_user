@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/filter_option_chip.dart';
@@ -42,7 +43,7 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Filter Result',
+                    Strings.filterResult.tr,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontSize: 18.sp(context),
                       fontWeight: FontWeight.w700,
@@ -54,14 +55,14 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _PriceLabel(
-                          label: 'Minimum',
+                          label: Strings.minimum.tr,
                           value:
                               '\$${controller.draftPriceRange.value.start.round()}',
                         ),
                       ),
                       Expanded(
                         child: _PriceLabel(
-                          label: 'Maximum',
+                          label: Strings.maximum.tr,
                           alignment: CrossAxisAlignment.end,
                           value:
                               '\$${controller.draftPriceRange.value.end.round()}.00',
@@ -79,7 +80,7 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                     onChanged: controller.updateDraftPriceRange,
                   ),
                   SizedBox(height: 12.h(context)),
-                  _SectionLabel(text: 'Color'),
+                  _SectionLabel(text: Strings.color.tr),
                   SizedBox(height: 10.h(context)),
                   Wrap(
                     spacing: 8.w(context),
@@ -95,7 +96,7 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                         .toList(),
                   ),
                   SizedBox(height: 16.h(context)),
-                  _SectionLabel(text: 'Size'),
+                  _SectionLabel(text: Strings.size.tr),
                   SizedBox(height: 10.h(context)),
                   Wrap(
                     spacing: 8.w(context),
@@ -115,7 +116,7 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                     children: [
                       Expanded(
                         child: CustomButton(
-                          text: 'Clear all',
+                          text: Strings.clearAll.tr,
                           backgroundColor: const Color(0xFFF3F3F3),
                           textStyle: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
@@ -129,7 +130,7 @@ class AllProductFilterBottomSheet extends StatelessWidget {
                       SizedBox(width: 14.w(context)),
                       Expanded(
                         child: CustomButton(
-                          text: 'Apply filter',
+                          text: Strings.applyFilter.tr,
                           onPressed: () {
                             controller.applyFilters();
                             Navigator.pop(context);

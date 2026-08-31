@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -24,8 +25,8 @@ class OrderSupportMessageController extends GetxController {
   final Rx<GeneralMessageModel?> _messageModel = Rx<GeneralMessageModel?>(null);
   final RxString chatId = ''.obs;
   final RxString orderId = ''.obs;
-  final RxString chatTitle = 'Order Support'.obs;
-  final RxString chatSubtitle = 'Online'.obs;
+  final RxString chatTitle = Strings.orderSupportChat.tr.obs;
+  final RxString chatSubtitle = Strings.online.tr.obs;
   final RxString receiverName = ''.obs;
   final RxString receiverAvatar = ''.obs;
   final RxList<Map<String, dynamic>> orderSupportMessages =
@@ -147,7 +148,7 @@ class OrderSupportMessageController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -156,7 +157,7 @@ class OrderSupportMessageController extends GetxController {
     final resolvedOrderId = orderId.value.trim();
     if (resolvedOrderId.isEmpty) {
       showAppToast(
-        message: 'Order support chat not available.',
+        message: Strings.orderSupportChatNotAvailable.tr,
         isError: true,
       );
       return;
@@ -176,7 +177,7 @@ class OrderSupportMessageController extends GetxController {
 
       if (response.responseData is! Map) {
         showAppToast(
-          message: 'Order support chat response is invalid.',
+          message: Strings.orderSupportChatResponseInvalid.tr,
           isError: true,
         );
         return;
@@ -193,7 +194,7 @@ class OrderSupportMessageController extends GetxController {
 
       if (resolvedChatId.isEmpty) {
         showAppToast(
-          message: 'Order support chat not available.',
+          message: Strings.orderSupportChatNotAvailable.tr,
           isError: true,
         );
         return;
@@ -209,7 +210,7 @@ class OrderSupportMessageController extends GetxController {
       }
     } catch (e) {
       showAppToast(
-        message: 'Failed to load order support chat: $e',
+        message: '${Strings.failedToLoadOrderSupportChat.tr}$e',
         isError: true,
       );
     }
@@ -223,7 +224,7 @@ class OrderSupportMessageController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -254,7 +255,10 @@ class OrderSupportMessageController extends GetxController {
         ..addAll(mappedMessages);
       orderSupportMessages.refresh();
     } catch (e) {
-      showAppToast(message: 'Failed to load messages: $e', isError: true);
+      showAppToast(
+        message: '${Strings.failedToLoadMessages.tr}$e',
+        isError: true,
+      );
     } finally {
       isLoading.value = false;
     }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/filter_option_chip.dart';
@@ -275,7 +277,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                   ),
                 ),
                 Text(
-                  'Edit Item',
+                  Strings.editItem.tr,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontSize: 18.sp(context),
                     fontWeight: FontWeight.w700,
@@ -284,7 +286,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                 ),
                 SizedBox(height: 8.h(context)),
                 Text(
-                  widget.item.product?.title ?? 'Unnamed product',
+                  widget.item.product?.title ?? Strings.unnamedProduct.tr,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 14.sp(context),
                     color: const Color(0xFF707070),
@@ -293,7 +295,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                 SizedBox(height: 16.h(context)),
                 if (_inventoryType == 'size_color' && _sizes.isNotEmpty) ...[
                   Text(
-                    'Size',
+                    Strings.size.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 14.sp(context),
                       fontWeight: FontWeight.w600,
@@ -329,13 +331,13 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                       borderRadius: BorderRadius.circular(12.r(context)),
                       border: Border.all(color: const Color(0xFFEAEAEA)),
                     ),
-                    child: const Text('No size available'),
+                    child: Text(Strings.notAvailable.tr),
                   ),
                   SizedBox(height: 16.h(context)),
                 ],
                 if (_inventoryType != 'single' && currentColors.isNotEmpty) ...[
                   Text(
-                    'Color',
+                    Strings.color.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 14.sp(context),
                       fontWeight: FontWeight.w600,
@@ -370,7 +372,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                       borderRadius: BorderRadius.circular(12.r(context)),
                       border: Border.all(color: const Color(0xFFEAEAEA)),
                     ),
-                    child: const Text('No color available'),
+                    child: Text(Strings.noColorAvailable.tr),
                   ),
                   SizedBox(height: 16.h(context)),
                 ],
@@ -378,7 +380,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 12.h(context)),
                     child: Text(
-                      'Out of stock',
+                      Strings.outOfStock.tr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 13.sp(context),
                         fontWeight: FontWeight.w600,
@@ -391,7 +393,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                   children: [
                     Expanded(
                       child: CustomButton(
-                        text: 'Cancel',
+                        text: Strings.cancel.tr,
                         backgroundColor: const Color(0xFFF3F3F3),
                         textStyle:
                             Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -405,7 +407,7 @@ class _CartItemUpdateSheetState extends State<CartItemUpdateSheet> {
                     SizedBox(width: 14.w(context)),
                     Expanded(
                       child: CustomButton(
-                        text: 'Apply Changes',
+                        text: Strings.applyChanges.tr,
                         enabled: _canApplyChanges,
                         onPressed: _submit,
                       ),

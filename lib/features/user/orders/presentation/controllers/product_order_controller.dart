@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -37,7 +38,7 @@ class ProductOrderController extends GetxController {
   }) async {
     if (_orderSummaryController.orderSummaryData == null) {
       showAppToast(
-        message: 'Order summary not found. Please create summary again.',
+        message: Strings.orderSummaryNotFoundPleaseCreateAgain.tr,
         isError: true,
       );
       return false;
@@ -46,7 +47,7 @@ class ProductOrderController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return false;
@@ -54,7 +55,7 @@ class ProductOrderController extends GetxController {
 
     final items = _buildItemsPayload();
     if (items.isEmpty) {
-      showAppToast(message: 'Cart is empty.', isError: true);
+      showAppToast(message: Strings.cartIsEmpty.tr, isError: true);
       return false;
     }
 
@@ -78,7 +79,7 @@ class ProductOrderController extends GetxController {
     bool isSuccess = false;
 
     await showLoadingOverLay(
-      msg: 'Creating order...',
+      msg: Strings.creatingOrder.tr,
       asyncFunction: () async {
         isLoading.value = true;
 

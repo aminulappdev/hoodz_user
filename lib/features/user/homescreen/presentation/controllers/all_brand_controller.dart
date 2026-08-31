@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -34,7 +35,7 @@ class AllBrandController extends AllTrendingProductController {
 
   String get pageTitle => title.value.trim().isEmpty
       ? _prettyBrandType(brandType.value)
-      : title.value;
+      : title.value.tr;
 
   @override
   void onInit() {
@@ -101,13 +102,13 @@ class AllBrandController extends AllTrendingProductController {
   String _prettyBrandType(String value) {
     switch (value) {
       case 'international':
-        return 'International Brand';
+        return Strings.internationalBrand.tr;
       case 'trending':
-        return 'Trending Now';
+        return Strings.trendingNow.tr;
       case 'new':
-        return 'New Arrivals';
+        return Strings.newArrivals.tr;
       default:
-        return 'Local Brand';
+        return Strings.localBrand.tr;
     }
   }
 
@@ -123,8 +124,8 @@ class AllBrandController extends AllTrendingProductController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Category Load Failed',
-        'Access token not found. Please login again.',
+        Strings.categoryLoadFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return;
     }
@@ -142,9 +143,9 @@ class AllBrandController extends AllTrendingProductController {
         return;
       }
 
-      Get.snackbar('Category Load Failed', response.errorMessage);
+      Get.snackbar(Strings.categoryLoadFailed.tr, response.errorMessage);
     } catch (e) {
-      Get.snackbar('Category Load Failed', e.toString());
+      Get.snackbar(Strings.categoryLoadFailed.tr, e.toString());
     } finally {
       isBrandTypesLoading.value = false;
     }
@@ -188,8 +189,8 @@ class AllBrandController extends AllTrendingProductController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Shop Load Failed',
-        'Access token not found. Please login again.',
+        Strings.shopLoadFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return;
     }
@@ -213,9 +214,9 @@ class AllBrandController extends AllTrendingProductController {
         return;
       }
 
-      Get.snackbar('Shop Load Failed', response.errorMessage);
+      Get.snackbar(Strings.shopLoadFailed.tr, response.errorMessage);
     } catch (e) {
-      Get.snackbar('Shop Load Failed', e.toString());
+      Get.snackbar(Strings.shopLoadFailed.tr, e.toString());
     } finally {
       isCategoryShopsLoading.value = false;
     }

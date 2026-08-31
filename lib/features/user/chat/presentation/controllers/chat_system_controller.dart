@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -16,14 +17,16 @@ class ChatSystemController extends GetxController {
   Future<Map<String, dynamic>?> createCustomerSupportChat() async {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
-      print('CUSTOM SUPPORT CREATE ERROR => Access token not found.');
+      print(
+        'CUSTOM SUPPORT CREATE ERROR => ${Strings.accessTokenNotFoundPleaseLoginAgain.tr}',
+      );
       return null;
     }
 
     Map<String, dynamic>? createdChat;
 
     await showLoadingOverLay(
-      msg: 'Opening customer support...',
+      msg: Strings.openingCustomerSupport.tr,
       asyncFunction: () async {
         isCreatingChat.value = true;
 
@@ -74,7 +77,9 @@ class ChatSystemController extends GetxController {
   }) async {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
-      print('ORDER SUPPORT CREATE ERROR => Access token not found.');
+      print(
+        'ORDER SUPPORT CREATE ERROR => ${Strings.accessTokenNotFoundPleaseLoginAgain.tr}',
+      );
       return null;
     }
 
@@ -86,7 +91,7 @@ class ChatSystemController extends GetxController {
     Map<String, dynamic>? createdChat;
 
     await showLoadingOverLay(
-      msg: 'Opening order support...',
+      msg: Strings.openingOrderSupport.tr,
       asyncFunction: () async {
         isCreatingChat.value = true;
 
@@ -128,8 +133,8 @@ class ChatSystemController extends GetxController {
     final createdChatData = createdChat;
     if (createdChatData != null) {
       final chatArgs = _buildChatArguments(createdChatData);
-      chatArgs['title'] = 'Order Support';
-      chatArgs['subtitle'] = 'Online';
+      chatArgs['title'] = Strings.orderSupportChat.tr;
+      chatArgs['subtitle'] = Strings.online.tr;
       chatArgs['orderId'] = orderId.trim();
       Get.to(() => const OrderSupportMessageScreen(), arguments: chatArgs);
     }
@@ -142,7 +147,9 @@ class ChatSystemController extends GetxController {
   }) async {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
-      print('CHAT CREATE ERROR => Access token not found.');
+      print(
+        'CHAT CREATE ERROR => ${Strings.accessTokenNotFoundPleaseLoginAgain.tr}',
+      );
       return null;
     }
 
@@ -154,7 +161,7 @@ class ChatSystemController extends GetxController {
     Map<String, dynamic>? createdChat;
 
     await showLoadingOverLay(
-      msg: 'Creating chat...',
+      msg: Strings.creatingChat.tr,
       asyncFunction: () async {
         isCreatingChat.value = true;
 
@@ -286,8 +293,8 @@ class ChatSystemController extends GetxController {
 
     return {
       'chatId': chatData['_id']?.toString() ?? '',
-      'title': otherParticipant['name']?.toString() ?? 'Chat',
-      'subtitle': otherParticipant['role']?.toString() ?? 'Powered by AI',
+      'title': otherParticipant['name']?.toString() ?? Strings.chat.tr,
+      'subtitle': otherParticipant['role']?.toString() ?? Strings.poweredByAI.tr,
       'receiverName': otherParticipant['name']?.toString() ?? '',
       'receiverAvatar': otherParticipant['profileAvatar']?.toString() ?? '',
       'chatData': chatData,

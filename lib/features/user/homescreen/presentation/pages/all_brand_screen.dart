@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
@@ -40,7 +41,7 @@ class AllBrandScreen extends GetView<AllBrandController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'All Categories',
+                      Strings.allCategories.tr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 16.sp(context),
                         fontWeight: FontWeight.w800,
@@ -53,7 +54,7 @@ class AllBrandScreen extends GetView<AllBrandController> {
                       child: isCategoriesLoading && categories.isEmpty
                           ? const Center(child: CircularProgressIndicator())
                           : categories.isEmpty
-                          ? const Center(child: Text('No category found'))
+                          ? Center(child: Text(Strings.noCategoryFound.tr))
                           : ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: categories.length,
@@ -80,8 +81,8 @@ class AllBrandScreen extends GetView<AllBrandController> {
                     SizedBox(height: 10.h(context)),
                     Text(
                       selectedCategoryTitle.isEmpty
-                          ? 'Brands'
-                          : '$selectedCategoryTitle Shops',
+                          ? Strings.brands.tr
+                          : '$selectedCategoryTitle ${Strings.shops.tr}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 16.sp(context),
                         fontWeight: FontWeight.w800,
@@ -101,7 +102,7 @@ class AllBrandScreen extends GetView<AllBrandController> {
                           borderRadius: BorderRadius.circular(12.r(context)),
                           border: Border.all(color: const Color(0xFFEFEFEF)),
                         ),
-                        child: const Text('Select a category to view shops.'),
+                        child: Text(Strings.selectACategoryToViewShops.tr),
                       )
                     else if (isShopsLoading && shops.isEmpty)
                       const Center(child: CircularProgressIndicator())
@@ -117,7 +118,7 @@ class AllBrandScreen extends GetView<AllBrandController> {
                           borderRadius: BorderRadius.circular(12.r(context)),
                           border: Border.all(color: const Color(0xFFEFEFEF)),
                         ),
-                        child: const Text('No shop found'),
+                        child: Text(Strings.noShopFound.tr),
                       )
                     else
                       ListView.separated(

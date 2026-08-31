@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/payment/presentation/models/voucher_model.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/voucher_screen.dart';
 
@@ -15,12 +16,12 @@ class VoucherViewData {
 }
 
 class AllVouchersController extends GetxController {
-  final RxString title = 'Shop Vouchers'.obs;
+  final RxString title = Strings.shopVouchers.tr.obs;
 
   final RxList<VoucherViewData> vouchers = <VoucherViewData>[].obs;
 
   void initialize(Map<String, dynamic>? arguments) {
-    title.value = arguments?['title'] as String? ?? 'Shop Vouchers';
+    title.value = arguments?['title'] as String? ?? Strings.shopVouchers.tr;
     final rawVouchers = arguments?['vouchers'];
 
     if (rawVouchers is List<VoucherViewData>) {

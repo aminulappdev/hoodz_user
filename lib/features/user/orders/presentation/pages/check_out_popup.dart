@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 
 const Color kOrange = Color(0xFFE8622C);
 
@@ -166,13 +168,13 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [ 
-          const Text( 
-            'Confirm Your Order',
+          Text(
+            Strings.confirmYourOrder.tr,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
-            'Please review your order before placing it.',
+            Strings.pleaseReviewYourOrderBeforePlacingIt.tr,
             style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 20),
@@ -181,8 +183,8 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Items',
+              Text(
+                Strings.items.tr,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Text(
@@ -226,7 +228,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                     ),
                   ),
                   child: Text(
-                    'Edit order $_formattedTime',
+                    '${Strings.editOrder.tr} $_formattedTime',
                     style: const TextStyle(
                       fontSize: 14, 
                       fontWeight: FontWeight.w600,
@@ -247,8 +249,8 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  child: const Text(
-                    'Continue',
+                  child: Text(
+                    Strings.continueButton.tr,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -302,7 +304,7 @@ class _DeliveryAddressRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Delivery Address',
+                Strings.deliveryAddress.tr,
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 3),
@@ -365,7 +367,7 @@ class OrderItemTile extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Size: ${item.size}     Quantity: ${item.quantity}',
+                '${Strings.size.tr}: ${item.size}     ${Strings.quantity.tr}: ${item.quantity}',
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ],

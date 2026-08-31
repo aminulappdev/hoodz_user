@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
@@ -12,7 +13,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(label: 'Customer Service'),
+      appBar: CustomAppBar(label: Strings.customerService.tr),
       body: SafeArea(
         child: Form(
           key: controller.formKey,
@@ -28,7 +29,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Selected issue',
+                    Strings.selectedIssue.tr,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontSize: 18.sp(context),
                           fontWeight: FontWeight.w700,
@@ -116,7 +117,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                   ),
                   SizedBox(height: 22.h(context)),
                   Text(
-                    'Upload images',
+                    Strings.uploadImages.tr,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontSize: 18.sp(context),
                           fontWeight: FontWeight.w700,
@@ -150,8 +151,8 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                           SizedBox(height: 10.h(context)),
                           Text(
                             controller.isPickingImages.value
-                                ? 'Picking images...'
-                                : 'Tap to add multiple photos',
+                                ? Strings.pickingImages.tr
+                                : Strings.tapToAddMultiplePhotos.tr,
                             style:
                                 Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       fontSize: 14.sp(context),
@@ -161,7 +162,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                           ),
                           SizedBox(height: 6.h(context)),
                           Text(
-                            'You can choose multiple images from gallery',
+                            Strings.chooseMultipleImages.tr,
                             textAlign: TextAlign.center,
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -236,7 +237,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                   ],
                   SizedBox(height: 22.h(context)),
                   Text(
-                    'Note',
+                    Strings.note.tr,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontSize: 18.sp(context),
                           fontWeight: FontWeight.w700,
@@ -249,7 +250,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                     validator: ValidatorService.validateSimpleField,
                     maxLines: 4,
                     decoration: InputDecoration(
-                      hintText: 'Write your note here...',
+                      hintText: Strings.writeYourNoteHere.tr,
                       filled: true,
                       fillColor: const Color(0xFFF6F6F8),
                       contentPadding: EdgeInsets.symmetric(
@@ -293,8 +294,8 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                       ),
                       child: Text(
                         controller.isSubmitting.value
-                            ? 'Submitting...'
-                            : 'Submit',
+                            ? Strings.submitting.tr
+                            : Strings.submit.tr,
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontSize: 15.sp(context),

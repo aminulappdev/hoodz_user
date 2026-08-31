@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/product_details_model.dart';
@@ -111,7 +112,7 @@ class ProductDetailsController extends GetxController {
   }
 
   void _showProductIdError() {
-    Get.snackbar('Product Load Failed', 'Product ID not found.');
+    Get.snackbar(Strings.productLoadFailed.tr, Strings.productIdNotFound.tr);
   }
 
   void onSizeSelected(String size) {
@@ -140,8 +141,8 @@ class ProductDetailsController extends GetxController {
 
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Profile Load Failed',
-        'Access token not found. Please login again.',
+        Strings.productLoadFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return;
     }
@@ -160,10 +161,10 @@ class ProductDetailsController extends GetxController {
         );
         _applyDefaultSelections(_productDetailsModel.value?.data);
       } else {
-        Get.snackbar('Product Load Failed', response.errorMessage);
+        Get.snackbar(Strings.productLoadFailed.tr, response.errorMessage);
       }
     } catch (e) {
-      Get.snackbar('Product Load Failed', e.toString());
+      Get.snackbar(Strings.productLoadFailed.tr, e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -307,8 +308,8 @@ class ProductDetailsController extends GetxController {
   bool get isCurrentSelectionInStock => currentSelectedQuantity > 0;
 
   String get stockStatusLabel => isCurrentSelectionInStock
-      ? 'In Stock'
-      : 'Out of Stock';
+      ? Strings.inStock.tr
+      : Strings.outOfStock.tr;
 
   String? get currentSelectedSizePayload => currentSelectedSize;
 

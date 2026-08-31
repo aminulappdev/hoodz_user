@@ -1,6 +1,8 @@
 
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/policy_title.dart';
 import 'package:hoodz/gen/assets.gen.dart';
@@ -22,8 +24,8 @@ class ProductPolicySection extends StatelessWidget {
             width: 24.w(context),
             color: const Color(0xff4A4A4A),
           ),
-          title: 'Instant Delivery & Regular Delivery',
-          subtitle: '2-3 business days',
+          title: Strings.instantDeliveryAvailable.tr,
+          subtitle: Strings.businessDays.tr,
         ),
         SizedBox(height: 20.h(context)),
         ProductInfoTile(
@@ -32,8 +34,8 @@ class ProductPolicySection extends StatelessWidget {
             color: const Color(0xff4A4A4A),
             size: 24.h(context),
           ),
-          title: 'Secure Payment',
-          subtitle: '100% secure transactions',
+          title: Strings.securePayment.tr,
+          subtitle: Strings.secureTransactions.tr,
         ),
         SizedBox(height: 20.h(context)),
         ProductInfoTile(
@@ -42,8 +44,8 @@ class ProductPolicySection extends StatelessWidget {
             color: const Color(0xff4A4A4A),
             size: 24.h(context),
           ),
-          title: 'Return/ Exchange policies',
-          subtitle: '30 days return policy',
+          title: Strings.returnExchangePolicies.tr,
+          subtitle: Strings.returnPolicy.tr,
         ),
       ],
     );

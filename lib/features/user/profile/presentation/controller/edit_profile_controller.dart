@@ -10,6 +10,7 @@ import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/services/upload_service.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/profile/data/models/user_profile_model.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/urls.dart';
@@ -141,7 +142,10 @@ class EditProfileController extends GetxController {
     }
 
     if (selectedAddress.value.trim().isEmpty) {
-      Get.snackbar('Validation', 'Please select your address');
+      Get.snackbar(
+        Strings.validation.tr,
+        Strings.pleaseSelectYourAddress.tr,
+      );
       return false;
     }
 
@@ -152,8 +156,8 @@ class EditProfileController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       Get.snackbar(
-        'Profile Update Failed',
-        'Access token not found. Please login again.',
+        Strings.profileUpdateFailed.tr,
+        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
       );
       return false;
     }
@@ -163,7 +167,7 @@ class EditProfileController extends GetxController {
 
     try {
       await showLoadingOverLay(
-        msg: 'Updating profile...',
+        msg: Strings.updatingProfile.tr,
         asyncFunction: () async {
           String avatarUrl = existingProfileImageUrl.value;
 
@@ -197,7 +201,7 @@ class EditProfileController extends GetxController {
 
           if (!updateProfileResponse.isSuccess) {
             Get.snackbar(
-              'Profile Update Failed',
+              Strings.profileUpdateFailed.tr,
               updateProfileResponse.errorMessage,
             );
             return;
@@ -205,7 +209,10 @@ class EditProfileController extends GetxController {
 
           await _profileController.loadUserProfile(force: true);
           isSuccess = true;
-          Get.snackbar('Success', 'Profile updated successfully');
+          Get.snackbar(
+            Strings.profileTitle.tr,
+            Strings.profileUpdatedSuccessfully.tr,
+          );
         },
       );
     } finally {

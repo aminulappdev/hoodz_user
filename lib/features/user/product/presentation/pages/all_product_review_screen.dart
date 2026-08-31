@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
@@ -45,7 +46,7 @@ class AllProductReviewScreen extends GetView<AllProductReviewController> {
                     ReviewSummaryCard(controller: controller),
                     SizedBox(height: 16.h(context)),
                     Text(
-                      "User's Review",
+                      Strings.usersReview.tr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 18.sp(context),
                         fontWeight: FontWeight.w600,
@@ -76,7 +77,7 @@ class AllProductReviewScreen extends GetView<AllProductReviewController> {
                           borderRadius: BorderRadius.circular(14.r(context)),
                           border: Border.all(color: const Color(0xFFEAEAEA)),
                         ),
-                        child: const Center(child: Text('No reviews found')),
+                        child: Center(child: Text(Strings.noReviewsFound.tr)),
                       )
                     else
                       ListView.separated(

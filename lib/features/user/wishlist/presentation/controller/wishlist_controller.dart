@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -48,7 +49,7 @@ class WishlistController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;
@@ -101,7 +102,7 @@ class WishlistController extends GetxController {
 
       if (!response.isSuccess) {
         _wishlistStates[productId] = currentValue;
-        Get.snackbar('Wishlist Update Failed', response.errorMessage);
+        Get.snackbar(Strings.wishlistUpdateFailed.tr, response.errorMessage);
         return null;
       }
 
@@ -134,7 +135,7 @@ class WishlistController extends GetxController {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
-        message: 'Access token not found. Please login again.',
+        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
         isError: true,
       );
       return;

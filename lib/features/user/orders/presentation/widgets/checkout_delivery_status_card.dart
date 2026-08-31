@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_section_card.dart';
 
 class CheckoutDeliveryStatusCard extends StatelessWidget {
@@ -6,12 +8,12 @@ class CheckoutDeliveryStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CheckoutSectionCard(
+    return CheckoutSectionCard(
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       child: Row(
         children: [
-          CheckoutStatusIconBubble(),
-          SizedBox(width: 10),
+          const CheckoutStatusIconBubble(),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,34 +21,40 @@ class CheckoutDeliveryStatusCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Delivery',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF8B8B8B)),
+                      Strings.delivery.tr,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF8B8B8B),
+                      ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Text(
-                      'Distance',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF8B8B8B)),
+                      Strings.distance.tr,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF8B8B8B),
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Text(
-                        'Arriving in approx 20 mins',
-                        style: TextStyle(
+                        Strings.arrivingInApprox20Mins.tr,
+                        style: const TextStyle(
                           fontSize: 13,
                           color: Color(0xFF323232),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Text(
-                      '4.2 km',
-                      style: TextStyle(
+                      '4.2 ${Strings.kilometer.tr}',
+                      style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFF323232),
                         fontWeight: FontWeight.w600,

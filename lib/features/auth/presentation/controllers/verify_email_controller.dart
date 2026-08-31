@@ -1,16 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
-import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/urls.dart';
 
 class VerifyEmailController extends GetxController {
   VerifyEmailController(this._networkCaller);
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final TextEditingController otpCtrl = TextEditingController();
   final RxString email = ''.obs;
   final RxString verificationToken = ''.obs;
   final RxString verificationType = 'signup'.obs;
@@ -19,6 +16,11 @@ class VerifyEmailController extends GetxController {
   final NetworkCaller _networkCaller;
 
   void initializeFromArguments(Object? arguments) {
+    email.value = '';
+    verificationToken.value = '';
+    verificationType.value = 'signup';
+    screenName.value = 'signup';
+
     if (arguments is! Map) {
       return;
     }
@@ -40,15 +42,11 @@ class VerifyEmailController extends GetxController {
     }
   }
 
-  Future<Map<String, dynamic>?> verifyEmail() async {
-    if (!ValidatorService.validateAndSave(formKey)) {
-      return null;
-    }
-
+  Future<Map<String, dynamic>?> verifyEmail({required String otp}) async {
     if (verificationToken.value.isEmpty) {
       Get.snackbar(
-        'Verification Failed',
-        'Verification token missing. Please try again.',
+        Strings.verificationFailed.tr,
+        Strings.verificationTokenNotFound.tr,
       );
       return null;
     }
@@ -57,16 +55,16 @@ class VerifyEmailController extends GetxController {
 
     try {
       await showLoadingOverLay(
-        msg: 'Verifying OTP...',
+        msg: Strings.verifyingOtp.tr,
         asyncFunction: () async {
           final response = await _networkCaller.postRequest(
             '${Urls.verifyOtpUrl}?type=${verificationType.value}',
             accessToken: verificationToken.value,
-            body: {'otp': otpCtrl.text.trim()},
+            body: {'otp': otp},
           );
 
           if (!response.isSuccess) {
-            Get.snackbar('Verification Failed', response.errorMessage);
+            Get.snackbar(Strings.verificationFailed.tr, response.errorMessage);
             return;
           }
 
@@ -74,13 +72,11 @@ class VerifyEmailController extends GetxController {
           final userData = _extractUser(response.responseData);
           if (accessToken == null || accessToken.isEmpty) {
             Get.snackbar(
-              'Verification Failed',
-              'Access token not found. Please try again.',
+              Strings.verificationFailed.tr,
+              Strings.invalidLoginResponse.tr,
             );
             return;
           }
-
-          otpCtrl.clear();
 
           if (screenName.value == 'forgot') {
             verifiedData = {
@@ -141,11 +137,5 @@ class VerifyEmailController extends GetxController {
     }
 
     return null;
-  }
-
-  @override
-  void onClose() {
-    otpCtrl.dispose();
-    super.onClose();
   }
 }

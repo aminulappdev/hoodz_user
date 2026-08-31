@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/services/others/image_preview_service.dart';
@@ -344,8 +345,8 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
       controller.initialize(routeArguments);
     });
 
-    return Scaffold( 
-      appBar: CustomAppBar(label: 'Product Details'), 
+    return Scaffold(
+      appBar: CustomAppBar(label: Strings.productDetailsTitle.tr),
 
       bottomNavigationBar: Obx(
         () => Padding(
@@ -356,7 +357,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
             onTapAddToCart: () async {
               if (!controller.isCurrentSelectionInStock) {
                 showAppToast(
-                  message: 'Selected variant is not available.',
+                  message: Strings.selectedVariantNotAvailable.tr,
                   isError: true,
                 );
                 return;
@@ -383,7 +384,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
             onTapBuyNow: () async {
               if (!controller.isCurrentSelectionInStock) {
                 showAppToast(
-                  message: 'Selected variant is not available.',
+                  message: Strings.selectedVariantNotAvailable.tr,
                   isError: true,
                 );
                 return;
@@ -478,7 +479,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                   SizedBox(
                     height: 200.h(context),
                     width: width,
-                    child: const Center(child: Text('No image found')),
+                    child: Center(child: Text(Strings.noImageFound.tr)),
                   )
                 else
                   Column(
@@ -570,7 +571,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 if (inventoryType == 'size_color' &&
                     sizeOptions.isNotEmpty) ...[
                   Text(
-                    'Select Size',
+                    Strings.selectSize.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 16.sp(context),
                       fontWeight: FontWeight.w700,
@@ -621,7 +622,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 if (colorOptions.isNotEmpty) ...[
                   Text(
-                    'Select color',
+                    Strings.selectColor.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 16.sp(context),
                       fontWeight: FontWeight.w700,
@@ -664,7 +665,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 // ================= DESCRIPTION =================
                 Text(
-                  'Description',
+                  Strings.productDescription.tr,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 16.sp(context),
                     fontWeight: FontWeight.w700,
@@ -676,7 +677,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 SizedBox(
                   width: width,
                   child: Html(
-                    data: product?.description ?? 'No description found',
+                    data: product?.description ?? Strings.noDescriptionFound.tr,
                   ),
                 ),
 
@@ -705,7 +706,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 Row(
                   children: [
                     Text(
-                      'Complete your look',
+                      Strings.completeYourLook.tr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 16.sp(context),
                         fontWeight: FontWeight.w800,
@@ -717,7 +718,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                     const Spacer(),
                     LabelContainer(
                       icon: Assets.icons.ai.path,
-                      name: 'Ai Suggested',
+                      name: Strings.aiSuggested.tr,
                       contentColor: const Color(0xff039855),
                       backgroundColor: const Color(0xff039855),
                     ),
@@ -729,7 +730,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 SizedBox(
                   height: 266.h(context),
                   child: similarProducts.isEmpty
-                      ? const Center(child: Text('No similar products'))
+                      ? Center(child: Text(Strings.noSimilarProducts.tr))
                       : ListView.separated(
                           itemCount: similarProducts.length,
                           separatorBuilder: (context, index) {
@@ -791,10 +792,11 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 // ================= VOUCHERS =================
                 ViewAllList(
-                  title: 'Vouchers',
+                  title: Strings.vouchers.tr,
                   onTap: () {
                     final productTitle =
-                        _normalizeString(product?.title) ?? 'Product';
+                        _normalizeString(product?.title) ??
+                        Strings.unnamedProduct.tr;
                     final voucherViewData = vouchers
                         .map((voucher) => _toVoucherViewData(voucher))
                         .toList();
@@ -802,7 +804,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                       context,
                       AppRoutes.allVouchers,
                       arguments: {
-                        'title': '$productTitle Vouchers',
+                        'title': '$productTitle ${Strings.vouchers.tr}',
                         'vouchers': voucherViewData,
                       },
                     );
@@ -818,7 +820,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                         ? [
                             SizedBox(
                               width: 320.w(context),
-                              child: const Text('No vouchers available'),
+                              child: Text(Strings.noVouchersAvailable.tr),
                             ),
                           ]
                         : List.generate(vouchers.length, (index) {
@@ -854,12 +856,12 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
                 // ================= USER FEEDBACK =================
                 ViewAllList(
-                  title: 'User Feedbacks',
+                  title: Strings.userFeedbacks.tr,
                   onTap: () {
                     final productId = product?.id?.trim() ?? '';
                     if (productId.isEmpty) {
                       showAppToast(
-                        message: 'Product id not found.',
+                        message: Strings.productIdNotFound.tr,
                         isError: true,
                       );
                       return;
@@ -869,7 +871,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                       context,
                       AppRoutes.allProductReview,
                       arguments: {
-                        'title': 'Reviews',
+                        'title': Strings.reviewTitle.tr,
                         'productId': productId,
                       },
                     );
@@ -889,12 +891,12 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                             width: 1.w(context),
                           ),
                         ),
-                        child: const Center(child: Text('No reviews yet')),
+                        child: Center(child: Text(Strings.noReviewsYet.tr)),
                       )
                     : UserFeedbackSection(
                         feedbacks: reviews.map((review) {
                           return UserFeedbackModel(
-                            userName: review.user?.name ?? 'Anonymous',
+                            userName: review.user?.name ?? Strings.anonymous.tr,
                             date: review.createdAt ?? DateTime.now(),
                             rating: (review.rating ?? 0).toDouble(),
                             comment: review.review ?? '',
@@ -906,12 +908,12 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 if (hasPurchase) ...[
                   SizedBox(height: 12.h(context)),
                   CustomButton(
-                    text: 'Add review',
+                    text: Strings.addReview.tr,
                     onPressed: () {
                       final productId = product?.id?.trim() ?? '';
                       if (productId.isEmpty) {
                         showAppToast(
-                          message: 'Product id not found.',
+                          message: Strings.productIdNotFound.tr,
                           isError: true,
                         );
                         return;

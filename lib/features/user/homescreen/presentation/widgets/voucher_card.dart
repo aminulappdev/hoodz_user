@@ -2,6 +2,8 @@ import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/voucher_screen.dart';
 import 'package:hoodz/gen/assets.gen.dart';
@@ -33,7 +35,7 @@ class VoucherCardHomeScreen extends StatelessWidget {
               ),
               SizedBox(width: 10.w(context)),
               Text(
-                '2 Vouchers',
+                '2 ${Strings.vouchers.tr}',
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontSize: 16.sp(context),
                   fontWeight: FontWeight.w500,

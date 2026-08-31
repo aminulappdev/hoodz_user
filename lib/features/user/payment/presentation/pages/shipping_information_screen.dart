@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
@@ -31,7 +32,7 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
               }
             } on LocationServiceException catch (error) {
               Get.snackbar(
-                'Location unavailable',
+                Strings.locationUnavailable.tr,
                 error.message,
                 snackPosition: SnackPosition.BOTTOM,
               );
@@ -69,7 +70,7 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
 
       return Scaffold( 
         backgroundColor: Colors.white,
-        appBar: CustomAppBar(label: 'Shipping Information'),
+        appBar: CustomAppBar(label: Strings.shippingInformation.tr),
         // bottomNavigationBar: ShipingButtomBar(
         //   total: controller.price,
         //   onTap: () {
@@ -86,27 +87,27 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _FieldLabel('Full Name'),
+              _FieldLabel(Strings.fullName.tr),
               SizedBox(height: 8.h(context)), 
               CustomTextField(
                 enabled: false,
                 controller: controller.fullNameController, 
-                hintText: 'Enter full name',
+                hintText: Strings.enterYourName.tr,
               ),
               SizedBox(height: 18.h(context)),
-              const _FieldLabel('Phone Number'),
+              _FieldLabel(Strings.phoneNumber.tr),
               SizedBox(height: 8.h(context)),
               CustomTextField(
                 enabled: false,
                 controller: controller.phoneNumberController,
-                hintText: 'Enter phone number',
+                hintText: Strings.enterYourPhoneNumber.tr,
                 keyboardType: TextInputType.phone,
               ),
               SizedBox(height: 18.h(context)),
-              const _FieldLabel('City'),
+              _FieldLabel(Strings.location.tr),
               SizedBox(height: 8.h(context)),
               CustomTextField(
-                hintText: 'Select city',
+                hintText: Strings.select.tr,
                 hintStyle: dropDownStyle,
                 value: controller.selectedCity.value,
                 onChanged: controller.changeCity,
@@ -121,7 +122,7 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
               ),
               SizedBox(height: 18.h(context)),
               _SectionHeader(
-                title: 'Shipping Address',
+                title: Strings.shippingAddress.tr,
                 onChange: () => _showLocationSheet(context),
               ),
               SizedBox(height: 10.h(context)),
@@ -156,11 +157,11 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                     //   ],
                     // ),
                     SizedBox(height: 18.h(context)),
-                    const _FieldLabel('Full Address'),
+                    _FieldLabel(Strings.fullAddress.tr),
                     SizedBox(height: 8.h(context)),
                     CustomTextField(
                       controller: controller.fullAddressController,
-                      hintText: 'address',
+                      hintText: Strings.address.tr,
                     ),
                     SizedBox(height: 18.h(context)),
                     Row(
@@ -169,11 +170,11 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const _FieldLabel('Building no'),
+                              _FieldLabel(Strings.buildingNo.tr),
                               SizedBox(height: 8.h(context)),
                               CustomTextField(
                                 controller: controller.buildingController,
-                                hintText: 'Enter building',
+                                hintText: Strings.buildingNo.tr,
                               ),
                             ],
                           ),
@@ -183,11 +184,11 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const _FieldLabel('Floor no'),
+                              _FieldLabel(Strings.floorNo.tr),
                               SizedBox(height: 8.h(context)),
                               CustomTextField(
                                 controller: controller.floorController,
-                                hintText: 'Enter floor',
+                                hintText: Strings.floorNo.tr,
                               ),
                             ],
                           ),
@@ -195,18 +196,18 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                       ],
                     ),
                     SizedBox(height: 18.h(context)),
-                    const _FieldLabel('Apartment'),
+                    _FieldLabel(Strings.apartment.tr),
                     SizedBox(height: 8.h(context)),
                     CustomTextField(
                       controller: controller.apartmentController,
-                      hintText: 'address',
+                      hintText: Strings.address.tr,
                     ),
                   ],
                 ),
               ),
               SizedBox(height: 18.h(context)),
               CustomButton(
-                text: 'Save Changes',
+                text: Strings.saveChanges.tr,
                 onPressed: () async {
                   final success = await controller.updateDeliveryLocation();
                   if (success && context.mounted) {
@@ -255,7 +256,7 @@ class _SectionHeader extends StatelessWidget {
         GestureDetector(
           onTap: onChange,
           child: Text(
-            'Change',
+            Strings.change.tr,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 13.sp(context),
               fontWeight: FontWeight.w500,

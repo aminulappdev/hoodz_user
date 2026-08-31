@@ -1,17 +1,21 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class AuthBackground extends StatelessWidget {
   final bool isBack;
   final String title;
   final String subtitle;
+  final String backLabel;
   final Widget contentColumn;
   const AuthBackground({
     super.key,
     required this.contentColumn,
     this.isBack = false,
+    this.backLabel = '',
     required this.title,
     required this.subtitle,
   });
@@ -49,7 +53,7 @@ class AuthBackground extends StatelessWidget {
                           ),
                           SizedBox(width: 4.w(context)),
                           Text(
-                            'Back',
+                            backLabel.isNotEmpty ? backLabel : Strings.back.tr,
                             style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(
                                   color: Colors.white,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 
@@ -39,13 +41,13 @@ class CheckoutCard extends StatelessWidget {
       child: Column(
         children: [
           SummaryRow(
-            title: 'Sub-total',
+            title: Strings.subtotal.tr,
             value: '\$${subTotal.toStringAsFixed(2)}',
             titleColor: const Color(0xff9A9A9A),
           ),
           SizedBox(height: 14.h(context)),
           SummaryRow(
-            title: 'Delivery charge',
+            title: Strings.deliveryFee.tr,
             value: '\$${deliveryCharge.toStringAsFixed(2)}',
             titleColor: const Color(0xff9A9A9A),
           ),
@@ -53,12 +55,12 @@ class CheckoutCard extends StatelessWidget {
           const Divider(color: Color(0xffEAEAEA), height: 1),
           SizedBox(height: 14.h(context)),
           SummaryRow(
-            title: 'Total cost',
+            title: Strings.totalCost.tr,
             value: '\$${total.toStringAsFixed(2)}',
             isBold: true,
           ),
           SizedBox(height: 26.h(context)),
-          CustomButton(text: 'Proceed to Checkout', onPressed: onTap),
+          CustomButton(text: Strings.checkout.tr, onPressed: onTap),
         ],
       ),
     );

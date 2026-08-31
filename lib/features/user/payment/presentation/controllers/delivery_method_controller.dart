@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/payment/presentation/models/delivery_method_item.dart';
 
 class DeliveryMethodController extends GetxController {
@@ -6,18 +7,18 @@ class DeliveryMethodController extends GetxController {
 
   final List<DeliveryMethodItem> methods = const [
     DeliveryMethodItem(
-      title: 'Debit/Credit card',
+      title: Strings.debitCreditCard,
       providers: ['Visa', 'Master Card'],
       type: DeliveryMethodType.card,
     ),
     DeliveryMethodItem(
-      title: 'Smart Wallets',
+      title: Strings.smartWallets,
       providers: ['Apple Pay', 'Google Pay', 'PayPal'],
       type: DeliveryMethodType.wallet,
     ),
     DeliveryMethodItem(
-      title: 'Cash on Delivery',
-      providers: ['Pay on delivery'],
+      title: Strings.cashOnDelivery,
+      providers: [Strings.payOnDelivery],
       type: DeliveryMethodType.cashOnDelivery,
     ),
   ];

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/controller/ai_assistant_controller.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_chat_header.dart';
@@ -9,7 +11,7 @@ import 'package:hoodz/features/user/ai_assistant/presentation/widgets/reccomanda
 
 class AiAssistantScreen extends GetView<AiAssistantController> {
   final bool? isShowBackButton;
-  final String? title; 
+  final String? title;
   final String? subtitle;
 
   const AiAssistantScreen({
@@ -26,9 +28,9 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
     final resolvedIsShowBackButton =
         arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
     final resolvedTitle =
-        arguments?['title'] as String? ?? title ?? 'Customer support';
+        arguments?['title'] as String? ?? title ?? Strings.aiAssistant.tr;
     final resolvedSubtitle =
-        arguments?['subtitle'] as String? ?? subtitle ?? 'Powered by AI';
+        arguments?['subtitle'] as String? ?? subtitle ?? Strings.poweredByAI.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -43,30 +45,26 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
             Expanded(
               child: ListView(
                 padding: EdgeInsets.fromLTRB(
-                  16.w(context), 
+                  16.w(context),
                   20.h(context),
                   16.w(context),
                   20.h(context),
                 ),
                 children: [
                   MessageBubble(
-                    message:
-                        "Hi! I'm your AI Fashion Assistant✨ How can I help you "
-                        'style your look today?',
+                    message: Strings.aiFashionAssistantGreeting.tr,
                     isMe: false,
                     timestamp: '04:02 PM',
                   ),
                   SizedBox(height: 10.h(context)),
-                  const MessageBubble(
-                    message: 'Show me white shirts',
+                  MessageBubble(
+                    message: Strings.showMeWhiteShirts.tr,
                     isMe: true,
                     timestamp: '04:02 PM',
                   ),
                   SizedBox(height: 18.h(context)),
-                  const MessageBubble(
-                    message:
-                        'I found some perfect white shirts for you! Here are my '
-                        'top picks:',
+                  MessageBubble(
+                    message: Strings.aiRecommendationIntro.tr,
                     isMe: false,
                   ),
                   SizedBox(height: 12.h(context)),
@@ -74,8 +72,8 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
                     (product) => Padding(
                       padding: EdgeInsets.only(bottom: 10.h(context)),
                       child: RecommendationCard(
-                        brand: product['brand'] ?? '',
-                        name: product['name'] ?? '',
+                        brand: (product['brandKey'] ?? '').tr,
+                        name: (product['nameKey'] ?? '').tr,
                         price: product['price'] ?? '',
                       ),
                     ),

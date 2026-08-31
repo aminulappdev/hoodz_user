@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/shop/data/models/shop_details_model.dart';
 
@@ -16,7 +18,7 @@ class ShopAvailabilityCard extends StatelessWidget {
     final statusColor = isOpenNow
         ? const Color(0xFF22C55E)
         : const Color(0xFFEF4444);
-    final statusText = isOpenNow ? 'Open now' : 'Closed';
+    final statusText = isOpenNow ? Strings.openNow.tr : Strings.closed.tr;
 
     return Container(
       width: double.infinity,
@@ -41,7 +43,7 @@ class ShopAvailabilityCard extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w(context)),
                   Text(
-                    'Availability',
+                    Strings.availability.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 16.sp(context),
                       fontWeight: FontWeight.w700,
@@ -67,7 +69,7 @@ class ShopAvailabilityCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Opening Time',
+                Strings.openingTime.tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 14.sp(context),
                   color: const Color(0xff777777),

@@ -53,13 +53,12 @@ class MySharedPref {
   /// get current locale
   static Locale getLocale() {
     if (!_isInitialized) {
-      return const Locale('en');
+      return LocalizationService.defaultLanguage;
     }
 
     String? langCode = _sharedPreferences.getString(_currentLocalKey);
-    // default language is english
     return LocalizationService.supportedLanguages[langCode] ??
-        const Locale('en');
+        LocalizationService.defaultLanguage;
   }
 
   /// save generated fcm token

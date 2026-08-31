@@ -1,5 +1,7 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
@@ -15,7 +17,7 @@ class CustomHomePageAppBar extends StatelessWidget {
     required this.onTapSearch,
   });
 
-  final String address; 
+  final String address;
   final int notificationCount;
   final VoidCallback onTapEdit;
   final VoidCallback onTapNotification;
@@ -47,7 +49,7 @@ class CustomHomePageAppBar extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Deliver to ',
+                  Strings.deliverTo.tr,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     fontSize: 14.sp(context),
                     fontFamily: 'Geist',
@@ -56,7 +58,7 @@ class CustomHomePageAppBar extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    address,
+                    address.isEmpty ? Strings.noAddressAdded.tr : address,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -86,7 +88,7 @@ class CustomHomePageAppBar extends StatelessWidget {
                 SizedBox(
                   width: 300.w(context),
                   child: CustomTextField(
-                    hintText: 'Search...',
+                    hintText: Strings.search.tr,
                     prefixIcon: Assets.icons.search02.path,
                     prefixIconColor: Colors.white,
                     readOnly: true,

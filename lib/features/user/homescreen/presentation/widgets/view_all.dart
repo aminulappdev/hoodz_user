@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class ViewAllList extends StatelessWidget {
@@ -21,7 +23,7 @@ class ViewAllList extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Text(
-            'View all',
+            Strings.viewAll.tr,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               fontSize: 14.sp(context),
               fontWeight: FontWeight.w500,
