@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class LabelContainer extends StatelessWidget {
-  final String icon;
+  final String? icon;
   final String name;
   final Color contentColor;
   final Color backgroundColor;
   const LabelContainer({
     super.key,
-    required this.icon,
+    this.icon,
     required this.name,
     required this.contentColor,
     required this.backgroundColor,
@@ -30,13 +30,15 @@ class LabelContainer extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CrashSafeImage(
-              icon,
-              height: 16.h(context),
-              width: 16.w(context),
-              color: contentColor,
-            ),
-            SizedBox(width: 5.w(context)),
+            if (icon != null) ...[
+              CrashSafeImage(
+                icon!,
+                height: 16.h(context),
+                width: 16.w(context),
+                color: contentColor,
+              ),
+              SizedBox(width: 5.w(context)),
+            ],
             Text(
               name,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

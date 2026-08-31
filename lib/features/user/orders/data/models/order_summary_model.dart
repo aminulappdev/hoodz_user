@@ -57,16 +57,16 @@ class Data {
 
     factory Data.fromJson(Map<String, dynamic> json){ 
         return Data(
-            amount: json["amount"],
+            amount: _toInt(json["amount"]),
             voucherCode: json["voucherCode"],
-            voucherDiscount: json["voucherDiscount"],
+            voucherDiscount: _toInt(json["voucherDiscount"]),
             giftDetails: json["giftDetails"],
-            redeemCoins: json["redeemCoins"],
-            coinDiscount: json["coinDiscount"],
-            deliveryCharge: json["deliveryCharge"],
-            totalAmount: json["totalAmount"],
-            walletBalance: json["walletBalance"],
-            pointBalance: json["pointBalance"],
+            redeemCoins: _toInt(json["redeemCoins"]),
+            coinDiscount: _toInt(json["coinDiscount"]),
+            deliveryCharge: _toInt(json["deliveryCharge"]),
+            totalAmount: _toInt(json["totalAmount"]),
+            walletBalance: _toInt(json["walletBalance"]),
+            pointBalance: _toInt(json["pointBalance"]),
             deliveryType: json["deliveryType"],
             city: json["city"],
             billingDetails: json["billingDetails"] == null ? null : BillingDetails.fromJson(json["billingDetails"]),
@@ -109,9 +109,9 @@ class BillingDetails {
             address: json["address"],
             phoneNumber: json["phoneNumber"],
             email: json["email"],
-            buildingNo: json["buildingNo"],
-            floorNo: json["floorNo"],
-            apartment: json["apartment"],
+            buildingNo: _toInt(json["buildingNo"]),
+            floorNo: _toInt(json["floorNo"]),
+            apartment: _toInt(json["apartment"]),
             city: json["city"],
             country: json["country"],
             deliveryLocation: json["deliveryLocation"] == null ? null : DeliveryLocation.fromJson(json["deliveryLocation"]),
@@ -181,12 +181,12 @@ class Order {
     factory Order.fromJson(Map<String, dynamic> json){ 
         return Order(
             author: json["author"],
-            amount: json["amount"],
-            voucherDiscount: json["voucherDiscount"],
+            amount: _toInt(json["amount"]),
+            voucherDiscount: _toInt(json["voucherDiscount"]),
             giftDetails: json["giftDetails"],
-            coinDiscount: json["coinDiscount"],
-            deliveryCharge: json["deliveryCharge"],
-            totalAmount: json["totalAmount"],
+            coinDiscount: _toInt(json["coinDiscount"]),
+            deliveryCharge: _toInt(json["deliveryCharge"]),
+            totalAmount: _toInt(json["totalAmount"]),
             items: json["items"] == null ? [] : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
         );
     }
@@ -217,10 +217,10 @@ class Item {
             productId: json["productId"],
             size: json["size"],
             color: json["color"] == null ? null : Color.fromJson(json["color"]),
-            quantity: json["quantity"],
+            quantity: _toInt(json["quantity"]),
             product: json["product"] == null ? null : Product.fromJson(json["product"]),
-            unitPrice: json["unitPrice"],
-            totalPrice: json["totalPrice"],
+            unitPrice: _toInt(json["unitPrice"]),
+            totalPrice: _toInt(json["totalPrice"]),
         );
     }
 
@@ -274,11 +274,24 @@ class Product {
             title: json["title"],
             banner: json["banner"],
             inventoryType: json["inventoryType"],
-            price: json["price"],
-            discount: json["discount"],
-            discountPrice: json["discountPrice"],
+            price: _toInt(json["price"]),
+            discount: _toInt(json["discount"]),
+            discountPrice: _toInt(json["discountPrice"]),
             isDiscounted: json["isDiscounted"],
         );
     }
 
+}
+
+int? _toInt(dynamic value) {
+    if (value is int) {
+        return value;
+    }
+    if (value is double) {
+        return value.toInt();
+    }
+    if (value is String) {
+        return int.tryParse(value);
+    }
+    return null;
 }

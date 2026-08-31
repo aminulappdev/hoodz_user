@@ -226,6 +226,40 @@ class MyOrdersController extends GetxController {
     return 'processing';
   }
 
+  String orderStatusLabel(Datum order) {
+    final status = (order.status ?? '').trim();
+    if (status.isEmpty) {
+      return Strings.processing.tr;
+    }
+
+    final normalizedStatus = status.toLowerCase();
+    switch (normalizedStatus) {
+      case 'cancelled':
+      case 'canceled':
+      case 'cancel':
+        return Strings.cancelled.tr;
+      case 'completed':
+      case 'complete':
+      case 'delivered':
+      case 'delivery':
+        return Strings.delivered.tr;
+      case 'processing':
+        return Strings.processing.tr;
+      case 'rider_assigned':
+        return Strings.riderAssigned.tr;
+      default:
+        return status
+            .replaceAll('_', ' ')
+            .split(RegExp(r'\s+'))
+            .where((part) => part.isNotEmpty)
+            .map(
+              (part) => part[0].toUpperCase() +
+                  (part.length > 1 ? part.substring(1).toLowerCase() : ''),
+            )
+            .join(' ');
+    }
+  }
+
   int orderItemCount(Datum order) {
     return order.totalItem ?? order.items.length;
   }

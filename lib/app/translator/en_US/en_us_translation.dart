@@ -199,7 +199,7 @@ const Map<String, String> enUs = {
   Strings.noOrdersHereYet: 'No orders here yet',
   Strings.reorderItemsNotFoundForThisOrder:
       'Reorder items not found for this order.',
-  Strings.customerService: 'Customer Service',
+  Strings.OrderSupport: 'Order Support',
   Strings.selectedIssue: 'Selected issue',
   Strings.pleaseSelectAnIssueFirst: 'Please select an issue first.',
   Strings.pleaseWriteANoteFirst: 'Please write a note first.',

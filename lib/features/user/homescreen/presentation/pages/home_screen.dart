@@ -365,7 +365,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   final isWishlisted =
                                       product.isWishlisted ?? false;
                                   return ProductCard(
-                                    name: name, 
+                                    name: name,  
                                     image: image, 
                                     price: price,
                                     rating: rating,

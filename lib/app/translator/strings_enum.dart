@@ -201,7 +201,7 @@ class Strings {
   static const String noOrdersHereYet = 'no_orders_here_yet';
   static const String reorderItemsNotFoundForThisOrder =
       'reorder_items_not_found_for_this_order';
-  static const String customerService = 'customer_service';
+  static const String OrderSupport = 'customer_service';
   static const String selectedIssue = 'selected_issue';
   static const String pleaseSelectAnIssueFirst = 'please_select_an_issue_first';
   static const String pleaseWriteANoteFirst = 'please_write_a_note_first';

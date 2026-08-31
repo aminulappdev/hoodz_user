@@ -19,7 +19,7 @@ class OrderScreen extends GetView<MyOrdersController> {
 
   List<Map<String, dynamic>> _buildReorderItemsPayload(
     order_model.Datum order,
-  ) {
+  ) { 
     final items = <Map<String, dynamic>>[];
 
     for (final item in order.items) {
@@ -170,6 +170,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                             orderID: controller.orderId(order),
                             price: controller.orderPrice(order),
                             type: controller.orderType(order),
+                            statusText: controller.orderStatusLabel(order),
                             item: controller.orderItemCount(order),
                             onTap: () {
                               final orderType = controller.orderType(order);

@@ -424,7 +424,7 @@ final Map<String, String> arAR = {
   Strings.noOrdersHereYet: 'لا توجد طلبات بعد',
   Strings.reorderItemsNotFoundForThisOrder:
       'لم يتم العثور على عناصر لإعادة الطلب.',
-  Strings.customerService: 'خدمة العميل',
+  Strings.OrderSupport: 'دعم الطلب',
   Strings.selectedIssue: 'المشكلة المختارة',
   Strings.pleaseSelectAnIssueFirst: 'يرجى اختيار مشكلة أولاً.',
   Strings.pleaseWriteANoteFirst: 'يرجى كتابة ملاحظة أولاً.',

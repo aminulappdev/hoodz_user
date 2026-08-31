@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "234939405246",
+    "project_id": "the-hoodz-7a518",
+    "storage_bucket": "the-hoodz-7a518.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234939405246:android:2f439e84c54c51e3009fef",
+        "android_client_info": {
+          "package_name": "com.hoodz.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-1LyYQXjCAuXWJ2FAXcBY4aC8SSogyR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

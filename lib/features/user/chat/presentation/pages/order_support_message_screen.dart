@@ -26,12 +26,18 @@ class OrderSupportMessageScreen extends GetView<OrderSupportMessageController> {
         : null;
     final resolvedIsShowBackButton =
         arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
+    final resolvedOrderId =
+        controller.orderId.value.trim().isNotEmpty
+            ? controller.orderId.value.trim()
+            : arguments?['orderId']?.toString().trim() ?? '';
     final resolvedTitle = controller.chatTitle.value.isNotEmpty
         ? controller.chatTitle.value
         : arguments?['title'] as String? ?? title ?? Strings.orderSupportChat.tr;
-    final resolvedSubtitle = controller.chatSubtitle.value.isNotEmpty
-        ? controller.chatSubtitle.value
-        : arguments?['subtitle'] as String? ?? subtitle ?? Strings.online.tr;
+    final resolvedSubtitle = resolvedOrderId.isNotEmpty
+        ? 'Order ID: $resolvedOrderId'
+        : controller.chatSubtitle.value.isNotEmpty
+            ? controller.chatSubtitle.value
+            : arguments?['subtitle'] as String? ?? subtitle ?? Strings.online.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,

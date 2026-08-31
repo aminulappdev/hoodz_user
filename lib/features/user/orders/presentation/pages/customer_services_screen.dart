@@ -13,7 +13,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(label: Strings.customerService.tr),
+      appBar: CustomAppBar(label: Strings.OrderSupport.tr),
       body: SafeArea(
         child: Form(
           key: controller.formKey,
@@ -28,7 +28,7 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
               () => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  Text( 
                     Strings.selectedIssue.tr,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontSize: 18.sp(context),
@@ -102,12 +102,12 @@ class CustomerServiceScreen extends GetView<CustomerServiceController> {
                                         ),
                                   ),
                                 ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  color: isSelected
-                                      ? const Color(0xFFE8622C)
-                                      : const Color(0xFFB7B7B7),
-                                ),
+                                // Icon(
+                                //   Icons.chevron_right,
+                                //   color: isSelected
+                                //       ? const Color(0xFFE8622C)
+                                //       : const Color(0xFFB7B7B7),
+                                // ),
                               ],
                             ),
                           ),

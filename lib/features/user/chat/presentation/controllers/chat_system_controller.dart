@@ -10,7 +10,7 @@ import 'package:hoodz/urls.dart';
 
 class ChatSystemController extends GetxController {
   ChatSystemController(this._networkCaller);
-
+ 
   final NetworkCaller _networkCaller;
   final RxBool isCreatingChat = false.obs;
 
@@ -134,7 +134,7 @@ class ChatSystemController extends GetxController {
     if (createdChatData != null) {
       final chatArgs = _buildChatArguments(createdChatData);
       chatArgs['title'] = Strings.orderSupportChat.tr;
-      chatArgs['subtitle'] = Strings.online.tr;
+      chatArgs['subtitle'] = 'Order ID: ${orderId.trim()}';
       chatArgs['orderId'] = orderId.trim();
       Get.to(() => const OrderSupportMessageScreen(), arguments: chatArgs);
     }

@@ -6,7 +6,7 @@ import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatelessWidget { 
   const ProductCard({ 
     super.key,
     required this.name,
@@ -182,6 +182,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 4.h(context)),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,7 +193,7 @@ class ProductCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 16.sp(context),
+                        fontSize: 18.sp(context),
                         fontWeight: FontWeight.w800,
                         color: const Color(0xFF22C55E),
                       ),
@@ -213,17 +214,17 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                  SizedBox(width: 4.w(context)),
-                  CircleAvatar(
-                    radius: 17.r(context),
-                    backgroundColor: Colors.white,
-                    child: CrashSafeImage(
-                      Assets.icons.cart.path,
-                      height: 14.h(context),
-                      width: 14.w(context),
-                      color: Colors.black,
-                    ),
-                  ),
+                  // SizedBox(width: 4.w(context)),
+                  // CircleAvatar(
+                  //   radius: 17.r(context),
+                  //   backgroundColor: Colors.white,
+                  //   child: CrashSafeImage(
+                  //     Assets.icons.cart.path,
+                  //     height: 14.h(context),
+                  //     width: 14.w(context),
+                  //     color: Colors.black,
+                  //   ),
+                  // ),
                 ],
               ),
             ],

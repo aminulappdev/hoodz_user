@@ -132,7 +132,7 @@ class AllBrandScreen extends GetView<AllBrandController> {
                           final shop = shops[index];
                           return BrandCardList(
                             image: shop.displayImage.isEmpty
-                                ? AppStrings.demoImageUrl 
+                                ? AppStrings.demoImageUrl
                                 : shop.displayImage,
                             name: shop.displayTitle,
                             rating: shop.avgRating?.toStringAsFixed(1) ?? '0.0',
@@ -144,14 +144,8 @@ class AllBrandScreen extends GetView<AllBrandController> {
                               if ((shop.id ?? '').isNotEmpty) {
                                 PageNavigationService.to(
                                   context,
-                                  AppRoutes.shopProduct,
-                                  arguments: {
-                                    'shopId': shop.id,
-                                    'title': shop.displayTitle,
-                                    'image': shop.displayImage,
-                                    'category': selectedCategoryTitle,
-                                    'brandType': controller.brandType.value,
-                                  },
+                                  AppRoutes.shop,
+                                  arguments: {'shopId': shop.id},
                                 );
                               }
                             },

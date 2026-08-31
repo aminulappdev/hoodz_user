@@ -16,6 +16,7 @@ class OrderCard extends StatelessWidget {
   final String price;
   final int item;
   final String type;
+  final String statusText;
   final VoidCallback onTap;
   final VoidCallback optionalOnTap;
   final VoidCallback? onReorder;
@@ -28,6 +29,7 @@ class OrderCard extends StatelessWidget {
     required this.orderID,
     required this.price,
     required this.type,
+    required this.statusText,
     required this.onTap,
     required this.optionalOnTap,
     required this.item,
@@ -81,7 +83,7 @@ class OrderCard extends StatelessWidget {
                             ),
                           ),
                           SizedBox(width: 8.w(context)),
-                          _StatusLabel(type: type),
+                          _StatusLabel(type: type, statusText: statusText),
                         ],
                       ),
                       Text(
@@ -180,35 +182,58 @@ class OrderCard extends StatelessWidget {
 }
 
 class _StatusLabel extends StatelessWidget {
-  const _StatusLabel({required this.type});
+  const _StatusLabel({required this.type, required this.statusText});
 
   final String type;
+  final String statusText;
 
   @override
   Widget build(BuildContext context) {
-    if (type == 'processing') {
+    final normalizedStatus = statusText.trim().toLowerCase();
+
+    if (normalizedStatus == 'rider_assigned') {
       return LabelContainer(
         icon: Assets.icons.box01.path,
-        name: Strings.processing.tr,
-        contentColor: LightThemeColors.primaryColor,
-        backgroundColor: LightThemeColors.primaryColor,
+        name: statusText,
+        contentColor: const Color(0xFF2563EB),
+        backgroundColor: const Color(0xFF2563EB),
       );
     }
 
-    if (type == 'completed') {
+    if (normalizedStatus == 'processing') {
+      return LabelContainer(
+        icon: Assets.icons.box01.path,
+        name: statusText,
+        contentColor: const Color(0xFFF97316),
+        backgroundColor: const Color(0xFFF97316),
+      );
+    }
+
+    if (normalizedStatus == 'completed' || normalizedStatus == 'delivered') {
       return LabelContainer(
         icon: Assets.icons.checkMark.path,
-        name: Strings.delivered.tr,
-        contentColor: const Color(0xff12B76A),
-        backgroundColor: const Color(0xff12B76A),
+        name: statusText,
+        contentColor: const Color(0xFF12B76A),
+        backgroundColor: const Color(0xFF12B76A),
+      );
+    }
+
+    if (normalizedStatus == 'cancelled' ||
+        normalizedStatus == 'canceled' ||
+        normalizedStatus == 'cancel') {
+      return LabelContainer(
+        icon: null,
+        name: statusText,
+        contentColor: const Color(0xFFEF4444),
+        backgroundColor: const Color(0xFFEF4444),
       );
     }
 
     return LabelContainer(
-      icon: Assets.icons.cross.path,
-      name: Strings.cancelled.tr,
-      contentColor: LightThemeColors.primaryColor,
-      backgroundColor: LightThemeColors.primaryColor,
+      icon: null,
+      name: statusText,
+      contentColor: const Color(0xFF6B7280),
+      backgroundColor: const Color(0xFF6B7280),
     );
   }
 }
