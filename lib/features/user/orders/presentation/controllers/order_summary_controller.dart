@@ -45,6 +45,7 @@ class OrderSummaryController extends GetxController {
     int? redeemCoins,
     String? note,
     List<Map<String, dynamic>>? itemsOverride,
+    bool usePreviousItems = false,
     void Function()? onSuccessNavigate,
   }) async {
     _lastDeliveryType = deliveryType;
@@ -66,14 +67,17 @@ class OrderSummaryController extends GetxController {
       _lastItemsSource = _OrderItemsSource.override;
     }
 
-    final cartItemsPayload = _buildItemsPayload();
-    if (itemsOverride == null && cartItemsPayload.isNotEmpty) {
+    final cartItemsPayload =
+        usePreviousItems ? const <Map<String, dynamic>>[] : _buildItemsPayload();
+    if (itemsOverride == null && !usePreviousItems && cartItemsPayload.isNotEmpty) {
       _lastItemsPayload = cartItemsPayload;
       _lastItemsSource = _OrderItemsSource.cart;
     }
 
     final items = itemsOverride ??
-        (_lastItemsSource == _OrderItemsSource.override
+        (usePreviousItems
+            ? _lastItemsPayload
+            : _lastItemsSource == _OrderItemsSource.override
             ? _lastItemsPayload
             : cartItemsPayload.isNotEmpty
                 ? cartItemsPayload
@@ -83,6 +87,8 @@ class OrderSummaryController extends GetxController {
       showAppToast(message: Strings.cartIsEmpty.tr, isError: true);
       return false;
     }
+
+    await _ensureProfileLoaded();
 
     final orderData = <String, dynamic>{
       'deliveryType': deliveryType,
@@ -173,20 +179,21 @@ class OrderSummaryController extends GetxController {
   Map<String, dynamic>? _buildBillingDetails() {
     final userData = _profileController.userData;
     final deliveryAddress = userData?.deliveryAddress;
-    final deliveryLocation = deliveryAddress?.location;
+    final deliveryLocation =
+        deliveryAddress?.location ?? userData?.deliveryLocation;
 
     return {
       'name': _normalizeString(userData?.name),
       'address': _normalizeString(deliveryAddress?.name) ??
           _normalizeString(userData?.address),
       'phoneNumber': _resolvePhoneNumber(userData),
-      'email': _normalizeString(userData?.email),
+      'email': _normalizeString(userData?.email) ?? '',
       'buildingNo': deliveryAddress?.buildingNo,
       'floorNo': deliveryAddress?.floorNo,
       'apartment': deliveryAddress?.apartment,
       'city': _normalizeString(deliveryAddress?.city),
       'country': _normalizeString(deliveryAddress?.country),
-      'deliveryLocation': _buildDeliveryLocation(deliveryLocation),
+      'deliveryLocation': _buildDeliveryLocation(deliveryLocation) ?? {},
       'note': _lastNote,
     };
   }
@@ -251,6 +258,18 @@ class OrderSummaryController extends GetxController {
   String? _normalizeString(String? value) {
     final normalized = value?.trim();
     return (normalized == null || normalized.isEmpty) ? null : normalized;
+  }
+
+  Future<void> _ensureProfileLoaded() async {
+    if (_profileController.userData != null) {
+      return;
+    }
+
+    while (_profileController.isLoading.value) {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+
+    await _profileController.loadUserProfile();
   }
 
   void clearOrderSummary() {

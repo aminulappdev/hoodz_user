@@ -7,10 +7,10 @@ class HomeDataModel {
   });
 
   final bool? success; 
-  final int? statusCode;
+  final dynamic statusCode;
   final String? message;  
   final Data? data;
-
+ 
   factory HomeDataModel.fromJson(Map<String, dynamic> json) {
     return HomeDataModel(
       success: json["success"],
@@ -22,7 +22,7 @@ class HomeDataModel {
 
   HomeDataModel copyWith({
     bool? success,
-    int? statusCode,
+    dynamic statusCode,
     String? message,
     Data? data,
   }) {
@@ -50,7 +50,7 @@ class Data {
   });
 
   final Profile? profile;
-  final int? unreadNotification;
+  final dynamic unreadNotification;
   final List<SectionBanner> firstSectionBanner;
   final LastOrder? lastOrder;
   final List<NearbyBrand> nearbyBrands;
@@ -112,7 +112,7 @@ class Data {
 
   Data copyWith({
     Profile? profile,
-    int? unreadNotification,
+    dynamic unreadNotification,
     List<SectionBanner>? firstSectionBanner,
     LastOrder? lastOrder,
     List<NearbyBrand>? nearbyBrands,
@@ -149,7 +149,7 @@ class LastOrder {
 
   final String? id;
   final List<LastOrderItem> items;
-  final int? amount;
+  final dynamic amount;
   final String? status;
   final DateTime? createdAt;
 
@@ -161,7 +161,7 @@ class LastOrder {
           : List<LastOrderItem>.from(
               json["items"]!.map((x) => LastOrderItem.fromJson(x)),
             ),
-      amount: json["amount"] as int?,
+      amount: json["amount"],
       status: json["status"]?.toString(),
       createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
     );
@@ -187,9 +187,9 @@ class LastOrderItem {
   final String? orderId;
   final LastOrderProduct? product;
   final String? author;
-  final int? quantity;
-  final int? price;
-  final int? totalPrice;
+  final dynamic quantity;
+  final dynamic price;
+  final dynamic totalPrice;
   final dynamic size;
   final dynamic color;
   final DateTime? createdAt;
@@ -205,9 +205,9 @@ class LastOrderItem {
               Map<String, dynamic>.from(json["product"]),
             ),
       author: json["author"]?.toString(),
-      quantity: json["quantity"] as int?,
-      price: json["price"] as int?,
-      totalPrice: json["totalPrice"] as int?,
+      quantity: json["quantity"],
+      price: json["price"],
+      totalPrice: json["totalPrice"],
       size: json["size"],
       color: json["color"],
       createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
@@ -228,16 +228,16 @@ class LastOrderProduct {
   final String? id;
   final String? title;
   final String? banner;
-  final int? price;
-  final int? discountPrice;
+  final dynamic price;
+  final dynamic discountPrice;
 
   factory LastOrderProduct.fromJson(Map<String, dynamic> json) {
     return LastOrderProduct(
       id: json["_id"]?.toString(),
       title: json["title"]?.toString(),
       banner: json["banner"]?.toString(),
-      price: json["price"] as int?,
-      discountPrice: json["discountPrice"] as int?,
+      price: json["price"],
+      discountPrice: json["discountPrice"],
     );
   }
 }
@@ -282,10 +282,10 @@ class Product {
   final String? image;
   final String? banner;
   final String? collectionType;
-  final int? price;
-  final int? discountPrice;
+  final dynamic price;
+  final dynamic discountPrice;
   final dynamic avgRating;
-  final int? ratingCount;
+  final dynamic ratingCount;
   final bool? isWishlisted;
   final bool? inStock;
 
@@ -315,10 +315,10 @@ class Product {
     String? image,
     String? banner,
     String? collectionType,
-    int? price,
-    int? discountPrice,
+    dynamic price,
+    dynamic discountPrice,
     dynamic avgRating,
-    int? ratingCount,
+    dynamic ratingCount,
     bool? isWishlisted,
     bool? inStock,
   }) {
@@ -339,13 +339,22 @@ class Product {
 }
 
 class SectionBanner {
-  SectionBanner({required this.banner, required this.reference});
+  SectionBanner({
+    required this.banner,
+    required this.reference,
+    required this.type,
+  });
 
   final String? banner;
   final String? reference;
+  final String? type;
 
   factory SectionBanner.fromJson(Map<String, dynamic> json) {
-    return SectionBanner(banner: json["banner"], reference: json["reference"]);
+    return SectionBanner(
+      banner: json["banner"]?.toString(),
+      reference: json["reference"]?.toString(),
+      type: json["type"]?.toString(),
+    );
   }
 }
 
@@ -406,9 +415,9 @@ class DeliveryAddress {
 
   final String? name;
   final DeliveryLocation? location;
-  final int? buildingNo;
-  final int? floorNo;
-  final int? apartment;
+  final dynamic buildingNo;
+  final dynamic floorNo;
+  final dynamic apartment;
   final String? city;
   final String? country;
 

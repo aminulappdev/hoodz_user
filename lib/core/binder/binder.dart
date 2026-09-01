@@ -16,6 +16,7 @@ import 'package:hoodz/features/user/homescreen/presentation/controllers/all_bran
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_info_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
+import 'package:hoodz/features/user/homescreen/presentation/controllers/campaign_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
@@ -170,7 +171,11 @@ class ControllerBinder extends Bindings {
     );
     Get.lazyPut(ChangePasswordController.new, fenix: true);
     Get.lazyPut(ContentController.new, fenix: true);
-    Get.lazyPut(AiAssistantController.new, fenix: true);
+    Get.lazyPut(
+      () => AiAssistantController(Get.find<NetworkCaller>()),
+      fenix: true,
+    );
+    Get.lazyPut(CampaignController.new, fenix: true);
     Get.lazyPut(AllTrendingProductController.new, fenix: true);
     Get.lazyPut(AiRecommendedProductController.new, fenix: true);
     Get.lazyPut(AllProductInfoController.new, fenix: true);

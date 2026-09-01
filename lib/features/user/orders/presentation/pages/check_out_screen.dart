@@ -123,6 +123,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       voucherCode: voucherCode.isEmpty ? null : voucherCode,
       redeemCoins: redeemCoins == 0 ? null : redeemCoins,
       note: note.isEmpty ? null : note,
+      usePreviousItems: true,
     );
 
     if (!isSuccess) {
@@ -396,17 +397,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               children: [
-                CheckoutOrderDetailsCard(
-                  onChangeTap: () {
-                    PageNavigationService.to(
-                      context,
-                      AppRoutes.shippingInformation,
-                    );
-                  },
-                  name: _orderName,
-                  phone: _orderPhone,
-                  deliveryType: _orderDeliveryType,
-                  address: _orderAddress,
+                Obx(
+                  () => CheckoutOrderDetailsCard(
+                    onChangeTap: () async {
+                      PageNavigationService.to(
+                        context,
+                        AppRoutes.shippingInformation,
+                      );
+                    },
+                    name: _orderName,
+                    phone: _orderPhone,
+                    deliveryType: _orderDeliveryType,
+                    address: _orderAddress,
+                  ),
                 ),
                 const SizedBox(height: 14),
                 CheckoutVoucherPointsCard(

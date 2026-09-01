@@ -14,7 +14,7 @@ class CardPaymentSucessModel {
     factory CardPaymentSucessModel.fromJson(Map<String, dynamic> json){ 
         return CardPaymentSucessModel(
             success: json["success"],
-            statusCode: json["statusCode"],
+            statusCode: _toInt(json["statusCode"]),
             message: json["message"],
             data: json["data"] == null ? null : Data.fromJson(json["data"]),
         );
@@ -98,18 +98,18 @@ class Payment {
             transactionId: json["transactionId"],
             paymentIntentId: json["paymentIntentId"],
             savedCard: json["savedCard"],
-            saveCardRequested: json["saveCardRequested"],
-            subtotalAmount: json["subtotalAmount"],
-            coinDiscount: json["coinDiscount"],
-            deliveryCharge: json["deliveryCharge"],
-            amount: json["amount"],
+            saveCardRequested: _toBool(json["saveCardRequested"]),
+            subtotalAmount: _toInt(json["subtotalAmount"]),
+            coinDiscount: _toInt(json["coinDiscount"]),
+            deliveryCharge: _toInt(json["deliveryCharge"]),
+            amount: _toInt(json["amount"]),
             status: json["status"],
             paymentMethod: json["paymentMethod"],
-            isPaid: json["isPaid"],
-            isDeleted: json["isDeleted"],
+            isPaid: _toBool(json["isPaid"]),
+            isDeleted: _toBool(json["isDeleted"]),
             paymentId: json["id"],
-            createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
-            updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
+            createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+            updatedAt: DateTime.tryParse(json["updatedAt"]?.toString() ?? ""),
         );
     }
 
@@ -168,10 +168,10 @@ class Order {
     factory Order.fromJson(Map<String, dynamic> json){ 
         return Order(
             id: json["_id"],
-            amount: json["amount"],
-            coinDiscount: json["coinDiscount"],
-            deliveryCharge: json["deliveryCharge"],
-            totalAmount: json["totalAmount"],
+            amount: _toInt(json["amount"]),
+            coinDiscount: _toInt(json["coinDiscount"]),
+            deliveryCharge: _toInt(json["deliveryCharge"]),
+            totalAmount: _toInt(json["totalAmount"]),
             status: json["status"],
             paymentStatus: json["paymentStatus"],
             billingDetails: json["billingDetails"] == null ? null : BillingDetails.fromJson(json["billingDetails"]),
@@ -214,9 +214,9 @@ class BillingDetails {
             address: json["address"],
             phoneNumber: json["phoneNumber"],
             email: json["email"],
-            buildingNo: json["buildingNo"],
-            floorNo: json["floorNo"],
-            apartment: json["apartment"],
+            buildingNo: _toInt(json["buildingNo"]),
+            floorNo: _toInt(json["floorNo"]),
+            apartment: _toInt(json["apartment"]),
             city: json["city"],
             country: json["country"],
             note: json["note"],
@@ -242,10 +242,31 @@ class DeliveryLocation {
     factory DeliveryLocation.fromJson(Map<String, dynamic> json){ 
         return DeliveryLocation(
             type: json["type"],
-            coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x)),
-            latitude: json["latitude"],
-            longitude: json["longitude"],
+            coordinates: json["coordinates"] == null
+                ? []
+                : List<double>.from(
+                    (json["coordinates"] as List).map((x) => (x as num).toDouble()),
+                  ),
+            latitude: (json["latitude"] as num?)?.toDouble(),
+            longitude: (json["longitude"] as num?)?.toDouble(),
         );
     }
 
+}
+
+bool? _toBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is String) {
+        final normalized = value.trim().toLowerCase();
+        if (normalized == 'true') return true;
+        if (normalized == 'false') return false;
+    }
+    return null;
+}
+
+int? _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
 }

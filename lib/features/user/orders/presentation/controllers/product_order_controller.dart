@@ -59,6 +59,8 @@ class ProductOrderController extends GetxController {
       return false;
     }
 
+    await _ensureProfileLoaded();
+
     final orderData = <String, dynamic>{
       'deliveryType': deliveryType ?? 'regular',
       'billingDetails': _buildBillingDetails(note: note),
@@ -174,20 +176,21 @@ class ProductOrderController extends GetxController {
   Map<String, dynamic>? _buildBillingDetails({String? note}) {
     final userData = _profileController.userData;
     final deliveryAddress = userData?.deliveryAddress;
-    final deliveryLocation = deliveryAddress?.location;
+    final deliveryLocation =
+        deliveryAddress?.location ?? userData?.deliveryLocation;
 
     return {
       'name': _normalizeString(userData?.name),
       'address': _normalizeString(deliveryAddress?.name) ??
           _normalizeString(userData?.address),
       'phoneNumber': _resolvePhoneNumber(userData),
-      'email': _normalizeString(userData?.email),
+      'email': _normalizeString(userData?.email) ?? '',
       'buildingNo': deliveryAddress?.buildingNo,
       'floorNo': deliveryAddress?.floorNo,
       'apartment': deliveryAddress?.apartment,
       'city': _normalizeString(deliveryAddress?.city),
       'country': _normalizeString(deliveryAddress?.country),
-      'deliveryLocation': _buildDeliveryLocation(deliveryLocation),
+      'deliveryLocation': _buildDeliveryLocation(deliveryLocation) ?? {},
       'note': _normalizeString(note),
     };
   }
@@ -262,6 +265,18 @@ class ProductOrderController extends GetxController {
         ? countryCode
         : '+$countryCode';
     return '$normalizedCountryCode$phone';
+  }
+
+  Future<void> _ensureProfileLoaded() async {
+    if (_profileController.userData != null) {
+      return;
+    }
+
+    while (_profileController.isLoading.value) {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+
+    await _profileController.loadUserProfile();
   }
 
   String? _normalizeString(String? value) {

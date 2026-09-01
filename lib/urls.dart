@@ -44,6 +44,7 @@ class Urls {
   static const String trendingProductUrl = '$_baseUrl/products/trending';
   static const String aiRecommendedProductUrl =
       '$_baseUrl/products/ai-recommended';
+  static const String campaignUrl = '$_baseUrl/campain';
   static String getBrandTypeCategoriesUrl(String brandType) {
     return '$_baseUrl/category/brand-type?brandType=$brandType';
   }

@@ -13,10 +13,10 @@ class MyOrderModel {
   final Meta? meta;
   final List<Datum> data;
 
-  factory MyOrderModel.fromJson(Map<String, dynamic> json) {
+    factory MyOrderModel.fromJson(Map<String, dynamic> json) {
     return MyOrderModel(
       success: json["success"],
-      statusCode: json["statusCode"],
+      statusCode: _toInt(json["statusCode"]),
       message: json["message"],
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
       data: json["data"] == null
@@ -65,18 +65,18 @@ class Datum {
       items: json["items"] == null
           ? []
           : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
-      totalItem: json["totalItem"],
-      deliveryCharge: json["deliveryCharge"],
-      totalAmount: json["totalAmount"],
+      totalItem: _toInt(json["totalItem"]),
+      deliveryCharge: _toInt(json["deliveryCharge"]),
+      totalAmount: _toInt(json["totalAmount"]),
       status: json["status"],
       paymentStatus: json["paymentStatus"],
       transactionId: json["transactionId"],
       deliveryType: json["deliveryType"],
-      isDeleted: json["isDeleted"],
+      isDeleted: _toBool(json["isDeleted"]),
       datumId: json["id"],
-      createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
-      hasGrievance: json["hasGrievance"],
-      hasGrievanceIssued: json["hasGrievanceIssued"],
+      createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+      hasGrievance: _toBool(json["hasGrievance"]),
+      hasGrievanceIssued: _toBool(json["hasGrievanceIssued"]),
     );
   }
 }
@@ -157,12 +157,22 @@ class Meta {
 
   factory Meta.fromJson(Map<String, dynamic> json) {
     return Meta(
-      page: json["page"],
-      limit: json["limit"],
-      total: json["total"],
-      totalPage: json["totalPage"],
+      page: _toInt(json["page"]),
+      limit: _toInt(json["limit"]),
+      total: _toInt(json["total"]),
+      totalPage: _toInt(json["totalPage"]),
     );
   }
+}
+
+bool? _toBool(dynamic value) {
+  if (value is bool) return value;
+  if (value is String) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized == 'true') return true;
+    if (normalized == 'false') return false;
+  }
+  return null;
 }
 
 int? _toInt(dynamic value) {

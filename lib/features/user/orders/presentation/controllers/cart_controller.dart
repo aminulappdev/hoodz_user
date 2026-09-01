@@ -40,9 +40,10 @@ class CartController extends GetxController {
 
   Future<bool> addToCart({
     required String productId,
-    String? size, 
+    String? size,
     Map<String, String>? color,
     int quantity = 1,
+    bool includeVariantFields = false,
   }) async {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
@@ -71,6 +72,8 @@ class CartController extends GetxController {
         final normalizedSize = size?.trim();
         if (normalizedSize != null && normalizedSize.isNotEmpty) {
           body['size'] = normalizedSize;
+        } else if (includeVariantFields) {
+          body['size'] = null;
         }
 
         final colorCode = color?['code']?.trim();
@@ -83,6 +86,8 @@ class CartController extends GetxController {
             'code': colorCode,
             'name': colorName,
           };
+        } else if (includeVariantFields) {
+          body['color'] = null;
         }
 
         final response = await _networkCaller.postRequest(

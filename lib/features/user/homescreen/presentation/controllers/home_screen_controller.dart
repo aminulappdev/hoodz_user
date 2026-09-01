@@ -8,7 +8,7 @@ import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart'
 import 'package:hoodz/urls.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
-class HomeScreenController extends GetxController { 
+class HomeScreenController extends GetxController {  
   HomeScreenController(this._locationService);
 
   final LocationSelectionService _locationService; 
@@ -136,7 +136,7 @@ class HomeScreenController extends GetxController {
     );
   }
 
-  Future<void> getUserMeta() async {
+  Future<void> getUserMeta({bool force = false}) async {
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
       showAppToast(
@@ -146,7 +146,7 @@ class HomeScreenController extends GetxController {
       return;
     }
 
-    if (isLoading.value) {
+    if (isLoading.value && !force) {
       return;
     }
 
@@ -160,7 +160,7 @@ class HomeScreenController extends GetxController {
 
       if (response.isSuccess) {
         _homeDataModel.value = HomeDataModel.fromJson(response.responseData);
-        notificationCount.value = homeData?.unreadNotification ?? 0;
+        notificationCount.value = _toInt(homeData?.unreadNotification) ?? 0;
         return;
       }
 
@@ -168,5 +168,12 @@ class HomeScreenController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  int? _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 }

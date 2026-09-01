@@ -15,6 +15,7 @@ import 'package:hoodz/features/user/product/presentation/pages/all_product_revie
 import 'package:hoodz/features/user/product/presentation/pages/all_vouchers_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/all_brand_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/home_screen.dart';
+import 'package:hoodz/features/user/homescreen/presentation/pages/campaign_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/map_location_picker_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/search_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/cart_screen.dart';
@@ -73,6 +74,7 @@ abstract final class AppPages {
     AppRoutes.paymentMethod: (_) => const PaymentMethodScreen(),
     AppRoutes.paymentSuccessfull: (_) => const PaymentSuccessfullScreen(),
     AppRoutes.aiAssistant: (_) => const AiAssistantScreen(),
+    AppRoutes.campaign: (_) => const CampaignScreen(),
     AppRoutes.customerSupportMessage: (_) =>
         const CustomerSupportMessageScreen(),
     AppRoutes.orderSupportMessage: (_) => const OrderSupportMessageScreen(),

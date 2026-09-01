@@ -5,6 +5,7 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
+import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/carousel_banner.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/home_page_header.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
@@ -245,9 +246,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                         SizedBox(height: 16.h(context)),
                         CarouselBanner(
                           homeData?.firstSectionBanner ?? const [],
-                          (reference) {
-                            PageNavigationService.to(context, AppRoutes.shop);
-                          },
+                          (banner) => _handleBannerTap(context, banner),
                         ),
                         SizedBox(height: 12.h(context)),
                       ],
@@ -484,9 +483,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                       ] else if ((homeData?.secondSectionBanner ?? const []).isNotEmpty) ...[
                         CarouselBanner(
                           homeData?.secondSectionBanner ?? const [],
-                          (reference) {
-                            PageNavigationService.to(context, AppRoutes.shop);
-                          },
+                          (banner) => _handleBannerTap(context, banner),
                         ),
                         SizedBox(height: 12.h(context)),
                       ],
@@ -589,5 +586,45 @@ class HomeScreen extends GetView<HomeScreenController> {
       return 'new';
     }
     return 'local';
+  }
+
+  void _handleBannerTap(BuildContext context, SectionBanner banner) {
+    final reference = banner.reference?.trim() ?? '';
+    final type = banner.type?.trim().toLowerCase() ?? '';
+
+    if (reference.isEmpty) {
+      debugPrint('BANNER TAP: reference is empty for type=$type');
+      return;
+    }
+
+    switch (type) {
+      case 'shop':
+        PageNavigationService.to(
+          context,
+          AppRoutes.shop,
+          arguments: {'shopId': reference},
+        );
+        break;
+      case 'product':
+        PageNavigationService.to(
+          context,
+          AppRoutes.productDetails,
+          arguments: {'productId': reference},
+        );
+        break;
+      case 'campain':
+      case 'campaign':
+        PageNavigationService.to(
+          context,
+          AppRoutes.campaign,
+          arguments: {
+            'reference': reference,
+            'banner': banner.banner ?? '',
+          },
+        );
+        break;
+      default:
+        debugPrint('UNKNOWN BANNER TYPE: type=$type, reference=$reference');
+    }
   }
 }

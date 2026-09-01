@@ -173,6 +173,8 @@ class ShippingInformationController extends GetxController {
         'City not found',
         'Selected location city does not match available cities.',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
       return false;
     }
@@ -184,6 +186,8 @@ class ShippingInformationController extends GetxController {
         'City mismatch',
         'Picked location city does not match the selected city.',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
       return false;
     }

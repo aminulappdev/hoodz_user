@@ -101,9 +101,23 @@ class WishlistScreen extends GetView<WishlistController> {
                     return;
                   }
 
+                  final firstVariant = product?.variants.isNotEmpty == true
+                      ? product!.variants.first
+                      : null;
+                  final variantColor = firstVariant?.color;
+                  final colorPayload = variantColor == null
+                      ? null
+                      : {
+                          'code': variantColor.code ?? '',
+                          'name': variantColor.name ?? '',
+                        };
+
                   final isAdded = await cartController.addToCart(
                     productId: productId,
+                    size: firstVariant?.size,
+                    color: colorPayload,
                     quantity: 1,
+                    includeVariantFields: true,
                   );
 
                   if (!isAdded) {

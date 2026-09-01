@@ -97,7 +97,6 @@ class ConfirmOrderSheet extends StatefulWidget {
 class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   late int _secondsLeft = widget.secondsToConfirm;
   Timer? _timer;
-  bool get _canContinue => _secondsLeft <= 0;
 
   @override
   void initState() {
@@ -168,7 +167,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [ 
-          Text(
+          Text( 
             Strings.confirmYourOrder.tr,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
@@ -239,7 +238,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _canContinue ? widget.onContinue : null,
+                  onPressed: widget.onContinue,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kOrange,
                     foregroundColor: Colors.white,

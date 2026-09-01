@@ -14,7 +14,7 @@ class OrderDetailsModel {
     factory OrderDetailsModel.fromJson(Map<String, dynamic> json){ 
         return OrderDetailsModel( 
             success: json["success"],
-            statusCode: json["statusCode"],
+            statusCode: _toInt(json["statusCode"]),
             message: json["message"],
             data: json["data"] == null ? null : Data.fromJson(json["data"]),
         );
@@ -108,14 +108,14 @@ class Data {
             id: json["_id"],
             user: json["user"] == null ? null : Author.fromJson(json["user"]),
             author: json["author"] == null ? null : Author.fromJson(json["author"]),
-            amount: json["amount"],
-            coinDiscount: json["coinDiscount"],
+            amount: _toInt(json["amount"]),
+            coinDiscount: _toInt(json["coinDiscount"]),
             voucher: json["voucher"],
             voucherCode: json["voucherCode"],
-            voucherDiscount: json["voucherDiscount"],
+            voucherDiscount: _toInt(json["voucherDiscount"]),
             giftDetails: json["giftDetails"],
-            deliveryCharge: json["deliveryCharge"],
-            totalAmount: json["totalAmount"],
+            deliveryCharge: _toInt(json["deliveryCharge"]),
+            totalAmount: _toInt(json["totalAmount"]),
             status: json["status"],
             paymentStatus: json["paymentStatus"],
             transactionId: json["transactionId"],
@@ -128,23 +128,23 @@ class Data {
             pickedUpAt: json["pickedUpAt"],
             onTheWayAt: json["onTheWayAt"],
             deliveredAt: json["deliveredAt"],
-            isOtpVerified: json["isOtpVerified"],
-            isStockDeducted: json["isStockDeducted"],
-            isShopBalanceCredited: json["isShopBalanceCredited"],
-            isDeleted: json["isDeleted"],
+            isOtpVerified: _toBool(json["isOtpVerified"]),
+            isStockDeducted: _toBool(json["isStockDeducted"]),
+            isShopBalanceCredited: _toBool(json["isShopBalanceCredited"]),
+            isDeleted: _toBool(json["isDeleted"]),
             dataId: json["id"],
             createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
             updatedAt: DateTime.tryParse(json["updatedAt"]?.toString() ?? ""),
             items: json["items"] == null ? [] : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
-            totalOrderItems: json["totalOrderItems"],
+            totalOrderItems: _toInt(json["totalOrderItems"]),
             rider: json["rider"] == null ? null : Rider.fromJson(json["rider"]),
-            hasOrderSupports: json["hasOrderSupports"],
-            hasRiderChat: json["hasRiderChat"],
-            hasGrievance: json["hasGrievance"],
+            hasOrderSupports: _toBool(json["hasOrderSupports"]),
+            hasRiderChat: _toBool(json["hasRiderChat"]),
+            hasGrievance: _toBool(json["hasGrievance"]),
             deliveryJob: json["deliveryJob"] == null
                 ? null
                 : DeliveryJob.fromJson(json["deliveryJob"]),
-            orderSteper: json["orderSteper"],
+            orderSteper: _toInt(json["orderSteper"]),
         );
     }
 
@@ -176,7 +176,7 @@ class Rider {
             profileAvatar: json["profileAvatar"]?.toString(),
             phone: json["phone"]?.toString(),
             avgRating: json["avgRating"] as num?,
-            ratingCount: json["ratingCount"] as int?,
+            ratingCount: _toInt(json["ratingCount"]),
             vehicle: json["vehicle"]?.toString(),
         );
     }
@@ -245,9 +245,9 @@ class BillingDetails {
             address: json["address"],
             phoneNumber: json["phoneNumber"],
             email: json["email"],
-            buildingNo: json["buildingNo"],
-            floorNo: json["floorNo"],
-            apartment: json["apartment"],
+            buildingNo: _toInt(json["buildingNo"]),
+            floorNo: _toInt(json["floorNo"]),
+            apartment: _toInt(json["apartment"]),
             city: json["city"],
             country: json["country"],
             note: json["note"],
@@ -320,13 +320,13 @@ class Item {
             order: json["order"],
             product: json["product"] == null ? null : Product.fromJson(json["product"]),
             author: json["author"],
-            quantity: json["quantity"],
-            price: json["price"],
-            totalPrice: json["totalPrice"],
+            quantity: _toInt(json["quantity"]),
+            price: _toInt(json["price"]),
+            totalPrice: _toInt(json["totalPrice"]),
             size: json["size"],
             color: json["color"],
-            createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
-            updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
+            createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+            updatedAt: DateTime.tryParse(json["updatedAt"]?.toString() ?? ""),
         );
     }
 
@@ -352,8 +352,8 @@ class Product {
             id: json["_id"],
             title: json["title"],
             banner: json["banner"],
-            price: json["price"],
-            discountPrice: json["discountPrice"],
+            price: _toInt(json["price"]),
+            discountPrice: _toInt(json["discountPrice"]),
         );
     }
 
@@ -438,7 +438,24 @@ class Pickup {
                     (json["coordinates"] as List).map(
                       (x) => (x as num).toDouble(),
                     ),
-                  ),
+            ),
         );
     }
+}
+
+bool? _toBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is String) {
+        final normalized = value.trim().toLowerCase();
+        if (normalized == 'true') return true;
+        if (normalized == 'false') return false;
+    }
+    return null;
+}
+
+int? _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
 }

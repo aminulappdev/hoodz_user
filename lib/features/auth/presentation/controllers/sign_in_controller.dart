@@ -4,6 +4,7 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
+import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/urls.dart';
@@ -49,7 +50,7 @@ class SignInController extends GetxController {
         );
 
         if (!response.isSuccess) {
-          Get.snackbar(Strings.loginFailed.tr, response.errorMessage);
+          showAppToast(message: response.errorMessage, isError: true);
           return;
         }
 
@@ -57,9 +58,9 @@ class SignInController extends GetxController {
         final accessToken = _extractAccessToken(response.responseData);
 
         if (user == null || accessToken == null) {
-          Get.snackbar(
-            Strings.loginFailed.tr,
-            Strings.invalidLoginResponse.tr,
+          showAppToast(
+            message: Strings.invalidLoginResponse.tr,
+            isError: true,
           );
           return;
         }

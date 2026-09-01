@@ -2,10 +2,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
+import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart';
 
 class CarouselBanner extends StatefulWidget {
   final List<dynamic> bannerList;
-  final Function(String reference) onTap;
+  final Function(SectionBanner banner) onTap;
   const CarouselBanner(this.bannerList, this.onTap, {super.key});
 
   @override
@@ -29,7 +30,7 @@ class _CarouselBannerState extends State<CarouselBanner> {
           itemBuilder: (context, index, realIndex) {
             return GestureDetector(
               onTap: () {
-                widget.onTap(widget.bannerList[index].reference);
+                widget.onTap(widget.bannerList[index]);
               },
               child: Container(
                 width: double.infinity,

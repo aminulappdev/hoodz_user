@@ -119,7 +119,7 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                       ),
                     )
                     .toList(),
-              ),
+              ), 
               SizedBox(height: 18.h(context)),
               _SectionHeader(
                 title: Strings.shippingAddress.tr,
@@ -214,7 +214,9 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                     await Get.find<ProfileController>().loadUserProfile(
                       force: true,
                     );
-                    await Get.find<HomeScreenController>().getUserMeta();
+                    await Get.find<HomeScreenController>().getUserMeta(
+                      force: true,
+                    );
                     await Get.find<OrderSummaryController>().refreshOrderSummary();
                     Navigator.pop(context);
                   }

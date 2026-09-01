@@ -14,6 +14,7 @@ import 'package:hoodz/features/user/chat/presentation/pages/order_support_messag
 import 'package:hoodz/features/user/product/presentation/pages/all_product_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/all_brand_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/home_screen.dart';
+import 'package:hoodz/features/user/homescreen/presentation/pages/campaign_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/map_location_picker_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/search_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/cart_screen.dart';
@@ -76,6 +77,7 @@ abstract final class AppRoutes {
   static const paymentMethod = '/payment-method';
   static const paymentSuccessfull = '/payment-successfull';
   static const aiAssistant = '/ai-assistant';
+  static const campaign = '/campaign';
   static const customerSupportMessage = '/customer-support-message';
   static const orderSupportMessage = '/order-support-message';
   static const shopDetails = '/shop-details';
@@ -115,6 +117,7 @@ Map<String, WidgetBuilder> getAppRoutes() {
     AppRoutes.paymentMethod: (_) => const PaymentMethodScreen(),
     AppRoutes.paymentSuccessfull: (_) => const PaymentSuccessfullScreen(),
     AppRoutes.aiAssistant: (_) => const AiAssistantScreen(),
+    AppRoutes.campaign: (_) => const CampaignScreen(),
     AppRoutes.customerSupportMessage: (_) =>
         const CustomerSupportMessageScreen(),
     AppRoutes.orderSupportMessage: (_) => const OrderSupportMessageScreen(),

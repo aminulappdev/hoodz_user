@@ -7,7 +7,7 @@ class UserProfileModel {
     });
 
     final bool? success;
-    final int? statusCode;
+    final dynamic statusCode;
     final String? message;
     final Data? data;
 
@@ -80,12 +80,12 @@ class Data {
     final String? timeZone;
     final String? role;
     final String? registerWith;
-    final int? avgRating;
-    final int? ratingCount;
-    final int? coins;
-    final int? balance;
-    final int? walletBalance;
-    final int? followers;
+    final dynamic avgRating;
+    final dynamic ratingCount;
+    final dynamic coins;
+    final dynamic balance;
+    final dynamic walletBalance;
+    final dynamic followers;
     final String? status;
     final bool? isProfileSetUp;
     final bool? isOnline;
@@ -99,43 +99,50 @@ class Data {
 
     factory Data.fromJson(Map<String, dynamic> json){ 
         return Data(
-            id: json["_id"],
+            id: json["_id"]?.toString(),
             referredBy: json["referredBy"],
             referralCodeUsed: json["referralCodeUsed"],
-            name: json["name"],
-            email: json["email"],
-            fcmToken: json["fcmToken"],
-            profileAvatar: json["profileAvatar"],
+            name: json["name"]?.toString(),
+            email: json["email"]?.toString(),
+            fcmToken: json["fcmToken"]?.toString(),
+            profileAvatar: json["profileAvatar"]?.toString(),
             coverPhoto: json["coverPhoto"],
             description: json["description"],
-            gender: json["gender"],
-            dob: DateTime.tryParse(json["dob"] ?? ""),
-            countryCode: json["countryCode"],
-            phone: json["phone"],
-            location: json["location"] == null ? null : Location.fromJson(json["location"]),
+            gender: json["gender"]?.toString(),
+            dob: DateTime.tryParse(json["dob"]?.toString() ?? ""),
+            countryCode: json["countryCode"]?.toString(),
+            phone: json["phone"]?.toString(),
+            location: json["location"] == null
+                ? null
+                : Location.fromJson(Map<String, dynamic>.from(json["location"])),
             deliveryAddress: json["deliveryAddress"] == null
                 ? null
                 : DeliveryAddress.fromJson(json["deliveryAddress"]),
-            deliveryLocation: json["deliveryLocation"] == null ? null : Location.fromJson(json["deliveryLocation"]),
-            timeZone: json["timeZone"],
-            role: json["role"],
-            registerWith: json["registerWith"],
+            deliveryLocation: json["deliveryLocation"] == null
+                ? null
+                : Location.fromJson(
+                    Map<String, dynamic>.from(json["deliveryLocation"]),
+                  ),
+            timeZone: json["timeZone"]?.toString(),
+            role: json["role"]?.toString(),
+            registerWith: json["registerWith"]?.toString(),
             avgRating: json["avgRating"],
             ratingCount: json["ratingCount"],
             coins: json["coins"] ?? json["balance"],
             balance: json["balance"] ?? json["coins"],
             walletBalance: json["walletBalance"],
             followers: json["followers"],
-            status: json["status"],
+            status: json["status"]?.toString(),
             isProfileSetUp: json["isProfileSetUp"],
             isOnline: json["isOnline"],
             isDeleted: json["isDeleted"],
             hasCustomerSupport: json["hasCustomerSupport"],
-            dataId: json["id"],
-            referralCode: json["referralCode"],
-            createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
-            passwordChangedAt: DateTime.tryParse(json["passwordChangedAt"] ?? ""),
-            address: json["address"],
+            dataId: json["id"]?.toString(),
+            referralCode: json["referralCode"]?.toString(),
+            createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
+            passwordChangedAt:
+                DateTime.tryParse(json["passwordChangedAt"]?.toString() ?? ""),
+            address: json["address"]?.toString(),
         );
     }
 
@@ -152,8 +159,12 @@ class Location {
 
     factory Location.fromJson(Map<String, dynamic> json){ 
         return Location(
-            type: json["type"],
-            coordinates: json["coordinates"] == null ? [] : List<num>.from(json["coordinates"]!),
+            type: json["type"]?.toString(),
+            coordinates: json["coordinates"] == null
+                ? []
+                : List<num>.from(
+                    (json["coordinates"] as List).whereType<num>(),
+                  ),
     );
     }
 
@@ -172,23 +183,23 @@ class DeliveryAddress {
 
     final String? name;
     final Location? location;
-    final int? buildingNo;
-    final int? floorNo;
-    final int? apartment;
+    final dynamic buildingNo;
+    final dynamic floorNo;
+    final dynamic apartment;
     final String? city;
     final String? country;
 
     factory DeliveryAddress.fromJson(Map<String, dynamic> json) {
         return DeliveryAddress(
-            name: json["name"],
+            name: json["name"]?.toString(),
             location: json["location"] == null
                 ? null
-                : Location.fromJson(json["location"]),
+                : Location.fromJson(Map<String, dynamic>.from(json["location"])),
             buildingNo: json["buildingNo"],
             floorNo: json["floorNo"],
             apartment: json["apartment"],
-            city: json["city"],
-            country: json["country"],
+            city: json["city"]?.toString(),
+            country: json["country"]?.toString(),
         );
     }
 }
