@@ -16,8 +16,8 @@ import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_co
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends GetView<HomeScreenController> {
-  const HomeScreen({super.key});
-
+  const HomeScreen({super.key}); 
+ 
   Widget _buildSectionTitleSkeleton(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: const Color(0xFFE7E7E7),

@@ -1,4 +1,3 @@
-import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:hoodz/features/auth/presentation/pages/forgot_password_screen.dart';
 import 'package:hoodz/features/auth/presentation/pages/profile_picture_setup_screen.dart';
@@ -126,6 +125,4 @@ Map<String, WidgetBuilder> getAppRoutes() {
   };
 }
 
-String get initialRoute => MySharedPref.getAccessToken() != null
-    ? AppRoutes.splashScreen
-    : AppRoutes.splashScreen;
+String get initialRoute => AppRoutes.splashScreen;

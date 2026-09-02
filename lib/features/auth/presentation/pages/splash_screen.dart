@@ -16,7 +16,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 2), () {
-      PageNavigationService.to(context, AppRoutes.signIn);
+      if (!mounted) return;
+      PageNavigationService.to(context, AppRoutes.userDashboard);
     });
     super.initState();
   }

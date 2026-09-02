@@ -7,8 +7,7 @@ import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_cha
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_input_bar.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/message_bubble.dart';
 
-class CustomerSupportMessageScreen
-    extends GetView<CustomerSupportMessageController> {
+class CustomerSupportMessageScreen extends StatefulWidget {
   final bool? isShowBackButton;
   final String? title;
   final String? subtitle;
@@ -21,18 +20,55 @@ class CustomerSupportMessageScreen
   });
 
   @override
+  State<CustomerSupportMessageScreen> createState() =>
+      _CustomerSupportMessageScreenState();
+}
+
+class _CustomerSupportMessageScreenState
+    extends State<CustomerSupportMessageScreen> with WidgetsBindingObserver {
+  final ScrollController _scrollController = ScrollController();
+  late final CustomerSupportMessageController controller;
+  int _lastMessageCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    controller = Get.find<CustomerSupportMessageController>();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    _scrollToBottom(delay: const Duration(milliseconds: 260));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final arguments = Get.arguments is Map<String, dynamic>
         ? Get.arguments as Map<String, dynamic>
         : null;
     final resolvedIsShowBackButton =
-        arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
+        arguments?['isShowBackButton'] as bool? ??
+        widget.isShowBackButton ??
+        true;
     final resolvedTitle = controller.chatTitle.value.isNotEmpty
         ? controller.chatTitle.value
-        : arguments?['title'] as String? ?? title ?? Strings.customerSupportChat.tr;
+        : arguments?['title'] as String? ??
+        widget.title ??
+        Strings.customerSupportChat.tr;
     final resolvedSubtitle = controller.chatSubtitle.value.isNotEmpty
         ? controller.chatSubtitle.value
-        : arguments?['subtitle'] as String? ?? subtitle ?? Strings.online.tr;
+        : arguments?['subtitle'] as String? ??
+        widget.subtitle ??
+        Strings.online.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -43,6 +79,7 @@ class CustomerSupportMessageScreen
       ),
       body: SafeArea(
         child: Obx(() {
+          _queueScrollWhenMessagesChange(controller.messages.length);
           if (controller.isInitialLoading.value ||
               (controller.isLoading.value && controller.messages.isEmpty)) {
             return const Center(child: CircularProgressIndicator());
@@ -51,7 +88,7 @@ class CustomerSupportMessageScreen
           if (controller.messages.isEmpty) {
             return Column(
               children: [
-                 Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
                       Strings.noMessagesFound.tr,
@@ -71,11 +108,14 @@ class CustomerSupportMessageScreen
             children: [
               Expanded(
                 child: ListView.separated(
+                  controller: _scrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: EdgeInsets.fromLTRB(
                     16.w(context),
                     20.h(context),
                     16.w(context),
-                    20.h(context),
+                    24.h(context),
                   ),
                   itemCount: controller.messages.length,
                   separatorBuilder: (_, __) => SizedBox(height: 10.h(context)),
@@ -103,6 +143,23 @@ class CustomerSupportMessageScreen
         }),
       ),
     );
+  }
+
+  void _queueScrollWhenMessagesChange(int messageCount) {
+    if (_lastMessageCount == messageCount) return;
+    _lastMessageCount = messageCount;
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom({Duration delay = const Duration(milliseconds: 80)}) {
+    Future<void>.delayed(delay, () {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   String _formatTimestamp(DateTime? value) {

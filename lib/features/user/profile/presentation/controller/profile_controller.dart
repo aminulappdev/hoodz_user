@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/localization_service.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
@@ -48,10 +49,6 @@ class ProfileController extends GetxController {
 
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.profileLoadFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
       return;
     }
 
@@ -77,10 +74,16 @@ class ProfileController extends GetxController {
       return;
     }
 
-    Get.snackbar(Strings.profileLoadFailed.tr, response.errorMessage);
+    _showProfileLoadError(response.errorMessage);
   }
 
   void updateAddressRealtime(String address) {
     currentAddress.value = address;
+  }
+
+  void _showProfileLoadError(String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.snackbar(Strings.profileLoadFailed.tr, message);
+    });
   }
 }

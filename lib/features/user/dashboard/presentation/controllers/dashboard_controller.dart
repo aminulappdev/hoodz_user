@@ -13,7 +13,7 @@ class UserDashboardController extends GetxController {
 
   final List<String> labels = [
     Strings.home.tr,
-    Strings.orders.tr,
+    Strings.orders.tr, 
     Strings.aiStylist.tr,
     Strings.wishlist.tr,
     Strings.profile.tr,
@@ -24,7 +24,7 @@ class UserDashboardController extends GetxController {
     OrderScreen(),
     AiAssistantScreen(
       isShowBackButton: false,
-      title: Strings.aiAssistant.tr,
+      title: Strings.aiAssistant.tr, 
       subtitle: Strings.poweredByAI.tr,
     ),
     WishlistScreen(),

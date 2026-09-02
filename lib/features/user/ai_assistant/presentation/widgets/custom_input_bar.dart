@@ -112,7 +112,6 @@ class _CustomInputBarState extends State<CustomInputBar> {
     setState(() {
       _attachmentUrls.clear();
     });
-    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -274,7 +273,7 @@ class _CustomInputBarState extends State<CustomInputBar> {
                               isDense: true,
                               border: InputBorder.none,
                               hintText:
-                                  widget.hintText ?? 
+                                  widget.hintText ??
                                   Strings.askMeAnythingAboutFashion.tr,
                               hintStyle: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(

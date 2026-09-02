@@ -8,7 +8,7 @@ import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_inp
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/message_bubble.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/reccomandation_card.dart';
 
-class AiAssistantScreen extends GetView<AiAssistantController> {
+class AiAssistantScreen extends StatefulWidget {
   final bool? isShowBackButton;
   final String? title;
   final String? subtitle;
@@ -21,18 +21,55 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
   });
 
   @override
+  State<AiAssistantScreen> createState() => _AiAssistantScreenState();
+}
+
+class _AiAssistantScreenState extends State<AiAssistantScreen>
+    with WidgetsBindingObserver {
+  final ScrollController _scrollController = ScrollController();
+  late final AiAssistantController controller;
+  int _lastMessageCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    controller = Get.find<AiAssistantController>();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    _scrollToBottom(delay: const Duration(milliseconds: 260));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final resolvedIsShowBackButton =
-        arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
+        arguments?['isShowBackButton'] as bool? ??
+        widget.isShowBackButton ??
+        true;
     final resolvedTitle =
-        arguments?['title'] as String? ?? title ?? Strings.aiAssistant.tr;
+        arguments?['title'] as String? ??
+        widget.title ??
+        Strings.aiAssistant.tr;
     final resolvedSubtitle =
-        arguments?['subtitle'] as String? ?? subtitle ?? Strings.poweredByAI.tr;
+        arguments?['subtitle'] as String? ??
+        widget.subtitle ??
+        Strings.poweredByAI.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
       appBar: CustomChatHeader(
         subtitle: resolvedSubtitle,
         label: resolvedTitle,
@@ -43,16 +80,26 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
           children: [
             Expanded(
               child: Obx(() {
+                _queueScrollWhenMessagesChange(controller.messages.length);
                 if (controller.isLoading.value && controller.messages.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
+                if (controller.messages.isEmpty) {
+                  return _EmptyAiConversation(
+                    title: resolvedTitle,
+                    subtitle: resolvedSubtitle,
+                  );
+                }
                 return ListView.separated(
+                  controller: _scrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: EdgeInsets.fromLTRB(
-                  16.w(context),
-                  20.h(context),
-                  16.w(context),
-                  20.h(context),
-                ),
+                    16.w(context),
+                    20.h(context),
+                    16.w(context),
+                    24.h(context),
+                  ),
                   itemCount: controller.messages.length,
                   separatorBuilder: (_, __) => SizedBox(height: 12.h(context)),
                   itemBuilder: (context, index) {
@@ -79,9 +126,20 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
                             (product) => Padding(
                               padding: EdgeInsets.only(bottom: 10.h(context)),
                               child: RecommendationCard(
-                                brand: _productValue(product, ['brand', 'brandName', 'brandKey']),
-                                name: _productValue(product, ['name', 'productName', 'nameKey']),
-                                price: _productValue(product, ['price', 'salePrice']),
+                                brand: _productValue(product, [
+                                  'brand',
+                                  'brandName',
+                                  'brandKey',
+                                ]),
+                                name: _productValue(product, [
+                                  'name',
+                                  'productName',
+                                  'nameKey',
+                                ]),
+                                price: _productValue(product, [
+                                  'price',
+                                  'salePrice',
+                                ]),
                               ),
                             ),
                           ),
@@ -99,10 +157,29 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
     );
   }
 
+  void _queueScrollWhenMessagesChange(int messageCount) {
+    if (_lastMessageCount == messageCount) return;
+    _lastMessageCount = messageCount;
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom({Duration delay = const Duration(milliseconds: 80)}) {
+    Future<void>.delayed(delay, () {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
   String _formatTime(dynamic value) {
     final date = DateTime.tryParse(value?.toString() ?? '');
     if (date == null) return '';
-    final hour = date.hour == 0 ? 12 : (date.hour > 12 ? date.hour - 12 : date.hour);
+    final hour = date.hour == 0
+        ? 12
+        : (date.hour > 12 ? date.hour - 12 : date.hour);
     final minute = date.minute.toString().padLeft(2, '0');
     return '$hour:$minute ${date.hour >= 12 ? 'PM' : 'AM'}';
   }
@@ -113,5 +190,61 @@ class AiAssistantScreen extends GetView<AiAssistantController> {
       if (value != null && value.toString().isNotEmpty) return value.toString();
     }
     return '';
+  }
+}
+
+class _EmptyAiConversation extends StatelessWidget {
+  const _EmptyAiConversation({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 28.w(context)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 70.h(context),
+              width: 70.w(context),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF1E8),
+                borderRadius: BorderRadius.circular(20.r(context)),
+              ),
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                color: const Color(0xFFFF6A00),
+                size: 30.r(context),
+              ),
+            ),
+            SizedBox(height: 18.h(context)),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: const Color(0xFF242424),
+                fontFamily: 'Geist',
+                fontSize: 18.sp(context),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(height: 6.h(context)),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: const Color(0xFF8B8B8B),
+                fontFamily: 'Poppins',
+                fontSize: 13.sp(context),
+                height: 1.45,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

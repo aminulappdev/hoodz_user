@@ -8,10 +8,10 @@ import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart'
 import 'package:hoodz/urls.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
-class HomeScreenController extends GetxController {  
-  HomeScreenController(this._locationService);
+class HomeScreenController extends GetxController {
+  HomeScreenController(this._locationService); 
 
-  final LocationSelectionService _locationService; 
+  final LocationSelectionService _locationService;
   final RxInt currentBannerIndex = 0.obs;
   final RxInt notificationCount = 3.obs;
   final RxString selectedAddress = 'AQUA Tower, 43 Mohakhali C/A'.obs;
@@ -93,7 +93,7 @@ class HomeScreenController extends GetxController {
       isLoadingCurrentLocation.value = false;
     }
   }
- 
+
   void updateSelectedLocation(LocationAddress location) {
     selectedAddress.value = location.fullAddress;
   }
@@ -131,7 +131,9 @@ class HomeScreenController extends GetxController {
       data: currentData.copyWith(
         recentlyViwed: updateProducts(currentData.recentlyViwed),
         trandingProducts: updateProducts(currentData.trandingProducts),
-        aiRecommandedProducts: updateProducts(currentData.aiRecommandedProducts),
+        aiRecommandedProducts: updateProducts(
+          currentData.aiRecommandedProducts,
+        ),
       ),
     );
   }
@@ -155,7 +157,7 @@ class HomeScreenController extends GetxController {
     try {
       final response = await _networkCaller.getRequest(
         Urls.metaUserUrl,
-        accessToken: accessToken,
+        // accessToken: accessToken,
       );
 
       if (response.isSuccess) {

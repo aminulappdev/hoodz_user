@@ -37,6 +37,8 @@ class Urls {
   }
   static String getChatMessagesUrlById(String chatId) =>
       '$_baseUrl/messages/chat/$chatId';
+  static const String aiAssistantMessagesUrl =
+      '$_baseUrl/messages/ai-assistant';
   static const String walletTopUpUrl = '$_baseUrl/top-up/add-wallet-money';
   static const String walletTransactionsUrl = '$_baseUrl/wallet-transactions';
   static const String kycUrl = '$_baseUrl/kyc';

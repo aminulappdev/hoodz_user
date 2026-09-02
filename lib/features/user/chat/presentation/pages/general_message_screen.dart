@@ -7,8 +7,8 @@ import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_cha
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_input_bar.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/message_bubble.dart';
 
-class GeneralMessageScreen extends GetView<GeneralMessageController> {
-  final bool? isShowBackButton; 
+class GeneralMessageScreen extends StatefulWidget {
+  final bool? isShowBackButton;
   final String? title;
   final String? subtitle;
 
@@ -20,18 +20,54 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
   });
 
   @override
+  State<GeneralMessageScreen> createState() => _GeneralMessageScreenState();
+}
+
+class _GeneralMessageScreenState extends State<GeneralMessageScreen>
+    with WidgetsBindingObserver {
+  final ScrollController _scrollController = ScrollController();
+  late final GeneralMessageController controller;
+  int _lastMessageCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    controller = Get.find<GeneralMessageController>();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    _scrollToBottom(delay: const Duration(milliseconds: 260));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final arguments = Get.arguments is Map<String, dynamic>
         ? Get.arguments as Map<String, dynamic>
         : null;
     final resolvedIsShowBackButton =
-        arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
+        arguments?['isShowBackButton'] as bool? ??
+        widget.isShowBackButton ??
+        true;
     final resolvedTitle = controller.chatTitle.value.isNotEmpty
         ? controller.chatTitle.value
-        : arguments?['title'] as String? ?? title ?? Strings.customerSupportChat.tr;
+        : arguments?['title'] as String? ??
+        widget.title ??
+        Strings.customerSupportChat.tr;
     final resolvedSubtitle = controller.chatSubtitle.value.isNotEmpty
         ? controller.chatSubtitle.value
-        : arguments?['subtitle'] as String? ?? subtitle ?? Strings.poweredByAI.tr;
+        : arguments?['subtitle'] as String? ??
+        widget.subtitle ??
+        Strings.poweredByAI.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -42,6 +78,7 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
       ),
       body: SafeArea(
         child: Obx(() {
+          _queueScrollWhenMessagesChange(controller.messages.length);
           if (controller.isLoading.value && controller.messages.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -49,7 +86,7 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
           if (controller.messages.isEmpty) {
             return Column(
               children: [
-                 Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
                       Strings.noMessagesFound.tr,
@@ -69,11 +106,14 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
             children: [
               Expanded(
                 child: ListView.separated(
+                  controller: _scrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: EdgeInsets.fromLTRB(
                     16.w(context),
                     20.h(context),
                     16.w(context),
-                    20.h(context),
+                    24.h(context),
                   ),
                   itemCount: controller.messages.length,
                   separatorBuilder: (_, __) => SizedBox(height: 10.h(context)),
@@ -101,6 +141,23 @@ class GeneralMessageScreen extends GetView<GeneralMessageController> {
         }),
       ),
     );
+  }
+
+  void _queueScrollWhenMessagesChange(int messageCount) {
+    if (_lastMessageCount == messageCount) return;
+    _lastMessageCount = messageCount;
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom({Duration delay = const Duration(milliseconds: 80)}) {
+    Future<void>.delayed(delay, () {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   String _formatTimestamp(DateTime? value) {

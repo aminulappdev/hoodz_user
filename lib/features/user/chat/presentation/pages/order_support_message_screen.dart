@@ -7,7 +7,7 @@ import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_inp
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/message_bubble.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/order_support_message_controller.dart';
 
-class OrderSupportMessageScreen extends GetView<OrderSupportMessageController> {
+class OrderSupportMessageScreen extends StatefulWidget {
   final bool? isShowBackButton;
   final String? title;
   final String? subtitle;
@@ -20,24 +20,60 @@ class OrderSupportMessageScreen extends GetView<OrderSupportMessageController> {
   });
 
   @override
+  State<OrderSupportMessageScreen> createState() =>
+      _OrderSupportMessageScreenState();
+}
+
+class _OrderSupportMessageScreenState extends State<OrderSupportMessageScreen>
+    with WidgetsBindingObserver {
+  final ScrollController _scrollController = ScrollController();
+  late final OrderSupportMessageController controller;
+  int _lastMessageCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    controller = Get.find<OrderSupportMessageController>();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    _scrollToBottom(delay: const Duration(milliseconds: 260));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final arguments = Get.arguments is Map<String, dynamic>
         ? Get.arguments as Map<String, dynamic>
         : null;
     final resolvedIsShowBackButton =
-        arguments?['isShowBackButton'] as bool? ?? isShowBackButton ?? true;
-    final resolvedOrderId =
-        controller.orderId.value.trim().isNotEmpty
-            ? controller.orderId.value.trim()
-            : arguments?['orderId']?.toString().trim() ?? '';
+        arguments?['isShowBackButton'] as bool? ??
+        widget.isShowBackButton ??
+        true;
+    final resolvedOrderId = controller.orderId.value.trim().isNotEmpty
+        ? controller.orderId.value.trim()
+        : arguments?['orderId']?.toString().trim() ?? '';
     final resolvedTitle = controller.chatTitle.value.isNotEmpty
         ? controller.chatTitle.value
-        : arguments?['title'] as String? ?? title ?? Strings.orderSupportChat.tr;
+        : arguments?['title'] as String? ??
+        widget.title ??
+        Strings.orderSupportChat.tr;
     final resolvedSubtitle = resolvedOrderId.isNotEmpty
         ? 'Order ID: $resolvedOrderId'
         : controller.chatSubtitle.value.isNotEmpty
             ? controller.chatSubtitle.value
-            : arguments?['subtitle'] as String? ?? subtitle ?? Strings.online.tr;
+            : arguments?['subtitle'] as String? ??
+                  widget.subtitle ??
+                  Strings.online.tr;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -48,6 +84,7 @@ class OrderSupportMessageScreen extends GetView<OrderSupportMessageController> {
       ),
       body: SafeArea(
         child: Obx(() {
+          _queueScrollWhenMessagesChange(controller.messages.length);
           if (controller.isInitialLoading.value ||
               (controller.isLoading.value && controller.messages.isEmpty)) {
             return const Center(child: CircularProgressIndicator());
@@ -56,7 +93,7 @@ class OrderSupportMessageScreen extends GetView<OrderSupportMessageController> {
           if (controller.messages.isEmpty) {
             return Column(
               children: [
-                 Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
                       Strings.noMessagesFound.tr,
@@ -76,11 +113,14 @@ class OrderSupportMessageScreen extends GetView<OrderSupportMessageController> {
             children: [
               Expanded(
                 child: ListView.separated(
+                  controller: _scrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: EdgeInsets.fromLTRB(
                     16.w(context),
                     20.h(context),
                     16.w(context),
-                    20.h(context),
+                    24.h(context),
                   ),
                   itemCount: controller.messages.length,
                   separatorBuilder: (_, __) => SizedBox(height: 10.h(context)),
@@ -108,6 +148,23 @@ class OrderSupportMessageScreen extends GetView<OrderSupportMessageController> {
         }),
       ),
     );
+  }
+
+  void _queueScrollWhenMessagesChange(int messageCount) {
+    if (_lastMessageCount == messageCount) return;
+    _lastMessageCount = messageCount;
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom({Duration delay = const Duration(milliseconds: 80)}) {
+    Future<void>.delayed(delay, () {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   String _formatTimestamp(DateTime? value) {
