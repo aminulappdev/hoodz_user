@@ -7,7 +7,9 @@ import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/image_picker_service.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/services/upload_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
@@ -125,11 +127,9 @@ class ProductReviewController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
+    if (!hasAccessToken) {
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -146,7 +146,7 @@ class ProductReviewController extends GetxController {
         try {
           for (final file in attachments) {
             final uploadedUrl = await _uploadService.uploadSingleFile(
-              accessToken: accessToken,
+              accessToken: accessToken!,
               file: file,
             );
             if (uploadedUrl == null || uploadedUrl.isEmpty) {
@@ -170,6 +170,11 @@ class ProductReviewController extends GetxController {
               'rating': selectedRating,
             },
           );
+
+          if (isLoginRequiredResponse(response)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!response.isSuccess) {
             showAppToast(message: response.errorMessage, isError: true);

@@ -4,6 +4,8 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/widgets/shimmer/shop_product_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_info_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_product_card.dart';
@@ -17,8 +19,6 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
 
   @override 
    Widget build(BuildContext context) {
-    final wishlistController = Get.find<WishlistController>();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
@@ -112,8 +112,14 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                                   return;
                                 }
 
-                                final updatedValue = await wishlistController
-                                    .toggleProductWishlist(
+                                if (!_hasAccessToken()) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
+                                final updatedValue =
+                                    await Get.find<WishlistController>()
+                                        .toggleProductWishlist(
                                       productId: productId,
                                       currentValue: isWishlisted,
                                     );
@@ -189,8 +195,14 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                                 return;
                               }
 
-                              final updatedValue = await wishlistController
-                                  .toggleProductWishlist(
+                              if (!_hasAccessToken()) {
+                                showLoginRequiredDialog();
+                                return;
+                              }
+
+                              final updatedValue =
+                                  await Get.find<WishlistController>()
+                                      .toggleProductWishlist(
                                     productId: productId,
                                     currentValue: isWishlisted,
                                   );
@@ -216,6 +228,9 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
       }),
     );
   }
+
+  bool _hasAccessToken() =>
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
 
   String _formatPrice(dynamic value) {
     final numeric = _toDouble(value);

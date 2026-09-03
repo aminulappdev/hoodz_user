@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/urls.dart';
@@ -48,10 +50,7 @@ class ChangePasswordController extends GetxController {
 
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -71,6 +70,11 @@ class ChangePasswordController extends GetxController {
               'confirmPassword': confirmPasswordCtrl.text.trim(),
             },
           );
+
+          if (isLoginRequiredResponse(response)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!response.isSuccess) {
             showAppToast(message: response.errorMessage, isError: true);

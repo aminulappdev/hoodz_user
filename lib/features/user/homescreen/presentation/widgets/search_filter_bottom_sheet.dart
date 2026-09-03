@@ -34,9 +34,14 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
 
   Future<filter_model.SearchFilterModel?> _fetchFilterPageData() async {
     final accessToken = MySharedPref.getAccessToken();
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
+    final guestId = hasAccessToken
+        ? null
+        : await MySharedPref.getOrCreateGuestId();
     final response = await _networkCaller.getRequest(
       Urls.searchFilterPageDataUrl,
-      accessToken: accessToken,
+      headers: hasAccessToken ? null : {'x-guest-id': guestId!},
+      accessToken: hasAccessToken ? accessToken : null,
     );
 
     if (!response.isSuccess) {

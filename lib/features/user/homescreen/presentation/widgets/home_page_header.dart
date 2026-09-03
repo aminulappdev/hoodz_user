@@ -49,7 +49,7 @@ class CustomHomePageAppBar extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  Strings.deliverTo.tr,
+                  '${Strings.deliverTo.tr} ',
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     fontSize: 14.sp(context),
                     fontFamily: 'Geist',

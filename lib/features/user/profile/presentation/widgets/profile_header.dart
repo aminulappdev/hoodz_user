@@ -5,10 +5,13 @@ import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class ProfileHeader extends GetView<ProfileController> {
+  bool _hasAccessToken() =>
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
   const ProfileHeader({super.key});
 
   @override
@@ -16,10 +19,13 @@ class ProfileHeader extends GetView<ProfileController> {
     double width = MediaQuery.of(context).size.width;
     return Obx(() {
       final user = controller.userData;
-      final profileAvatar = user?.profileAvatar;
-      final displayName = user?.name?.trim().isNotEmpty == true
-          ? user!.name!
-          : Strings.user.tr;
+      final hasAccessToken = _hasAccessToken();
+      final profileAvatar = hasAccessToken ? user?.profileAvatar : null;
+      final displayName = !hasAccessToken
+          ? 'Guest User'
+          : user?.name?.trim().isNotEmpty == true
+              ? user!.name!
+              : Strings.user.tr;
       final displayAddress = controller.currentAddress.value.trim().isNotEmpty
           ? controller.currentAddress.value
           : Strings.addressNotAdded.tr;
@@ -57,15 +63,15 @@ class ProfileHeader extends GetView<ProfileController> {
                     ),
                     SizedBox(height: 14.h(context)),
                     Text(
-                    Strings.profileTitle.tr,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      Strings.profileTitle.tr,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: LightThemeColors.backgroundColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 18.sp(context),
                       ),
                     ),
                     Text(
-                    Strings.managePersonalInformation.tr,
+                      Strings.managePersonalInformation.tr,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: LightThemeColors.backgroundColor,

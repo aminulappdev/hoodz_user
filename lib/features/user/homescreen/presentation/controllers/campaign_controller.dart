@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/all_campaign_model.dart'
     as campaign_model;
@@ -47,21 +49,25 @@ class CampaignController extends GetxController {
     if (reference.value.isEmpty || isLoading.value) return;
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     isLoading.value = true;
     try {
-      final response = await _networkCaller.getRequest(
-        Urls.campaignUrl,
-        accessToken: accessToken
-        // queryParams: {'reference': reference.value},
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.campaignUrl,
+              accessToken: accessToken,
+              // queryParams: {'reference': reference.value},
+            )
+          : await _networkCaller.getRequest(
+              Urls.campaignUrl,
+              // queryParams: {'reference': reference.value},
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (!response.isSuccess) {
         showAppToast(message: response.errorMessage, isError: true);

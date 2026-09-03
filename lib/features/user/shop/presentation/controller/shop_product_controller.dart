@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/shop/data/models/shop_product_model.dart';
 import 'package:hoodz/urls.dart';
@@ -17,7 +19,7 @@ class ShopProductController extends GetxController {
   final RxList<AllProduct> _allProducts = <AllProduct>[].obs;
   final RxString shopIdData = ''.obs;
   final RxString selectedCategory = ''.obs;
-  String? _loadedShopId; 
+  String? _loadedShopId;
 
   ShopProductModel? get shopProductModel => _shopProductModel.value;
   Data? get shopProductsData => _shopProductModel.value?.data;
@@ -161,13 +163,7 @@ class ShopProductController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.shopLoadFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     try {
       isProductsLoading.value = true;
@@ -187,10 +183,17 @@ class ShopProductController extends GetxController {
           ? uri.toString()
           : uri.replace(queryParameters: queryParameters).toString();
 
-      final response = await _networkCaller.getRequest(
-        requestUrl,
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              requestUrl,
+              accessToken: accessToken,
+            )
+          : await _networkCaller.getRequest(requestUrl);
+
+      if (hasAccessToken && isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         final model = ShopProductModel.fromJson(response.responseData);

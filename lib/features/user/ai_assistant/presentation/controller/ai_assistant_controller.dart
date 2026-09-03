@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/urls.dart';
 
@@ -46,17 +48,14 @@ class AiAssistantController extends GetxController {
   Future<void> _ensureSocketReady() async {
     if (socketService.isInitialized) return;
     final token = MySharedPref.getAccessToken();
-    if (token != null && token.isNotEmpty) await socketService.init();
+    if (token != null && token.trim().isNotEmpty) await socketService.init();
   }
 
   Future<void> loadMessages() async {
     if (isLoading.value) return;
     final token = MySharedPref.getAccessToken();
-    if (token == null || token.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (token == null || token.trim().isEmpty) {
+      showLoginRequiredDialog();
       return;
     }
     isLoading.value = true;
@@ -65,6 +64,10 @@ class AiAssistantController extends GetxController {
         Urls.aiAssistantMessagesUrl,
         accessToken: token,
       );
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
       if (!response.isSuccess) {
         showAppToast(message: response.errorMessage, isError: true);
         return;
@@ -88,6 +91,10 @@ class AiAssistantController extends GetxController {
   void sendMessage(String text, List<String> files) {
     final value = text.trim();
     if (isSending.value || (value.isEmpty && files.isEmpty)) return;
+    if (!_hasAccessToken()) {
+      showLoginRequiredDialog();
+      return;
+    }
     if (!socketService.isInitialized) {
       showAppToast(message: Strings.failedToLoadMessages.tr, isError: true);
       return;
@@ -110,6 +117,11 @@ class AiAssistantController extends GetxController {
     Future<void>.delayed(const Duration(seconds: 15), () {
       if (isSending.value) isSending.value = false;
     });
+  }
+
+  bool _hasAccessToken() {
+    final token = MySharedPref.getAccessToken();
+    return token != null && token.trim().isNotEmpty;
   }
 
   Future<void> _emitAiMessage(Map<String, dynamic> payload) async {

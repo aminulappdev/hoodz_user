@@ -43,6 +43,13 @@ class Urls {
   static const String walletTransactionsUrl = '$_baseUrl/wallet-transactions';
   static const String kycUrl = '$_baseUrl/kyc';
   static const String metaUserUrl = '$_baseUrl/meta/user';
+  static String metaUserGuestUrl({
+    required double lat,
+    required double lng,
+  }) {
+    return '$_baseUrl/meta/user/guest?lat=$lat&lng=$lng';
+  }
+
   static const String trendingProductUrl = '$_baseUrl/products/trending';
   static const String aiRecommendedProductUrl =
       '$_baseUrl/products/ai-recommended';

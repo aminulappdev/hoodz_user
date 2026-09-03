@@ -4,20 +4,24 @@ import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/carousel_banner.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/home_page_header.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_list.dart';
-import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/view_all.dart';
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends GetView<HomeScreenController> {
-  const HomeScreen({super.key}); 
- 
+  const HomeScreen({super.key});
+
+  bool _hasAccessToken() =>
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
+
   Widget _buildSectionTitleSkeleton(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: const Color(0xFFE7E7E7),
@@ -144,10 +148,8 @@ class HomeScreen extends GetView<HomeScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height; 
+    final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    final profileController = Get.find<ProfileController>(); 
-    final wishlistController = Get.find<WishlistController>();
 
     return Obx(() {
       final homeData = controller.homeData;
@@ -156,8 +158,9 @@ class HomeScreen extends GetView<HomeScreenController> {
       final recentlyViewed = homeData?.recentlyViwed ?? const [];
       final trendingProducts = homeData?.trandingProducts ?? const [];
       final aiRecommendedProducts = homeData?.aiRecommandedProducts ?? const [];
-      final showInitialLoaders =
-          controller.isLoading.value && homeData == null;
+      final showInitialLoaders = controller.isLoading.value && homeData == null;
+      final showRecentlyViewedSection =
+          showInitialLoaders || recentlyViewed.isNotEmpty;
 
       return Scaffold(
         body: SizedBox(
@@ -166,18 +169,28 @@ class HomeScreen extends GetView<HomeScreenController> {
           child: Column(
             children: [
               CustomHomePageAppBar(
-                address: homeData?.profile?.deliveryAddress?.name?.isNotEmpty ==
-                        true
+                address:
+                    homeData?.profile?.deliveryAddress?.name?.isNotEmpty == true
                     ? homeData!.profile!.deliveryAddress!.name!
                     : Strings.noAddressAdded.tr,
                 notificationCount: controller.notificationCount.value,
                 onTapEdit: () {
+                  if (!_hasAccessToken()) {
+                    showLoginRequiredDialog();
+                    return;
+                  }
+
                   PageNavigationService.to(
                     context,
                     AppRoutes.shippingInformation,
                   );
                 },
                 onTapNotification: () {
+                  if (!_hasAccessToken()) {
+                    showLoginRequiredDialog();
+                    return;
+                  }
+
                   PageNavigationService.to(context, AppRoutes.cart);
                 },
                 onTapSearch: () {
@@ -219,7 +232,9 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   return BrandList(
                                     image: category['image'] ?? "",
                                     name:
-                                        (category['nameKey'] ?? category['name'] ?? '')
+                                        (category['nameKey'] ??
+                                                category['name'] ??
+                                                '')
                                             .tr,
                                     onTap: () {
                                       PageNavigationService.to(
@@ -241,9 +256,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                         SizedBox(height: 12.h(context)),
                         _buildBannerSkeleton(context),
                         SizedBox(height: 16.h(context)),
-                      ] else if ((homeData?.firstSectionBanner ?? const []).isNotEmpty) ...[
-                        Text(Strings.firstSection.tr),
-                        SizedBox(height: 16.h(context)),
+                      ] else if ((homeData?.firstSectionBanner ?? const [])
+                          .isNotEmpty) ...[
                         CarouselBanner(
                           homeData?.firstSectionBanner ?? const [],
                           (banner) => _handleBannerTap(context, banner),
@@ -254,9 +268,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                           ? _buildSectionTitleSkeleton(context)
                           : Text(
                               Strings.nearbyBrands.tr,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
+                              style: Theme.of(context).textTheme.bodyMedium!
                                   .copyWith(
                                     fontSize: 16.sp(context),
                                     fontWeight: FontWeight.w800,
@@ -302,97 +314,85 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 },
                               ),
                       ),
-                      SizedBox(height: 12.h(context)),
-                      showInitialLoaders
-                          ? _buildSectionTitleSkeleton(context)
-                          : Text(
-                              Strings.recentlyViewed.tr,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    fontSize: 16.sp(context),
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                            ),
-                      SizedBox(height: 8.h(context)),
-                      showInitialLoaders
-                          ? SizedBox(
-                              height: 266.h(context),
-                              child: ListView.separated(
-                                itemCount: 2,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(width: 14.w(context)),
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  return _buildProductSkeleton(context);
-                                },
+                      if (showRecentlyViewedSection) ...[
+                        SizedBox(height: 12.h(context)),
+                        showInitialLoaders
+                            ? _buildSectionTitleSkeleton(context)
+                            : Text(
+                                Strings.recentlyViewed.tr,
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .copyWith(
+                                      fontSize: 16.sp(context),
+                                      fontWeight: FontWeight.w800,
+                                    ),
                               ),
-                            )
-                          : recentlyViewed.isEmpty
-                          ? Container(
-                              height: 100.h(context),
-                              alignment: Alignment.center,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(
-                                  10.r(context),
+                        SizedBox(height: 8.h(context)),
+                        showInitialLoaders
+                            ? SizedBox(
+                                height: 266.h(context),
+                                child: ListView.separated(
+                                  itemCount: 2,
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(width: 14.w(context)),
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return _buildProductSkeleton(context);
+                                  },
                                 ),
-                                border: Border.all(
-                                  color: const Color(0xFFE5E5E5),
-                                ),
-                              ),
-                              child:  Center(
-                                child: Text(Strings.noRecentlyViewed.tr),
-                              ),
-                            )
-                          : SizedBox(
-                              height: 266.h(context),
-                              child: ListView.separated(
-                                itemCount: recentlyViewed.length,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(width: 14.w(context)),
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  final product = recentlyViewed[index];
-                                  final name = product.title ?? "";
-                                  final image =
-                                      product.banner ?? product.image ?? "";
-                                  final price = "${product.price ?? ''}";
-                                  final rating = "${product.avgRating ?? ''}";
-                                  final isWishlisted =
-                                      product.isWishlisted ?? false;
-                                  return ProductCard(
-                                    name: name,  
-                                    image: image, 
-                                    price: price,
-                                    rating: rating,
-                                    productId: product.id,
-                                    isWishlisted: isWishlisted, 
-                                    onTap: () {
-                                      PageNavigationService.to(
-                                        context,
-                                        AppRoutes.productDetails,
-                                        arguments: {'productId': product.id},
-                                      );
-                                    },
-                                    onTapFavourite: () {
-                                      final productId = product.id;
-                                      if (productId == null ||
-                                          productId.isEmpty) {
-                                        return;
-                                      }
+                              )
+                            : SizedBox(
+                                height: 266.h(context),
+                                child: ListView.separated(
+                                  itemCount: recentlyViewed.length,
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(width: 14.w(context)),
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    final product = recentlyViewed[index];
+                                    final name = product.title ?? "";
+                                    final image =
+                                        product.banner ?? product.image ?? "";
+                                    final price = "${product.price ?? ''}";
+                                    final rating = "${product.avgRating ?? ''}";
+                                    final isWishlisted =
+                                        product.isWishlisted ?? false;
+                                    return ProductCard(
+                                      name: name,
+                                      image: image,
+                                      price: price,
+                                      rating: rating,
+                                      productId: product.id,
+                                      isWishlisted: isWishlisted,
+                                      onTap: () {
+                                        PageNavigationService.to(
+                                          context,
+                                          AppRoutes.productDetails,
+                                          arguments: {'productId': product.id},
+                                        );
+                                      },
+                                      onTapFavourite: () {
+                                        final productId = product.id;
+                                        if (productId == null ||
+                                            productId.isEmpty) {
+                                          return;
+                                        }
 
-                                      wishlistController.toggleProductWishlist(
-                                        productId: productId,
-                                        currentValue: isWishlisted,
-                                      );
-                                    },
-                                  );
-                                },
+                                        if (!_hasAccessToken()) {
+                                          showLoginRequiredDialog();
+                                          return;
+                                        }
+
+                                        Get.find<WishlistController>()
+                                            .toggleProductWishlist(
+                                              productId: productId,
+                                              currentValue: isWishlisted,
+                                            );
+                                      },
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
+                      ],
                       SizedBox(height: 12.h(context)),
                       showInitialLoaders
                           ? _buildSectionTitleSkeleton(context)
@@ -457,10 +457,16 @@ class HomeScreen extends GetView<HomeScreenController> {
                                         return;
                                       }
 
-                                      wishlistController.toggleProductWishlist(
-                                        productId: productId,
-                                        currentValue: isWishlisted,
-                                      );
+                                      if (!_hasAccessToken()) {
+                                        showLoginRequiredDialog();
+                                        return;
+                                      }
+
+                                      Get.find<WishlistController>()
+                                          .toggleProductWishlist(
+                                            productId: productId,
+                                            currentValue: isWishlisted,
+                                          );
                                     },
                                   );
                                 },
@@ -480,7 +486,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                       if (showInitialLoaders) ...[
                         _buildBannerSkeleton(context),
                         SizedBox(height: 12.h(context)),
-                      ] else if ((homeData?.secondSectionBanner ?? const []).isNotEmpty) ...[
+                      ] else if ((homeData?.secondSectionBanner ?? const [])
+                          .isNotEmpty) ...[
                         CarouselBanner(
                           homeData?.secondSectionBanner ?? const [],
                           (banner) => _handleBannerTap(context, banner),
@@ -553,10 +560,16 @@ class HomeScreen extends GetView<HomeScreenController> {
                                         return;
                                       }
 
-                                      wishlistController.toggleProductWishlist(
-                                        productId: productId,
-                                        currentValue: isWishlisted,
-                                      );
+                                      if (!_hasAccessToken()) {
+                                        showLoginRequiredDialog();
+                                        return;
+                                      }
+
+                                      Get.find<WishlistController>()
+                                          .toggleProductWishlist(
+                                            productId: productId,
+                                            currentValue: isWishlisted,
+                                          );
                                     },
                                   );
                                 },
@@ -617,10 +630,7 @@ class HomeScreen extends GetView<HomeScreenController> {
         PageNavigationService.to(
           context,
           AppRoutes.campaign,
-          arguments: {
-            'reference': reference,
-            'banner': banner.banner ?? '',
-          },
+          arguments: {'reference': reference, 'banner': banner.banner ?? ''},
         );
         break;
       default:

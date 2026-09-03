@@ -3,7 +3,9 @@ import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/product_details_model.dart'
     as product_details;
@@ -46,11 +48,8 @@ class CartController extends GetxController {
     bool includeVariantFields = false,
   }) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -96,6 +95,11 @@ class CartController extends GetxController {
           body: body,
         );
 
+        if (isLoginRequiredResponse(response)) {
+          showLoginRequiredDialog();
+          return;
+        }
+
         if (!response.isSuccess) {
           showAppToast(message: response.errorMessage, isError: true);
           return;
@@ -116,11 +120,8 @@ class CartController extends GetxController {
     required int quantity,
   }) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -162,6 +163,11 @@ class CartController extends GetxController {
           body: body,
         );
 
+        if (isLoginRequiredResponse(response)) {
+          showLoginRequiredDialog();
+          return;
+        }
+
         if (!response.isSuccess) {
           showAppToast(message: response.errorMessage, isError: true);
           return;
@@ -181,11 +187,8 @@ class CartController extends GetxController {
   }) async {
     try {
       final accessToken = MySharedPref.getAccessToken();
-      if (accessToken == null || accessToken.isEmpty) {
-        showAppToast(
-          message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-          isError: true,
-        );
+      if (accessToken == null || accessToken.trim().isEmpty) {
+        showLoginRequiredDialog();
         return null;
       }
 
@@ -198,6 +201,11 @@ class CartController extends GetxController {
         Urls.getProductUrlById(productId),
         accessToken: accessToken,
       );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return null;
+      }
 
       if (!response.isSuccess) {
         showAppToast(message: response.errorMessage, isError: true);
@@ -227,11 +235,8 @@ class CartController extends GetxController {
 
   Future<void> getCartData() async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return;
     }
 
@@ -246,6 +251,11 @@ class CartController extends GetxController {
         Urls.cartUrl,
         accessToken: accessToken,
       );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         _cartModel.value = MyCartModel.fromJson(response.responseData);
@@ -308,11 +318,8 @@ class CartController extends GetxController {
     Map<String, String>? color,
   }) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -352,6 +359,11 @@ class CartController extends GetxController {
           accessToken: accessToken,
           body: body,
         );
+
+        if (isLoginRequiredResponse(response)) {
+          showLoginRequiredDialog();
+          return;
+        }
 
         if (!response.isSuccess) {
           showAppToast(message: response.errorMessage, isError: true);

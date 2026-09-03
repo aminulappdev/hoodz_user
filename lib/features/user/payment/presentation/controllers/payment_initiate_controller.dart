@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/payment/presentation/models/card_success_model.dart'
     as card_success;
@@ -48,11 +50,8 @@ class PaymentInitiateController extends GetxController {
     bool saveCard = false,
   }) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: 'Access token not found. Please login again.',
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -80,6 +79,11 @@ class PaymentInitiateController extends GetxController {
             accessToken: accessToken,
             body: body,
           );
+
+          if (isLoginRequiredResponse(response)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!response.isSuccess) {
             showAppToast(message: response.errorMessage, isError: true);

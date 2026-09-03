@@ -8,6 +8,8 @@ import 'package:hoodz/core/services/others/image_picker_service.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/services/upload_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
@@ -18,7 +20,7 @@ import 'package:image_picker/image_picker.dart';
 
 class EditProfileController extends GetxController {
   EditProfileController(
-    this._locationService, 
+    this._locationService,
     this._networkCaller,
     this._profileController,
   );
@@ -155,10 +157,7 @@ class EditProfileController extends GetxController {
 
     final accessToken = MySharedPref.getAccessToken();
     if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.profileUpdateFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -198,6 +197,11 @@ class EditProfileController extends GetxController {
               'isProfileSetUp': true,
             },
           );
+
+          if (isLoginRequiredResponse(updateProfileResponse)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!updateProfileResponse.isSuccess) {
             Get.snackbar(

@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/shop/data/models/shop_details_model.dart';
 import 'package:hoodz/urls.dart';
@@ -82,21 +84,24 @@ class ShopDetailsController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.shopLoadFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     try {
       isLoading.value = true;
 
-      final response = await _networkCaller.getRequest(
-        Urls.getShopDetailsUrlById(shopIdData.value),
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.getShopDetailsUrlById(shopIdData.value),
+              accessToken: accessToken,
+            )
+          : await _networkCaller.getRequest(
+              Urls.getShopDetailsUrlById(shopIdData.value),
+            );
+
+      if (hasAccessToken && isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         _shopDetailsModel.value = ShopDetailsModel.fromJson(

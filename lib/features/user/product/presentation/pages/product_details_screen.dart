@@ -8,6 +8,8 @@ import 'package:hoodz/core/services/others/image_preview_service.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
@@ -33,12 +35,15 @@ import 'package:hoodz/features/user/orders/presentation/widgets/size_plate.dart'
 import 'package:hoodz/features/user/product/presentation/controller/all_vouchers_controller.dart';
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 import 'package:hoodz/gen/assets.gen.dart'; 
-
+ 
 class ProductDetailsScreen extends GetView<ProductDetailsController> {
   const ProductDetailsScreen({super.key});
 
+  bool _hasAccessToken() =>
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
+
   Color? _parseColor(dynamic value) { 
-    if (value is Color) {
+    if (value is Color) { 
       return value;
     } 
 
@@ -337,25 +342,33 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
-    final wishlistController = Get.find<WishlistController>();
-    final cartController = Get.find<CartController>();
     final routeArguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) { 
       controller.initialize(routeArguments);
     });
 
     return Scaffold(
       appBar: CustomAppBar(label: Strings.productDetailsTitle.tr),
 
-      bottomNavigationBar: Obx(
-        () => Padding(
+      bottomNavigationBar: Obx(() {
+        final hasAccessToken = _hasAccessToken();
+        final isCurrentSelectionInStock = controller.isCurrentSelectionInStock;
+        final canUseCartActions =
+            !hasAccessToken || isCurrentSelectionInStock;
+
+        return Padding(
           padding: EdgeInsets.all(20.w(context)),
           child: CartAndBuy(
-            isAddToCartEnabled: controller.isCurrentSelectionInStock,
-            isBuyNowEnabled: controller.isCurrentSelectionInStock,
+            isAddToCartEnabled: canUseCartActions,
+            isBuyNowEnabled: canUseCartActions,
             onTapAddToCart: () async {
-              if (!controller.isCurrentSelectionInStock) {
+              if (!_hasAccessToken()) {
+                showLoginRequiredDialog();
+                return;
+              }
+
+              if (!isCurrentSelectionInStock) {
                 showAppToast(
                   message: Strings.selectedVariantNotAvailable.tr,
                   isError: true,
@@ -374,7 +387,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 color: controller.currentSelectedColorPayload,
               );
 
-              await cartController.addToCart(
+              await Get.find<CartController>().addToCart(
                 productId: productId,
                 size: selection.size,
                 color: selection.color,
@@ -382,7 +395,12 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
               );
             },
             onTapBuyNow: () async {
-              if (!controller.isCurrentSelectionInStock) {
+              if (!_hasAccessToken()) {
+                showLoginRequiredDialog();
+                return;
+              }
+
+              if (!isCurrentSelectionInStock) {
                 showAppToast(
                   message: Strings.selectedVariantNotAvailable.tr,
                   isError: true,
@@ -400,9 +418,11 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 size: controller.currentSelectedSizePayload,
                 color: controller.currentSelectedColorPayload,
               );
-              final orderSummaryController = Get.find<OrderSummaryController>();
+              final orderSummaryController =
+                  Get.find<OrderSummaryController>();
 
-              final isSuccess = await orderSummaryController.createOrderSummary(
+              final isSuccess =
+                  await orderSummaryController.createOrderSummary(
                 itemsOverride: _buildBuyNowItems(
                   productId: productId,
                   selection: selection,
@@ -417,8 +437,8 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
               }
             },
           ),
-        ),
-      ),
+        );
+      }),
 
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -770,11 +790,19 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                                   return;
                                 }
 
-                                final updatedValue = await wishlistController
-                                    .toggleProductWishlist(
-                                      productId: productId,
-                                      currentValue: isWishlisted,
-                                    );
+                                final accessToken =
+                                    MySharedPref.getAccessToken();
+                                if (accessToken?.trim().isNotEmpty != true) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
+                                final updatedValue =
+                                    await Get.find<WishlistController>()
+                                        .toggleProductWishlist(
+                                          productId: productId,
+                                          currentValue: isWishlisted,
+                                        );
 
                                 if (updatedValue != null) {
                                   controller.updateSimilarProductWishlistStatus(
@@ -910,6 +938,11 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                   CustomButton(
                     text: Strings.addReview.tr,
                     onPressed: () {
+                      if (!_hasAccessToken()) {
+                        showLoginRequiredDialog();
+                        return;
+                      }
+
                       final productId = product?.id?.trim() ?? '';
                       if (productId.isEmpty) {
                         showAppToast(

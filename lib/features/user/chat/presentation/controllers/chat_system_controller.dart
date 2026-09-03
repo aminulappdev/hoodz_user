@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/chat/presentation/pages/customer_support_message_screen.dart';
 import 'package:hoodz/features/user/chat/presentation/pages/general_message_screen.dart';
@@ -16,10 +18,8 @@ class ChatSystemController extends GetxController {
 
   Future<Map<String, dynamic>?> createCustomerSupportChat() async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      print(
-        'CUSTOM SUPPORT CREATE ERROR => ${Strings.accessTokenNotFoundPleaseLoginAgain.tr}',
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return null;
     }
 
@@ -43,6 +43,11 @@ class ChatSystemController extends GetxController {
           print('CUSTOM SUPPORT CREATE SUCCESS => ${response.isSuccess}');
           print('CUSTOM SUPPORT CREATE MESSAGE => ${response.message}');
           print('CUSTOM SUPPORT CREATE RAW RESPONSE => ${response.responseData}');
+
+          if (isLoginRequiredResponse(response)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!response.isSuccess) {
             print('CUSTOM SUPPORT CREATE ERROR => ${response.errorMessage}');
@@ -76,10 +81,8 @@ class ChatSystemController extends GetxController {
     required String orderId,
   }) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      print(
-        'ORDER SUPPORT CREATE ERROR => ${Strings.accessTokenNotFoundPleaseLoginAgain.tr}',
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return null;
     }
 
@@ -110,6 +113,11 @@ class ChatSystemController extends GetxController {
           print(
             'ORDER SUPPORT CREATE RAW RESPONSE => ${response.responseData}',
           );
+
+          if (isLoginRequiredResponse(response)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!response.isSuccess) {
             print('ORDER SUPPORT CREATE ERROR => ${response.errorMessage}');
@@ -146,10 +154,8 @@ class ChatSystemController extends GetxController {
     required String participantId,
   }) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      print(
-        'CHAT CREATE ERROR => ${Strings.accessTokenNotFoundPleaseLoginAgain.tr}',
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return null;
     }
 
@@ -176,6 +182,11 @@ class ChatSystemController extends GetxController {
           print('CHAT CREATE SUCCESS => ${response.isSuccess}');
           print('CHAT CREATE MESSAGE => ${response.message}');
           print('CHAT CREATE RAW RESPONSE => ${response.responseData}');
+
+          if (isLoginRequiredResponse(response)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!response.isSuccess) {
             print('CHAT CREATE ERROR => ${response.errorMessage}');

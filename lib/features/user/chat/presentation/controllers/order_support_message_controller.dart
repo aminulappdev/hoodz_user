@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/chat/model/general_message_model.dart';
 import 'package:hoodz/features/user/chat/model/order_support_chat_model.dart';
@@ -105,7 +107,7 @@ class OrderSupportMessageController extends GetxController {
   Future<void> _ensureSocketReady() async {
     if (!socketService.isInitialized) {
       final accessToken = MySharedPref.getAccessToken();
-      if (accessToken == null || accessToken.isEmpty) {
+      if (accessToken == null || accessToken.trim().isEmpty) {
         return;
       }
 
@@ -146,11 +148,8 @@ class OrderSupportMessageController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return;
     }
 
@@ -169,6 +168,11 @@ class OrderSupportMessageController extends GetxController {
         accessToken: accessToken,
         body: {'type': 'order_support', 'order': resolvedOrderId},
       );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (!response.isSuccess) {
         showAppToast(message: response.errorMessage, isError: true);
@@ -222,11 +226,8 @@ class OrderSupportMessageController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return;
     }
 
@@ -237,6 +238,11 @@ class OrderSupportMessageController extends GetxController {
         apiPath,
         accessToken: accessToken,
       );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (!response.isSuccess) {
         showAppToast(message: response.errorMessage, isError: true);

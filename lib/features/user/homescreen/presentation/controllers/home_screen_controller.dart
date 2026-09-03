@@ -2,14 +2,16 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/home_data_model.dart';
 import 'package:hoodz/urls.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class HomeScreenController extends GetxController {
-  HomeScreenController(this._locationService); 
+  HomeScreenController(this._locationService);
 
   final LocationSelectionService _locationService;
   final RxInt currentBannerIndex = 0.obs;
@@ -139,26 +141,29 @@ class HomeScreenController extends GetxController {
   }
 
   Future<void> getUserMeta({bool force = false}) async {
-    final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
-      return;
-    }
-
     if (isLoading.value && !force) {
       return;
     }
 
+    final accessToken = MySharedPref.getAccessToken();
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
+
     isLoading.value = true;
 
     try {
-      final response = await _networkCaller.getRequest(
-        Urls.metaUserUrl,
-        // accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.metaUserUrl,
+              accessToken: accessToken,
+            )
+          : await _networkCaller.getRequest(
+              Urls.metaUserGuestUrl(lat: 23.8069, lng: 90.3687),
+            );
+
+      if (hasAccessToken && isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         _homeDataModel.value = HomeDataModel.fromJson(response.responseData);

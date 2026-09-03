@@ -12,7 +12,7 @@ class ProductController extends GetxController {
     Color(0xff7D8595),
     Color(0xffD7B88F),  
   ];
-
+  
   final List<Map<String, String>> productList = [
     {
       'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab',

@@ -8,6 +8,8 @@ import 'package:hoodz/gen/assets.gen.dart';
 
 class LogoutButton extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool Function()? canShowDialog;
+  final VoidCallback? onBlocked;
   final String buttonText;
   final String dialogTitle;
   final String dialogMessage;
@@ -17,6 +19,8 @@ class LogoutButton extends StatelessWidget {
   const LogoutButton({
     super.key,
     this.onTap,
+    this.canShowDialog,
+    this.onBlocked,
     this.buttonText = '',
     this.dialogTitle = '',
     this.dialogMessage = '',
@@ -141,7 +145,14 @@ class LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showLogoutDialog(context),
+      onTap: () {
+        if (canShowDialog?.call() == false) {
+          onBlocked?.call();
+          return;
+        }
+
+        _showLogoutDialog(context);
+      },
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 16.h(context)),

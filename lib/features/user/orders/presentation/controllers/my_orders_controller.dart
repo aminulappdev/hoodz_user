@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/orders/data/models/my_order_model.dart';
 import 'package:hoodz/urls.dart';
@@ -17,7 +19,7 @@ class MyOrdersController extends GetxController {
   final List<Datum> _orders = [];
   final Map<String, MyOrderModel> _cachedModels = {};
   int _requestSerial = 0;
- 
+
   List<String> get orderStatuses => [
         Strings.active.tr,
         Strings.completed.tr,
@@ -67,13 +69,7 @@ class MyOrdersController extends GetxController {
 
   Future<void> fetchOrders({bool forceRefresh = false}) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     if (!forceRefresh) {
       final cachedModel = _cachedModels[currentFilter];
@@ -91,11 +87,21 @@ class MyOrdersController extends GetxController {
     isLoading = true;
     update();
     try {
-      final response = await _networkCaller.getRequest(
-        Urls.myOrdersUrl,
-        accessToken: accessToken,
-        queryParams: {'filter': currentFilter},
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.myOrdersUrl,
+              accessToken: accessToken,
+              queryParams: {'filter': currentFilter},
+            )
+          : await _networkCaller.getRequest(
+              Urls.myOrdersUrl,
+              queryParams: {'filter': currentFilter},
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        _showLoginRequiredDialog();
+        return;
+      }
 
       if (!response.isSuccess) {
         showAppToast(message: response.errorMessage, isError: true);
@@ -155,6 +161,10 @@ class MyOrdersController extends GetxController {
     }
   }
 
+  void _showLoginRequiredDialog() {
+    showLoginRequiredDialog();
+  }
+
   String orderImage(Datum order) {
     return order.items.isNotEmpty &&
             order.items.first.product?.banner?.isNotEmpty == true
@@ -197,8 +207,8 @@ class MyOrdersController extends GetxController {
     final month = months[createdAt.month - 1];
     final year = createdAt.year;
     return '$day $month $year';
-  } 
- 
+  }
+
   String orderId(Datum order) {
     final id = order.id ?? order.datumId ?? '';
     return id.isEmpty ? '#N/A' : '#$id';

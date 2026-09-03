@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/urls.dart';
 
 class ContentController extends GetxController {
@@ -34,6 +36,12 @@ class ContentController extends GetxController {
         Urls.settingsUrl,
         queryParams: {'key': normalizedKey},
       );
+
+      if (isLoginRequiredResponse(response)) {
+        htmlContent.value = '';
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (!response.isSuccess) {
         htmlContent.value = '';

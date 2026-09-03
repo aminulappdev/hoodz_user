@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:hoodz/features/user/wishlist/data/models/wishlist_model.dart';
@@ -47,13 +49,7 @@ class WishlistController extends GetxController {
 
   Future<void> getWishlist() async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     if (isLoading.value) {
       return;
@@ -62,10 +58,17 @@ class WishlistController extends GetxController {
     try {
       isLoading.value = true;
 
-      final response = await _networkCaller.getRequest(
-        Urls.wishlistUrl,
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.wishlistUrl,
+              accessToken: accessToken,
+            )
+          : await _networkCaller.getRequest(Urls.wishlistUrl);
+
+      if (isLoginRequiredResponse(response)) {
+        _showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         _wishlistModel.value = WishlistModel.fromJson(response.responseData);
@@ -94,11 +97,24 @@ class WishlistController extends GetxController {
     _wishlistStates[productId] = nextValue;
 
     try {
-      final response = await _networkCaller.postRequest(
-        Urls.getWishlistToggleUrlById(productId),
-        body: {'modelType': modelType},
-        accessToken: MySharedPref.getAccessToken(),
-      );
+      final accessToken = MySharedPref.getAccessToken();
+      final hasAccessToken = accessToken?.trim().isNotEmpty == true;
+      final response = hasAccessToken
+          ? await _networkCaller.postRequest(
+              Urls.getWishlistToggleUrlById(productId),
+              body: {'modelType': modelType},
+              accessToken: accessToken,
+            )
+          : await _networkCaller.postRequest(
+              Urls.getWishlistToggleUrlById(productId),
+              body: {'modelType': modelType},
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        _wishlistStates[productId] = currentValue;
+        _showLoginRequiredDialog();
+        return null;
+      }
 
       if (!response.isSuccess) {
         _wishlistStates[productId] = currentValue;
@@ -133,13 +149,7 @@ class WishlistController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     final currentModel = _wishlistModel.value;
     final currentItems = currentModel?.data ?? const <WishlistItemModel>[];
@@ -158,10 +168,22 @@ class WishlistController extends GetxController {
     }
 
     try {
-      final response = await _networkCaller.deleteRequest(
-        Urls.getWishlistUrlById(itemId),
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.deleteRequest(
+              Urls.getWishlistUrlById(itemId),
+              accessToken: accessToken,
+            )
+          : await _networkCaller.deleteRequest(
+              Urls.getWishlistUrlById(itemId),
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        if (currentModel != null) {
+          _wishlistModel.value = currentModel;
+        }
+        _showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         String? deletedProductId;
@@ -255,5 +277,9 @@ class WishlistController extends GetxController {
     }
 
     return null;
+  }
+
+  void _showLoginRequiredDialog() {
+    showLoginRequiredDialog();
   }
 }

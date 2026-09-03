@@ -7,6 +7,7 @@ import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/image_picker_service.dart';
 import 'package:hoodz/core/services/upload_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/widgets/image_source_picker_sheet.dart';
 import 'package:hoodz/gen/assets.gen.dart';
@@ -32,6 +33,12 @@ class _CustomInputBarState extends State<CustomInputBar> {
       return;
     }
 
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
+      return;
+    }
+
     final ImageSource? source = await showImageSourcePickerSheet(context);
     if (source == null) {
       return;
@@ -46,15 +53,6 @@ class _CustomInputBarState extends State<CustomInputBar> {
         source,
       );
       if (pickedFiles.isEmpty) {
-        return;
-      }
-
-      final accessToken = MySharedPref.getAccessToken();
-      if (accessToken == null || accessToken.isEmpty) {
-        Get.snackbar(
-          Strings.uploadFailed.tr,
-          Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        );
         return;
       }
 

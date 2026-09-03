@@ -7,7 +7,9 @@ import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/image_picker_service.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/services/upload_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
@@ -138,11 +140,8 @@ class CustomerServiceController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -183,6 +182,11 @@ class CustomerServiceController extends GetxController {
               'files': uploadedFiles,
             },
           );
+
+          if (isLoginRequiredResponse(response)) {
+            showLoginRequiredDialog();
+            return;
+          }
 
           if (!response.isSuccess) {
             showAppToast(message: response.errorMessage, isError: true);

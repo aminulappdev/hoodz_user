@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/urls.dart';
 import 'package:hoodz/features/user/homescreen/data/models/all_review_mdel.dart';
 import 'package:hoodz/features/user/product/data/models/feedback_model.dart';
@@ -61,10 +64,23 @@ class AllProductReviewController extends GetxController {
 
     isLoading.value = true;
     try {
-      final response = await _networkCaller.getRequest(
-        Urls.getProductReviewsUrlById(productId),
-        queryParams: {'sort': selectedSort.value},
-      );
+      final accessToken = MySharedPref.getAccessToken();
+      final hasAccessToken = accessToken?.trim().isNotEmpty == true;
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.getProductReviewsUrlById(productId),
+              accessToken: accessToken,
+              queryParams: {'sort': selectedSort.value},
+            )
+          : await _networkCaller.getRequest(
+              Urls.getProductReviewsUrlById(productId),
+              queryParams: {'sort': selectedSort.value},
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         final rawData = response.responseData;

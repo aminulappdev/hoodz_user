@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/initial_search_model.dart';
 import 'package:hoodz/features/user/homescreen/data/models/product_search_model.dart'
@@ -193,18 +195,25 @@ class SearchScreenController extends GetxController {
   }
 
   Future<void> clearSearchHistory() async {
-    final accessToken = MySharedPref.getAccessToken();
+    final auth = await _resolveSearchAuth();
+
     final response = await _networkCaller.deleteRequest(
       Urls.searchUrl,
-      accessToken: accessToken,
+      headers: auth.headers,
+      accessToken: auth.accessToken,
     );
+
+    if (auth.hasAccessToken && isLoginRequiredResponse(response)) {
+      showLoginRequiredDialog();
+      return;
+    }
 
     if (!response.isSuccess) {
       showAppToast(message: response.errorMessage, isError: true);
       return;
     }
 
-    await _refreshInitialSearchData(accessToken);
+    await _refreshInitialSearchData(auth);
   }
 
   Future<void> fetchSearchData({String? query}) async {
@@ -218,7 +227,7 @@ class SearchScreenController extends GetxController {
     isLoading.value = true;
 
     try {
-      final accessToken = MySharedPref.getAccessToken();
+      final auth = await _resolveSearchAuth();
       final queryParams = <String, dynamic>{};
 
       if (normalizedQuery.isNotEmpty) {
@@ -232,9 +241,15 @@ class SearchScreenController extends GetxController {
 
       final response = await _networkCaller.getRequest(
         Urls.searchUrl,
-        accessToken: accessToken,
+        headers: auth.headers,
+        accessToken: auth.accessToken,
         queryParams: queryParams.isEmpty ? null : queryParams,
       );
+
+      if (auth.hasAccessToken && isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         _applyInitialSearchModel(
@@ -258,12 +273,18 @@ class SearchScreenController extends GetxController {
     isSuggestionLoading.value = true;
 
     try {
-      final accessToken = MySharedPref.getAccessToken();
+      final auth = await _resolveSearchAuth();
       final response = await _networkCaller.getRequest(
         Urls.searchDataUrl,
-        accessToken: accessToken,
+        headers: auth.headers,
+        accessToken: auth.accessToken,
         queryParams: {'searchTerm': normalizedQuery},
       );
+
+      if (auth.hasAccessToken && isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         final model = product_search.ProductSearchModel.fromJson(
@@ -324,24 +345,31 @@ class SearchScreenController extends GetxController {
         await _trackSearchHistory(normalizedQuery);
       }
       final location = await _getSearchLocation();
-      final accessToken = MySharedPref.getAccessToken();
+      final auth = await _resolveSearchAuth();
+      final queryParams = _buildProductSearchParams(
+        searchTerm: normalizedQuery,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        category: category,
+        brand: brand,
+        color: color,
+        size: size,
+        gender: gender,
+        maxDistance: maxDistance,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      );
       final response = await _networkCaller.getRequest(
         Urls.searchProductsUrl,
-        accessToken: accessToken,
-        queryParams: _buildProductSearchParams(
-          searchTerm: normalizedQuery,
-          minPrice: minPrice,
-          maxPrice: maxPrice,
-          category: category,
-          brand: brand,
-          color: color,
-          size: size,
-          gender: gender,
-          maxDistance: maxDistance,
-          latitude: location.latitude,
-          longitude: location.longitude,
-        ),
+        headers: auth.headers,
+        accessToken: auth.accessToken,
+        queryParams: queryParams,
       );
+
+      if (auth.hasAccessToken && isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         final model = search_product.SearchProductModel.fromJson(
@@ -443,25 +471,32 @@ class SearchScreenController extends GetxController {
   }
 
   Future<void> _trackSearchHistory(String query) async {
-    final accessToken = MySharedPref.getAccessToken();
+    final auth = await _resolveSearchAuth();
+
     final response = await _networkCaller.postRequest(
       Urls.searchUrl,
-      accessToken: accessToken,
+      headers: auth.headers,
+      accessToken: auth.accessToken,
       body: {
         'query': query,
         'source': 'manual',
       },
     );
 
+    if (isLoginRequiredResponse(response)) {
+      return;
+    }
+
     if (response.isSuccess) {
-      await _refreshInitialSearchData(accessToken);
+      await _refreshInitialSearchData(auth);
     }
   }
 
-  Future<void> _refreshInitialSearchData(String? accessToken) async {
+  Future<void> _refreshInitialSearchData(_SearchRequestAuth auth) async {
     final response = await _networkCaller.getRequest(
       Urls.searchUrl,
-      accessToken: accessToken,
+      headers: auth.headers,
+      accessToken: auth.accessToken,
     );
 
     if (!response.isSuccess) {
@@ -469,6 +504,16 @@ class SearchScreenController extends GetxController {
     }
 
     _applyInitialSearchModel(InitialSearchModel.fromJson(response.responseData));
+  }
+
+  Future<_SearchRequestAuth> _resolveSearchAuth() async {
+    final accessToken = MySharedPref.getAccessToken();
+    if (accessToken != null && accessToken.trim().isNotEmpty) {
+      return _SearchRequestAuth(accessToken: accessToken);
+    }
+
+    final guestId = await MySharedPref.getOrCreateGuestId();
+    return _SearchRequestAuth(headers: {'x-guest-id': guestId});
   }
 
   void _resetSearchResultState() {
@@ -518,4 +563,13 @@ class SearchScreenController extends GetxController {
       selectedCategory.value = firstTitle;
     }
   }
+}
+
+class _SearchRequestAuth {
+  const _SearchRequestAuth({this.accessToken, this.headers});
+
+  final String? accessToken;
+  final Map<String, String>? headers;
+
+  bool get hasAccessToken => accessToken?.trim().isNotEmpty == true;
 }

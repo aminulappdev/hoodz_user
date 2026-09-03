@@ -2,6 +2,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/safe_get_snackbar.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_product_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
@@ -122,20 +125,23 @@ class AllBrandController extends AllTrendingProductController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.categoryLoadFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     try {
       isBrandTypesLoading.value = true;
-      final response = await _networkCaller.getRequest(
-        Urls.getBrandTypeCategoriesUrl(brandType.value),
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.getBrandTypeCategoriesUrl(brandType.value),
+              accessToken: accessToken,
+            )
+          : await _networkCaller.getRequest(
+              Urls.getBrandTypeCategoriesUrl(brandType.value),
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         final model = CategoryBrandModel.fromJson(response.responseData);
@@ -143,9 +149,9 @@ class AllBrandController extends AllTrendingProductController {
         return;
       }
 
-      Get.snackbar(Strings.categoryLoadFailed.tr, response.errorMessage);
+      showSafeGetSnackbar(Strings.categoryLoadFailed.tr, response.errorMessage);
     } catch (e) {
-      Get.snackbar(Strings.categoryLoadFailed.tr, e.toString());
+      showSafeGetSnackbar(Strings.categoryLoadFailed.tr, e.toString());
     } finally {
       isBrandTypesLoading.value = false;
     }
@@ -187,26 +193,31 @@ class AllBrandController extends AllTrendingProductController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.shopLoadFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     try {
       isCategoryShopsLoading.value = true;
-      final response = await _networkCaller.getRequest(
-        Urls.getCategoryShopsUrl(categoryId),
-        accessToken: accessToken,
-        queryParams: {
-          'brandType': brandType.value,
-          'latitude': _latitude,
-          'longitude': _longitude,
-          'category': categoryTitle,
-        },
-      );
+      final queryParams = {
+        'brandType': brandType.value,
+        'latitude': _latitude,
+        'longitude': _longitude,
+        'category': categoryTitle,
+      };
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.getCategoryShopsUrl(categoryId),
+              accessToken: accessToken,
+              queryParams: queryParams,
+            )
+          : await _networkCaller.getRequest(
+              Urls.getCategoryShopsUrl(categoryId),
+              queryParams: queryParams,
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         final model = CategoryBrandModel.fromJson(response.responseData);
@@ -214,9 +225,9 @@ class AllBrandController extends AllTrendingProductController {
         return;
       }
 
-      Get.snackbar(Strings.shopLoadFailed.tr, response.errorMessage);
+      showSafeGetSnackbar(Strings.shopLoadFailed.tr, response.errorMessage);
     } catch (e) {
-      Get.snackbar(Strings.shopLoadFailed.tr, e.toString());
+      showSafeGetSnackbar(Strings.shopLoadFailed.tr, e.toString());
     } finally {
       isCategoryShopsLoading.value = false;
     }

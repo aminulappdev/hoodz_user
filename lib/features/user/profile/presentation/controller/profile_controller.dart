@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/localization_service.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/profile/data/models/user_profile_model.dart';
 import 'package:hoodz/urls.dart';
@@ -48,7 +50,10 @@ class ProfileController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
+    if (!hasAccessToken) {
+      _userProfileModel.value = null;
+      currentAddress.value = '';
       return;
     }
 
@@ -60,6 +65,11 @@ class ProfileController extends GetxController {
     );
 
     isLoading.value = false;
+
+    if (isLoginRequiredResponse(response)) {
+      showLoginRequiredDialog();
+      return;
+    }
 
     if (response.isSuccess) {
       _userProfileModel.value = UserProfileModel.fromJson(
@@ -79,6 +89,12 @@ class ProfileController extends GetxController {
 
   void updateAddressRealtime(String address) {
     currentAddress.value = address;
+  }
+
+  void clearUserProfile() {
+    _userProfileModel.value = null;
+    currentAddress.value = '';
+    isLoading.value = false;
   }
 
   void _showProfileLoadError(String message) {

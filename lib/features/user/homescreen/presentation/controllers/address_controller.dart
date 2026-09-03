@@ -2,6 +2,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/safe_get_snackbar.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/urls.dart';
@@ -31,11 +34,8 @@ class AddressController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.addressUpdateFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return;
     }
 
@@ -54,13 +54,18 @@ class AddressController extends GetxController {
 
     isUpdatingAddress.value = false;
 
+    if (isLoginRequiredResponse(response)) {
+      showLoginRequiredDialog();
+      return;
+    }
+
     if (!response.isSuccess) {
-      Get.snackbar(Strings.addressUpdateFailed.tr, response.errorMessage);
+      showSafeGetSnackbar(Strings.addressUpdateFailed.tr, response.errorMessage);
       return;
     }
 
     Get.find<ProfileController>().updateAddressRealtime(location.fullAddress);
-    Get.snackbar(
+    showSafeGetSnackbar(
       Strings.addressUpdatedSuccessfully.tr,
       Strings.addressUpdatedSuccessfully.tr,
     );

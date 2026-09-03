@@ -4,6 +4,9 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/logout_session_helper.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/widgets/custom_text_field.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/user_wallet_screen.dart';
@@ -15,6 +18,26 @@ import 'package:hoodz/features/user/profile/presentation/widgets/profile_setting
 
 class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
+
+  bool _hasAccessToken() =>
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
+
+  Future<void> _handleLogout(BuildContext context) async {
+    if (!_hasAccessToken()) {
+      showLoginRequiredDialog();
+      return;
+    }
+
+    Navigator.of(context, rootNavigator: true).pop();
+    await clearLogoutSession();
+
+    if (!context.mounted) {
+      return;
+    }
+
+    PageNavigationService.offAll(context, AppRoutes.signIn);
+  }
+
   Widget _buildSectionCard(
     BuildContext context, {
     required String title,
@@ -84,10 +107,15 @@ class ProfileScreen extends GetView<ProfileController> {
                           children: [
                             ProfileSettingsTile(
                               onTap: () {
+                                if (!_hasAccessToken()) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.editProfile,
-                              );
+                                );
                               },
                               icon: Icons.person_outline,
                               title: Strings.editProfile.tr,
@@ -95,9 +123,14 @@ class ProfileScreen extends GetView<ProfileController> {
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
                               onTap: () {
+                                if (!_hasAccessToken()) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
                                 PageNavigationService.to(
                                   context,
-                                  AppRoutes.changePassword, 
+                                  AppRoutes.changePassword,
                                 );
                               },
                               icon: Icons.lock_outline,
@@ -108,12 +141,22 @@ class ProfileScreen extends GetView<ProfileController> {
                               icon: Icons.account_balance_wallet_outlined,
                               title: Strings.wallet.tr,
                               onTap: () {
+                                if (!_hasAccessToken()) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
                                 Get.to(UserWalletScreen());
                               },
                             ),
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
                               onTap: () {
+                                if (!_hasAccessToken()) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
                                 if (controller.hasCustomerSupport) {
                                   PageNavigationService.to(
                                     context,
@@ -131,6 +174,11 @@ class ProfileScreen extends GetView<ProfileController> {
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
                               onTap: () {
+                                if (!_hasAccessToken()) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.points,
@@ -142,6 +190,11 @@ class ProfileScreen extends GetView<ProfileController> {
                             const ProfileSettingsDivider(),
                             ProfileSettingsTile(
                               onTap: () {
+                                if (!_hasAccessToken()) {
+                                  showLoginRequiredDialog();
+                                  return;
+                                }
+
                                 PageNavigationService.to(
                                   context,
                                   AppRoutes.wishlist,
@@ -213,9 +266,9 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                       SizedBox(height: 14.h(context)),
                       LogoutButton(
-                        onTap: () {
-                          PageNavigationService.to(context, AppRoutes.signIn);
-                        },
+                        canShowDialog: _hasAccessToken,
+                        onBlocked: showLoginRequiredDialog,
+                        onTap: () => _handleLogout(context),
                       ),
                       SizedBox(height: 24.h(context)),
                     ],

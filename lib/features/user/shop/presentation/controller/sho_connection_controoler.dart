@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/urls.dart';
 
@@ -42,13 +44,7 @@ class ShoConnectionControoler extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.actionFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     final previousValue = isFollowing.value;
     final nextValue = !previousValue;
@@ -60,10 +56,18 @@ class ShoConnectionControoler extends GetxController {
           ? Urls.getShopFollowUrlById(shopId)
           : Urls.getShopUnfollowUrlById(shopId);
 
-      final response = await _networkCaller.postRequest(
-        requestUrl,
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.postRequest(
+              requestUrl,
+              accessToken: accessToken,
+            )
+          : await _networkCaller.postRequest(requestUrl);
+
+      if (isLoginRequiredResponse(response)) {
+        isFollowing.value = previousValue;
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (!response.isSuccess) {
         isFollowing.value = previousValue;

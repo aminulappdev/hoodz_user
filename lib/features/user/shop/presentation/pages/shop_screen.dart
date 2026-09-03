@@ -4,6 +4,8 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/banner_card.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_product_card.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/shop_details_controller.dart';
@@ -15,7 +17,7 @@ import 'package:hoodz/features/user/shop/presentation/widgets/shop_header_sectio
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 
 class ShopScreen extends StatefulWidget {
-  const ShopScreen({super.key});
+  const ShopScreen({super.key}); 
 
   @override
   State<ShopScreen> createState() => _ShopScreenState();
@@ -25,7 +27,6 @@ class _ShopScreenState extends State<ShopScreen> {
   late final ShopDetailsController _shopDetailsController;
   late final ShopProductController _shopProductController;
   late final ShoConnectionControoler _connectionController;
-  late final WishlistController _wishlistController;
   String? _lastLoadedShopId;
 
   @override
@@ -34,7 +35,6 @@ class _ShopScreenState extends State<ShopScreen> {
     _shopDetailsController = Get.find<ShopDetailsController>();
     _shopProductController = Get.find<ShopProductController>();
     _connectionController = Get.find<ShoConnectionControoler>();
-    _wishlistController = Get.find<WishlistController>();
   }
 
   @override
@@ -96,10 +96,7 @@ class _ShopScreenState extends State<ShopScreen> {
         final shopId = _shopDetailsController.shopIdData.value.trim().isNotEmpty
             ? _shopDetailsController.shopIdData.value.trim()
             : (shop?.shopId ?? '').trim();
-        final isWishlisted = _wishlistController.isProductWishlisted(
-          shopId,
-          fallback: shop?.isWishlisted ?? false,
-        );
+        final isWishlisted = shop?.isWishlisted ?? false;
 
         if (_shopDetailsController.isLoading.value && shop == null) {
           return const Center(child: CircularProgressIndicator());
@@ -131,13 +128,25 @@ class _ShopScreenState extends State<ShopScreen> {
                 categories: _shopDetailsController.categories.toList(),
                 isFollowing: isFollowing,
                 isFollowLoading: isFollowLoading,
-                onTapFollow: _connectionController.toggleFollow,
+                onTapFollow: () {
+                  if (!_hasAccessToken()) {
+                    showLoginRequiredDialog();
+                    return;
+                  }
+
+                  _connectionController.toggleFollow();
+                },
                 onTapFavourite: () async {
                   if (shopId.isEmpty) {
                     return;
                   }
 
-                  await _wishlistController.toggleProductWishlist(
+                  if (!_hasAccessToken()) {
+                    showLoginRequiredDialog();
+                    return;
+                  }
+
+                  await Get.find<WishlistController>().toggleProductWishlist(
                     productId: shopId,
                     currentValue: isWishlisted,
                     modelType: 'shop',
@@ -273,8 +282,14 @@ class _ShopScreenState extends State<ShopScreen> {
                                     return;
                                   }
 
-                                  final updatedValue = await _wishlistController
-                                      .toggleProductWishlist(
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
+
+                                  final updatedValue =
+                                      await Get.find<WishlistController>()
+                                          .toggleProductWishlist(
                                         productId: productId,
                                         currentValue: isWishlisted,
                                       );
@@ -299,4 +314,7 @@ class _ShopScreenState extends State<ShopScreen> {
       }),
     );
   }
+
+  bool _hasAccessToken() =>
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
 }

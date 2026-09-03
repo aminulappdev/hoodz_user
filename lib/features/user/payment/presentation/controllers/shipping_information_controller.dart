@@ -4,7 +4,10 @@ import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/safe_get_snackbar.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/profile/data/models/user_profile_model.dart';
 import 'package:hoodz/urls.dart';
@@ -85,11 +88,8 @@ class ShippingInformationController extends GetxController {
 
   Future<bool> updateDeliveryLocation() async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: 'Access token not found. Please login again.',
-        isError: true,
-      );
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      showLoginRequiredDialog();
       return false;
     }
 
@@ -153,6 +153,11 @@ class ShippingInformationController extends GetxController {
           },
         );
 
+        if (isLoginRequiredResponse(response)) {
+          showLoginRequiredDialog();
+          return;
+        }
+
         if (!response.isSuccess) {
           showAppToast(message: response.errorMessage, isError: true);
           return;
@@ -169,12 +174,9 @@ class ShippingInformationController extends GetxController {
   Future<bool> applySelectedLocation(LocationAddress location) async {
     final matchedCity = _resolveCity(location);
     if (matchedCity == null) {
-      Get.snackbar(
+      showSafeGetSnackbar(
         'City not found',
         'Selected location city does not match available cities.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
       return false;
     }
@@ -182,12 +184,9 @@ class ShippingInformationController extends GetxController {
     final selectedCityValue = selectedCity.value.trim();
     if (selectedCityValue.isNotEmpty &&
         matchedCity.toLowerCase() != selectedCityValue.toLowerCase()) {
-      Get.snackbar(
+      showSafeGetSnackbar(
         'City mismatch',
         'Picked location city does not match the selected city.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
       return false;
     }

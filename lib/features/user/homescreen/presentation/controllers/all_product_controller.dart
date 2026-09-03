@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/all_product_model.dart';
 import 'package:hoodz/urls.dart';
@@ -104,13 +106,7 @@ class AllTrendingProductController extends GetxController {
 
   Future<void> getTrendingProduct({bool loadMore = false}) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      showAppToast(
-        message: 'Access token not found. Please login again.',
-        isError: true,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     if (loadMore) {
       if (isLoading.value || isLoadingMore.value || !hasMoreDuas) {
@@ -133,11 +129,21 @@ class AllTrendingProductController extends GetxController {
       }
 
     try {
-      final response = await _networkCaller.getRequest(
-        apiPath,
-        accessToken: accessToken,
-        queryParams: _buildQueryParams(page),
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              apiPath,
+              accessToken: accessToken,
+              queryParams: _buildQueryParams(page),
+            )
+          : await _networkCaller.getRequest(
+              apiPath,
+              queryParams: _buildQueryParams(page),
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         final model = AllProductModel.fromJson(response.responseData);

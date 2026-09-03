@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/utils/auth_response_utils.dart';
+import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/safe_get_snackbar.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/homescreen/data/models/product_details_model.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
@@ -93,15 +96,21 @@ class ProductDetailsController extends GetxController {
 
   Future<void> _trackProductViewed(String productId) async {
     final accessToken = MySharedPref.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     try {
-      final response = await _networkCaller.patchRequest(
-        Urls.getProductViewedUrlById(productId),
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.patchRequest(
+              Urls.getProductViewedUrlById(productId),
+              accessToken: accessToken,
+            )
+          : await _networkCaller.patchRequest(
+              Urls.getProductViewedUrlById(productId),
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        return;
+      }
 
       if (response.isSuccess && Get.isRegistered<HomeScreenController>()) {
         unawaited(Get.find<HomeScreenController>().getUserMeta());
@@ -112,7 +121,10 @@ class ProductDetailsController extends GetxController {
   }
 
   void _showProductIdError() {
-    Get.snackbar(Strings.productLoadFailed.tr, Strings.productIdNotFound.tr);
+    showSafeGetSnackbar(
+      Strings.productLoadFailed.tr,
+      Strings.productIdNotFound.tr,
+    );
   }
 
   void onSizeSelected(String size) {
@@ -138,22 +150,24 @@ class ProductDetailsController extends GetxController {
     }
 
     final accessToken = MySharedPref.getAccessToken();
-
-    if (accessToken == null || accessToken.isEmpty) {
-      Get.snackbar(
-        Strings.productLoadFailed.tr,
-        Strings.accessTokenNotFoundPleaseLoginAgain.tr,
-      );
-      return;
-    }
+    final hasAccessToken = accessToken?.trim().isNotEmpty == true;
 
     try {
       isLoading.value = true;
 
-      final response = await _networkCaller.getRequest(
-        Urls.getProductUrlById(productIdData.value),
-        accessToken: accessToken,
-      );
+      final response = hasAccessToken
+          ? await _networkCaller.getRequest(
+              Urls.getProductUrlById(productIdData.value),
+              accessToken: accessToken,
+            )
+          : await _networkCaller.getRequest(
+              Urls.getProductUrlById(productIdData.value),
+            );
+
+      if (isLoginRequiredResponse(response)) {
+        showLoginRequiredDialog();
+        return;
+      }
 
       if (response.isSuccess) {
         _productDetailsModel.value = ProductDetailsModel.fromJson(
@@ -161,10 +175,13 @@ class ProductDetailsController extends GetxController {
         );
         _applyDefaultSelections(_productDetailsModel.value?.data);
       } else {
-        Get.snackbar(Strings.productLoadFailed.tr, response.errorMessage);
+        showSafeGetSnackbar(
+          Strings.productLoadFailed.tr,
+          response.errorMessage,
+        );
       }
     } catch (e) {
-      Get.snackbar(Strings.productLoadFailed.tr, e.toString());
+      showSafeGetSnackbar(Strings.productLoadFailed.tr, e.toString());
     } finally {
       isLoading.value = false;
     }

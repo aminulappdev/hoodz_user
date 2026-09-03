@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hoodz/app/translator/localization_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +18,7 @@ class MySharedPref {
   static const String _lightThemeKey = 'is_theme_light';
   static const String _accessToken = 'access_token';
   static const String _userIdKey = 'user_id';
+  static const String _guestIdKey = 'guest_id';
 
   /// init get storage services 
   static Future<void> init() async {
@@ -73,6 +76,36 @@ class MySharedPref {
   static String? getUserId() =>
       _isInitialized ? _sharedPreferences.getString(_userIdKey) : null;
 
+  static Future<String> getOrCreateGuestId() async {
+    final savedGuestId = _isInitialized
+        ? _sharedPreferences.getString(_guestIdKey)
+        : null;
+
+    if (savedGuestId != null && savedGuestId.trim().isNotEmpty) {
+      return savedGuestId;
+    }
+
+    final guestId = 'guest_${_generateGuestId()}';
+    await _sharedPreferences.setString(_guestIdKey, guestId);
+    return guestId;
+  }
+
   /// clear all data from shared pref
   static Future<void> clear() async => await _sharedPreferences.clear();
+
+  static getgetAccessToken() {}
+
+  static String _generateGuestId() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+
+    String hex(int start, int length) => bytes
+        .skip(start)
+        .take(length)
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join()
+        .toUpperCase();
+
+    return '${hex(0, 4)}-${hex(4, 2)}-${hex(6, 2)}-${hex(8, 2)}-${hex(10, 6)}';
+  }
 }
