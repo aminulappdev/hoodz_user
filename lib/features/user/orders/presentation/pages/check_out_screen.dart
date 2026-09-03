@@ -23,12 +23,11 @@ import 'package:hoodz/features/user/payment/presentation/controllers/payment_suc
 import 'package:hoodz/core/utils/flutter_toast.dart';
 
 const Color kBgGrey = Color(0xFFF6F6F8);
- 
-class CheckoutScreen extends StatefulWidget {
+  class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
-
+  
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  State<CheckoutScreen> createState() => _CheckoutScreenState(); 
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
@@ -55,7 +54,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _voucherController.addListener(_handleVoucherChanged);
   }
 
-  int get _totalAmountValue =>
+  num get _totalAmountValue =>
       _orderSummaryController.orderSummaryData?.totalAmount ?? 0;
 
   int get _availableRedeemableCoins {
@@ -265,7 +264,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   int get _availablePoints =>
       _orderSummaryController.orderSummaryData?.pointBalance ?? 0;
 
-  int get _walletBalance =>
+  num get _walletBalance =>
       _orderSummaryController.orderSummaryData?.walletBalance ?? 0;
 
   String get _orderName {
@@ -302,7 +301,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   String get _availablePointsLabel =>
       '${Strings.availablePoints.tr} $_availablePoints';
-  String get _walletLabel => '${Strings.wallet.tr} ($_walletBalance)';
+  String get _walletLabel =>
+      '${Strings.wallet.tr} (\$${_walletBalance.toStringAsFixed(2)})';
 
   String get _selectedPaymentMethodValue {
     switch (_selectedPaymentIndex) {
@@ -401,8 +401,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   () => CheckoutOrderDetailsCard(
                     onChangeTap: () async {
                       PageNavigationService.to(
-                        context,
-                        AppRoutes.shippingInformation,
+                        context, 
+                        AppRoutes.savedDeliveryLocation,
                       );
                     },
                     name: _orderName,

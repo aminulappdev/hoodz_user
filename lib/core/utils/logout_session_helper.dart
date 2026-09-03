@@ -25,6 +25,7 @@ import 'package:hoodz/features/user/orders/presentation/controllers/order_detail
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/orders_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/product_order_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/saved_location_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/add_payment_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/delivery_method_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_details_controller.dart';
@@ -82,6 +83,7 @@ Future<void> clearLogoutSession() async {
   _deleteIfRegistered<CartController>();
   _deleteIfRegistered<OrderSummaryController>();
   _deleteIfRegistered<ProductOrderController>();
+  _deleteIfRegistered<SavedLocationController>();
   _deleteIfRegistered<OrderDetailsController>();
   _deleteIfRegistered<CustomerServiceController>();
   _deleteIfRegistered<MyOrdersController>();

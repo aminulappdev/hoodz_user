@@ -19,6 +19,7 @@ import 'package:hoodz/features/user/homescreen/presentation/pages/campaign_scree
 import 'package:hoodz/features/user/homescreen/presentation/pages/map_location_picker_screen.dart';
 import 'package:hoodz/features/user/homescreen/presentation/pages/search_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/cart_screen.dart';
+import 'package:hoodz/features/user/orders/presentation/pages/saved_delivery_location_screen.dart';
 import 'package:hoodz/features/user/product/presentation/pages/product_details_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_details_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_product_screen.dart';
@@ -69,6 +70,7 @@ abstract final class AppPages {
     AppRoutes.shopProduct: (_) => const ShopProductScreen(),
     AppRoutes.addPayment: (_) => const AddPaymentScreen(),
     AppRoutes.shippingInformation: (_) => const ShippingInformationScreen(),
+    AppRoutes.savedDeliveryLocation: (_) => const SavedDeliveryLocationScreen(),
     AppRoutes.deliveryMethod: (_) => const DeliveryMethodScreen(),
     AppRoutes.paymentDetails: (_) => const PaymentDetailsScreen(),
     AppRoutes.paymentMethod: (_) => const PaymentMethodScreen(),

@@ -91,8 +91,6 @@ class _ShopScreenState extends State<ShopScreen> {
         final allProducts = _shopProductController.allProducts;
         final isProductsLoading =
             _shopProductController.isProductsLoading.value;
-        final isFollowing = _connectionController.isFollowing.value;
-        final isFollowLoading = _connectionController.isLoading.value;
         final shopId = _shopDetailsController.shopIdData.value.trim().isNotEmpty
             ? _shopDetailsController.shopIdData.value.trim()
             : (shop?.shopId ?? '').trim();
@@ -107,9 +105,11 @@ class _ShopScreenState extends State<ShopScreen> {
         }
 
         _connectionController.bindShop(
-          shopId: _shopDetailsController.shopIdData.value,
+          shopId: shopId,
           initialFollowing: shop.isFollowing ?? false,
         );
+        final isFollowing = _connectionController.isFollowing.value;
+        final isFollowLoading = _connectionController.isLoading.value;
 
         return SingleChildScrollView(
           child: Column(

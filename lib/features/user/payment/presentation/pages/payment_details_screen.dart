@@ -18,7 +18,7 @@ import 'package:hoodz/features/user/payment/presentation/widgets/order_items_sec
 import 'package:hoodz/features/user/payment/presentation/widgets/rider_info_card.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/tracking_timeline_tile.dart';
  
-class PaymentDetailsScreen extends StatefulWidget { 
+class PaymentDetailsScreen extends StatefulWidget {  
   const PaymentDetailsScreen({super.key});
 
   @override

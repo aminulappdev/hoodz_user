@@ -24,6 +24,7 @@ import 'package:hoodz/features/user/orders/presentation/controllers/customer_ser
 import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/product_order_controller.dart';
+import 'package:hoodz/features/user/orders/presentation/controllers/saved_location_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/my_orders_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
@@ -113,6 +114,7 @@ class ControllerBinder extends Bindings {
     Get.lazyPut(() => CartController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(OrderSummaryController.new, fenix: true);
     Get.lazyPut(ProductOrderController.new, fenix: true);
+    Get.lazyPut(SavedLocationController.new, fenix: true);
     Get.lazyPut(OrderDetailsController.new, fenix: true);
     Get.lazyPut(
       () => CustomerServiceController(Get.find<NetworkCaller>()),

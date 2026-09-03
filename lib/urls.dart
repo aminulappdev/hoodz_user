@@ -12,6 +12,7 @@ class Urls {
   static const String currentUserUrl = '$_baseUrl/users/me';
   static const String userLocationUrl = '$_baseUrl/users/location';
   static const String deliveryLocationUrl = '$_baseUrl/users/delivery-location';
+  static const String savedLocationsUrl = '$_baseUrl/saved-locations';
   static const String settingsUrl = '$_baseUrl/settings';
   static const String searchUrl = '$_baseUrl/search';
   static const String searchDataUrl = '$_baseUrl/search/data';

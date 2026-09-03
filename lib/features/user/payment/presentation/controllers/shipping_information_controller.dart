@@ -18,7 +18,7 @@ class ShippingInformationController extends GetxController {
   final double deliveryCharge = 0.43;
 
   final fullNameController = TextEditingController();
-  final phoneNumberController = TextEditingController(); 
+  final phoneNumberController = TextEditingController();
   final fullAddressController = TextEditingController();
   final buildingController = TextEditingController();
   final floorController = TextEditingController();
@@ -130,27 +130,60 @@ class ShippingInformationController extends GetxController {
 
     var isSuccess = false;
 
+    final savedLocationBody = {
+      'name': name,
+      'location': {
+        'coordinates': [
+          selectedLongitude.value,
+          selectedLatitude.value,
+        ],
+      },
+      'buildingNo': buildingNo,
+      'floorNo': floorNo,
+      'apartment': apartment,
+      'city': city,
+      'country': country,
+    };
+
+    final deliveryLocationBody = {
+      'name': name,
+      'location': {
+        'type': 'Point',
+        'coordinates': [
+          selectedLongitude.value,
+          selectedLatitude.value,
+        ],
+      },
+      'buildingNo': buildingNo,
+      'floorNo': floorNo,
+      'apartment': apartment,
+      'city': city,
+      'country': country,
+    };
+
     await showLoadingOverLay(
       msg: Strings.savingDeliveryLocation.tr,
       asyncFunction: () async {
+        final savedAddressResponse = await _networkCaller.postRequest(
+          Urls.savedLocationsUrl,
+          accessToken: accessToken,
+          body: savedLocationBody,
+        );
+
+        if (isLoginRequiredResponse(savedAddressResponse)) {
+          showLoginRequiredDialog();
+          return;
+        }
+
+        if (!savedAddressResponse.isSuccess) {
+          showAppToast(message: savedAddressResponse.errorMessage, isError: true);
+          return;
+        }
+
         final response = await _networkCaller.putRequest(
           Urls.deliveryLocationUrl,
           accessToken: accessToken,
-          body: {
-            'name': name,
-            'location': {
-              'type': 'Point',
-              'coordinates': [
-                selectedLongitude.value,
-                selectedLatitude.value,
-              ],
-            },
-            'buildingNo': buildingNo,
-            'floorNo': floorNo,
-            'apartment': apartment,
-            'city': city,
-            'country': country,
-          },
+          body: deliveryLocationBody,
         );
 
         if (isLoginRequiredResponse(response)) {

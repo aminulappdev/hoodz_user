@@ -16,7 +16,7 @@ import 'package:hoodz/features/user/profile/presentation/controller/profile_cont
 class ShippingInformationScreen extends GetView<ShippingInformationController> {
   const ShippingInformationScreen({super.key});
 
-  Future<void> _showLocationSheet(BuildContext context) async {
+  Future<void> _showLocationSheet(BuildContext context) async { 
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -87,23 +87,23 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _FieldLabel(Strings.fullName.tr),
-              SizedBox(height: 8.h(context)), 
-              CustomTextField(
-                enabled: false,
-                controller: controller.fullNameController, 
-                hintText: Strings.enterYourName.tr,
-              ),
-              SizedBox(height: 18.h(context)),
-              _FieldLabel(Strings.phoneNumber.tr),
-              SizedBox(height: 8.h(context)),
-              CustomTextField(
-                enabled: false,
-                controller: controller.phoneNumberController,
-                hintText: Strings.enterYourPhoneNumber.tr,
-                keyboardType: TextInputType.phone,
-              ),
-              SizedBox(height: 18.h(context)),
+              // _FieldLabel(Strings.fullName.tr),
+              // SizedBox(height: 8.h(context)), 
+              // CustomTextField(
+              //   enabled: false,
+              //   controller: controller.fullNameController, 
+              //   hintText: Strings.enterYourName.tr,
+              // ),
+              // SizedBox(height: 18.h(context)),
+              // _FieldLabel(Strings.phoneNumber.tr),
+              // SizedBox(height: 8.h(context)),
+              // CustomTextField(
+              //   enabled: false,
+              //   controller: controller.phoneNumberController,
+              //   hintText: Strings.enterYourPhoneNumber.tr,
+              //   keyboardType: TextInputType.phone,
+              // ),
+             
               _FieldLabel(Strings.location.tr),
               SizedBox(height: 8.h(context)),
               CustomTextField(
