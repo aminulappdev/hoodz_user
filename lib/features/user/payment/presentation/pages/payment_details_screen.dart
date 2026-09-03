@@ -12,11 +12,12 @@ import 'package:hoodz/features/user/orders/data/models/order_details_model.dart'
     as order_details;
 import 'package:hoodz/features/user/orders/presentation/controllers/order_details_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/customer_services_screen.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/payment_details_controller.dart'
+    as tracking;
 import 'package:hoodz/features/user/payment/presentation/pages/live_tracking_screen.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/order_details_card.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/order_items_section.dart';
 import 'package:hoodz/features/user/payment/presentation/widgets/rider_info_card.dart';
-import 'package:hoodz/features/user/payment/presentation/widgets/tracking_timeline_tile.dart';
  
 class PaymentDetailsScreen extends StatefulWidget {  
   const PaymentDetailsScreen({super.key});
@@ -195,55 +196,9 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 14.w(context)),
                     child: Column(
                       children: [
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(
-                            14.w(context),
-                            16.h(context),
-                            14.w(context),
-                            8.h(context),
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.r(context)),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x12000000),
-                                blurRadius: 16,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                Strings.orderTimeline.tr,
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(
-                                      fontSize: 18.sp(context),
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF444444),
-                                    ),
-                              ),
-                              SizedBox(height: 14.h(context)),
-                              ...List.generate(_controller.timelineItems.length,
-                                  (index) {
-                                final item = _controller.timelineItems[index];
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 12.h(context)),
-                                  child: TrackingTimelineTile(
-                                    title: item.title,
-                                    trailingText: item.trailingText,
-                                    state: item.state,
-                                    showConnector:
-                                        index !=
-                                        _controller.timelineItems.length - 1,
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
+                        _OrderTimelineProgressCard(
+                          orderDetails: _controller.orderDetailsData,
+                          timelineItems: _controller.timelineItems,
                         ),
                         if (_controller.orderDetailsData?.rider != null) ...[
                           SizedBox(height: 14.h(context)),
@@ -354,4 +309,343 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
       ),
     );
   }
+}
+
+class _OrderTimelineProgressCard extends StatelessWidget {
+  const _OrderTimelineProgressCard({
+    required this.orderDetails,
+    required this.timelineItems,
+  });
+
+  final order_details.Data? orderDetails;
+  final List<tracking.TrackingTimelineItem> timelineItems;
+
+  static const _green = Color(0xFF12B76A);
+  static const _mutedLine = Color(0xFFE9ECEF);
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = _buildSteps();
+    final activeIndex = _activeStepIndex(steps);
+    final shopName = orderDetails?.author?.name?.trim();
+    final bottomTitle = _bottomTitle(steps, activeIndex);
+    final bottomSubtitle = _isDelivered(steps)
+        ? 'Your order has been delivered'
+        : '${shopName?.isNotEmpty == true ? shopName! : 'Style Hut'} is on it! They\'re getting things ready';
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(
+        20.w(context),
+        20.h(context),
+        20.w(context),
+        16.h(context),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r(context)),
+        border: Border.all(color: const Color(0xFFE9EEF2)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12000000),
+            blurRadius: 18,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Order Timeline',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontSize: 24.sp(context),
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF363636),
+                      ),
+                ),
+              ),
+              SizedBox(width: 12.w(context)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w(context),
+                  vertical: 7.h(context),
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE9F8F1),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: const Color(0xFFC8EEDC)),
+                ),
+                child: Text(
+                  _isDelivered(steps) ? 'Done' : 'On time',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontSize: 12.sp(context),
+                        fontWeight: FontWeight.w800,
+                        color: _green,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 28.h(context)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(steps.length, (index) {
+              final step = steps[index];
+              return Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _TimelineStepView(
+                        step: step,
+                      ),
+                    ),
+                    if (index != steps.length - 1)
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 16.h(context)),
+                          child: Container(
+                            height: 2.h(context),
+                            color: step.isCompleted || step.isActive
+                                ? _green
+                                : _mutedLine,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }),
+          ),
+          SizedBox(height: 20.h(context)),
+          const Divider(height: 1, thickness: 1, color: Color(0xFFECEFF2)),
+          SizedBox(height: 20.h(context)),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      bottomTitle,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontSize: 18.sp(context),
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF3A3A3A),
+                          ),
+                    ),
+                    SizedBox(height: 7.h(context)),
+                    Text(
+                      bottomSubtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 16.sp(context),
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF878787),
+                            height: 1.25,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                size: 34,
+                color: Color(0xFF7B8087),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<_ProgressStep> _buildSteps() {
+    final orderPreparedTitle = Strings.orderPrepared.tr.trim().toLowerCase();
+    final nearbyTitle = Strings.nearby.tr.trim().toLowerCase();
+    final filteredItems = timelineItems.where((item) {
+      final title = item.title.trim().toLowerCase();
+      return title != orderPreparedTitle && title != nearbyTitle;
+    }).toList(growable: false);
+    final uniqueItems = <String, tracking.TrackingTimelineItem>{};
+
+    for (final item in filteredItems) {
+      final key = item.title.trim().toLowerCase();
+      final current = uniqueItems[key];
+      if (current == null ||
+          _statePriority(item.state) > _statePriority(current.state)) {
+        uniqueItems[key] = item;
+      }
+    }
+
+    if (uniqueItems.isEmpty) {
+      return [
+        _ProgressStep(
+          label: Strings.orderConfirmed.tr,
+          icon: Icons.check_rounded,
+          state: tracking.TrackingTimelineState.active,
+        ),
+      ];
+    }
+
+    return uniqueItems.values.map((item) {
+      return _ProgressStep(
+        label: item.title,
+        icon: _iconForTitle(item.title),
+        state: item.state,
+      );
+    }).toList(growable: false);
+  }
+
+  int _statePriority(tracking.TrackingTimelineState state) {
+    switch (state) {
+      case tracking.TrackingTimelineState.active:
+        return 3;
+      case tracking.TrackingTimelineState.completed:
+        return 2;
+      case tracking.TrackingTimelineState.pending:
+        return 1;
+    }
+  }
+
+  int _activeStepIndex(List<_ProgressStep> steps) {
+    final activeIndex = steps.indexWhere((step) => step.isActive);
+    if (activeIndex != -1) {
+      return activeIndex;
+    }
+
+    final lastCompletedIndex = steps.lastIndexWhere((step) => step.isCompleted);
+    if (lastCompletedIndex != -1) {
+      return lastCompletedIndex;
+    }
+
+    return 0;
+  }
+
+  bool _isDelivered(List<_ProgressStep> steps) {
+    return steps.any((step) {
+      return step.label.toLowerCase().contains('deliver') && step.isCompleted;
+    });
+  }
+
+  String _bottomTitle(List<_ProgressStep> steps, int activeIndex) {
+    if (steps.isEmpty || activeIndex < 0 || activeIndex >= steps.length) {
+      return 'Preparing your order';
+    }
+
+    return steps[activeIndex].isPending
+        ? 'Preparing your order'
+        : steps[activeIndex].label;
+  }
+
+  IconData _iconForTitle(String title) {
+    final normalized = title.toLowerCase();
+    if (normalized.contains('deliver') || normalized.contains('confirm')) {
+      return Icons.check_rounded;
+    }
+    if (normalized.contains('rider')) {
+      return Icons.person_outline_rounded;
+    }
+    if (normalized.contains('way')) {
+      return Icons.near_me_outlined;
+    }
+    if (normalized.contains('pick')) {
+      return Icons.inventory_2_outlined;
+    }
+    if (normalized.contains('cancel')) {
+      return Icons.close_rounded;
+    }
+    return Icons.inventory_2_outlined;
+  }
+}
+
+class _TimelineStepView extends StatelessWidget {
+  const _TimelineStepView({
+    required this.step,
+  });
+
+  final _ProgressStep step;
+
+  static const _green = Color(0xFF12B76A);
+
+  @override
+  Widget build(BuildContext context) {
+    final circleColor =
+        step.isCompleted || step.isActive ? _green : const Color(0xFFF4F4F4);
+    final iconColor =
+        step.isCompleted || step.isActive ? Colors.white : const Color(0xFF8E949B);
+    final textColor = step.isActive || step.isCompleted
+        ? const Color(0xFF3A3A3A)
+        : const Color(0xFF888888);
+
+    return Column(
+      children: [
+        Container(
+          width: 38.w(context),
+          height: 38.w(context),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: circleColor,
+            border: Border.all(
+              color: step.isCompleted || step.isActive
+                  ? Colors.white
+                  : const Color(0xFFF2F2F2),
+              width: 4,
+            ),
+            boxShadow: step.isCompleted || step.isActive
+                ? const [
+                    BoxShadow(
+                      color: Color(0x2212B76A),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Icon(
+            step.icon,
+            size: 19.sp(context),
+            color: iconColor,
+          ),
+        ),
+        SizedBox(height: 10.h(context)),
+        Text(
+          step.label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 14.sp(context),
+                fontWeight: step.isActive || step.isCompleted
+                    ? FontWeight.w700
+                    : FontWeight.w500,
+                color: textColor,
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProgressStep {
+  const _ProgressStep({
+    required this.label,
+    required this.icon,
+    required this.state,
+  });
+
+  final String label;
+  final IconData icon;
+  final tracking.TrackingTimelineState state;
+
+  bool get isCompleted => state == tracking.TrackingTimelineState.completed;
+  bool get isActive => state == tracking.TrackingTimelineState.active;
+  bool get isPending => state == tracking.TrackingTimelineState.pending;
 }

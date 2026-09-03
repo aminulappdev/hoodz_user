@@ -78,7 +78,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   void _syncPointSelection() {
     if (_usePoints && !_canUsePoints && mounted) {
       setState(() {
-        _usePoints = false;
+        _usePoints = false; 
       });
     }
   }
