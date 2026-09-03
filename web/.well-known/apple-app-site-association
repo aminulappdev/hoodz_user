@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["APPLE_TEAM_ID_REPLACE_ME.com.hoodz.user"],
+        "components": [{"/": "/ref/*"}]
+      }
+    ]
+  }
+}

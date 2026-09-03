@@ -1,1 +1,45 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"the-hoodz-7a518","appId":"1:234939405246:android:2f439e84c54c51e3009fef","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"the-hoodz-7a518","configurations":{"android":"1:234939405246:android:2f439e84c54c51e3009fef","ios":"1:234939405246:ios:3386b645cc30ebde009fef","macos":"1:234939405246:ios:3386b645cc30ebde009fef","web":"1:234939405246:web:d446359654ab5d61009fef","windows":"1:234939405246:web:ee1cfd0662a1d6e4009fef"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "the-hoodz-7a518",
+          "appId": "1:234939405246:android:2f439e84c54c51e3009fef",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "the-hoodz-7a518",
+          "configurations": {
+            "android": "1:234939405246:android:2f439e84c54c51e3009fef",
+            "ios": "1:234939405246:ios:3386b645cc30ebde009fef",
+            "macos": "1:234939405246:ios:3386b645cc30ebde009fef",
+            "web": "1:234939405246:web:d446359654ab5d61009fef",
+            "windows": "1:234939405246:web:ee1cfd0662a1d6e4009fef"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/ref/**",
+        "destination": "/ref/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [{"key": "Content-Type", "value": "application/json"}]
+      },
+      {
+        "source": "/.well-known/apple-app-site-association",
+        "headers": [{"key": "Content-Type", "value": "application/json"}]
+      }
+    ]
+  }
+}

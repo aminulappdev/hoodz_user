@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/core/services/referral/referral_service.dart';
+import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
@@ -9,6 +15,8 @@ class PointsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final profileController = Get.find<ProfileController>();
+    final referralService = Get.find<ReferralService>();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FB),
@@ -121,15 +129,21 @@ class PointsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'https://hoodz.shop/ref/5H2Q2S',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade700,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                child: Obx(() {
+                                  final code = profileController.userData?.referralCode;
+                                  final link = code == null || code.trim().isEmpty
+                                      ? 'Referral link unavailable'
+                                      : referralService.buildReferralLink(code);
+                                  return Text(
+                                    link,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                }),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -139,9 +153,14 @@ class PointsScreen extends StatelessWidget {
                               child: CustomButton(
                                 text: 'Share',
                                 height: 48,
-                                onPressed: () {
-                                  debugPrint(
-                                    'Share referral link clicked - TODO share sheet',
+                                onPressed: () async {
+                                  final code = profileController.userData?.referralCode;
+                                  if (code == null || code.trim().isEmpty) {
+                                    showAppToast(message: 'Referral link is not available', isError: true);
+                                    return;
+                                  }
+                                  await SharePlus.instance.share(
+                                    ShareParams(text: referralService.buildReferralLink(code)),
                                   );
                                 },
                               ),
@@ -149,6 +168,21 @@ class PointsScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 18),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              final code = profileController.userData?.referralCode;
+                              if (code == null || code.trim().isEmpty) return;
+                              await Clipboard.setData(
+                                ClipboardData(text: referralService.buildReferralLink(code)),
+                              );
+                              showAppToast(message: 'Referral link copied');
+                            },
+                            icon: const Icon(Icons.copy_rounded, size: 16),
+                            label: const Text('Copy link'),
+                          ),
+                        ),
                         Text(
                           'How It Works',
                           style: TextStyle(

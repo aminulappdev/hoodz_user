@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
+import 'package:hoodz/core/services/referral/referral_service.dart';
 import 'package:hoodz/core/services/upload_service.dart';
 import 'package:hoodz/features/auth/presentation/controllers/forgot_password_controller.dart';
 import 'package:hoodz/features/auth/presentation/controllers/profile_setup_controller.dart';
@@ -64,6 +65,7 @@ class ControllerBinder extends Bindings {
     Get.put(NetworkCaller());
     Get.put(UploadService(Get.find<NetworkCaller>()));
     Get.put(LocationSelectionService());
+    Get.put(ReferralService(Get.find<NetworkCaller>()));
     Get.lazyPut(() => SignInController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(() => SignUpController(Get.find<NetworkCaller>()), fenix: true);
     Get.lazyPut(

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoodz Referral</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 48px 20px; }
+    a { display: inline-block; margin: 8px; padding: 14px 20px; border-radius: 8px; background: #ff6a00; color: white; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h2>Join Hoodz</h2>
+  <p id="message">Opening the Hoodz app...</p>
+  <div id="buttons" hidden>
+    <a id="android" href="https://play.google.com/store/apps/details?id=com.hoodz.user">Google Play</a>
+    <a id="ios" href="https://apps.apple.com/app/id1234567890">App Store</a>
+  </div>
+  <script>
+    const code = decodeURIComponent(location.pathname.split('/').pop() || '');
+    const androidUrl = 'https://play.google.com/store/apps/details?id=com.hoodz.user&referrer=' + encodeURIComponent('referralCode=' + code);
+    const iosUrl = 'https://apps.apple.com/app/id1234567890';
+    document.getElementById('android').href = androidUrl;
+    document.getElementById('ios').href = iosUrl;
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isApple = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    document.getElementById('buttons').hidden = false;
+    document.getElementById('message').textContent = isApple ? 'Install Hoodz from the App Store.' : 'Install Hoodz to continue.';
+    setTimeout(() => { window.location.href = isAndroid ? androidUrl : (isApple ? iosUrl : androidUrl); }, 500);
+  </script>
+</body>
+</html>

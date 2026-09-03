@@ -19,6 +19,7 @@ class MySharedPref {
   static const String _accessToken = 'access_token';
   static const String _userIdKey = 'user_id';
   static const String _guestIdKey = 'guest_id';
+  static const String _pendingReferralCodeKey = 'pending_referral_code';
 
   /// init get storage services 
   static Future<void> init() async {
@@ -75,6 +76,16 @@ class MySharedPref {
   /// get user id
   static String? getUserId() =>
       _isInitialized ? _sharedPreferences.getString(_userIdKey) : null;
+
+  static Future<void> setPendingReferralCode(String code) =>
+      _sharedPreferences.setString(_pendingReferralCodeKey, code);
+
+  static String? getPendingReferralCode() => _isInitialized
+      ? _sharedPreferences.getString(_pendingReferralCodeKey)
+      : null;
+
+  static Future<void> clearPendingReferralCode() =>
+      _sharedPreferences.remove(_pendingReferralCodeKey);
 
   static Future<String> getOrCreateGuestId() async {
     final savedGuestId = _isInitialized

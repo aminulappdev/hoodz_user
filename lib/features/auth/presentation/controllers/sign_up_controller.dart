@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
+import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/urls.dart';
 
@@ -46,6 +47,8 @@ class SignUpController extends GetxController {
               'role': role,
               'fcmToken': 'FCM_TOKEN',
               'isLegalTermsAccepted': true,
+              if (MySharedPref.getPendingReferralCode() != null)
+                'referralCode': MySharedPref.getPendingReferralCode(),
             },
           );
 
@@ -53,6 +56,8 @@ class SignUpController extends GetxController {
             Get.snackbar(Strings.signUpFailed.tr, response.errorMessage);
             return;
           }
+
+          await MySharedPref.clearPendingReferralCode();
 
           verificationToken = _extractVerificationToken(response.responseData);
           if (verificationToken == null) {

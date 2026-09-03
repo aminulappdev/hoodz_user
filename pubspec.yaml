@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   get: ^4.7.3
   shared_preferences: ^2.5.4
+  app_links: ^6.4.0
+  share_plus: ^11.0.0
   firebase_core:
   http: ^1.6.0
   logger: ^2.6.2

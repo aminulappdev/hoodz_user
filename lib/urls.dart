@@ -10,6 +10,7 @@ class Urls {
   static const String changePasswordUrl = '$_baseUrl/auth/change-password';
   static const String uploadMultipleUrl = '$_baseUrl/upload/multiple';
   static const String currentUserUrl = '$_baseUrl/users/me';
+  static const String referralCodeUrl = '$_baseUrl/users/referral-code';
   static const String userLocationUrl = '$_baseUrl/users/location';
   static const String deliveryLocationUrl = '$_baseUrl/users/delivery-location';
   static const String savedLocationsUrl = '$_baseUrl/saved-locations';
