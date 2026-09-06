@@ -4,6 +4,7 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/product_list_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/ai_recommended_product_controller.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_filter_bottom_sheet.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/all_product_header.dart';
@@ -52,15 +53,13 @@ class _AllProductScreenState extends State<AllProductScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
-        if (controller.isLoading.value && controller.products.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
         return Column(
           children: [
             _AllProductScreenHeader(controller: controller),
             Expanded(
-              child: controller.products.isEmpty
+              child: controller.isLoading.value && controller.products.isEmpty
+                  ? const ProductGridShimmer()
+                  : controller.products.isEmpty
                   ? Center(child: Text(Strings.noProductsFound.tr))
                   : GridView.builder(
                       padding: EdgeInsets.fromLTRB(

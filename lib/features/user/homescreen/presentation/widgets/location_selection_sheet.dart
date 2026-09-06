@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/homescreen_shimmer.dart';
 
 class LocationSelectionSheet extends StatelessWidget {
   const LocationSelectionSheet({
@@ -116,9 +117,11 @@ class _LocationOptionTile extends StatelessWidget {
               child: isLoading
                   ? Padding(
                       padding: EdgeInsets.all(8.r(context)),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(iconColor),
+                      child: HomeShimmerBox(
+                        height: 18.h(context),
+                        width: 18.w(context),
+                        radius: 9.r(context),
+                        circle: true,
                       ),
                     )
                   : Icon(icon, color: iconColor, size: 18.sp(context)),

@@ -14,6 +14,7 @@ import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/core/widgets/label_container.dart';
+import 'package:hoodz/core/widgets/shimmer/product_details_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/product_details_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/view_all.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
@@ -40,7 +41,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   const ProductDetailsScreen({super.key});
 
   bool _hasAccessToken() =>
-      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true; 
 
   Color? _parseColor(dynamic value) { 
     if (value is Color) { 
@@ -442,7 +443,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
 
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const ProductDetailsShimmer();
         }
 
         final productData = controller.productData;

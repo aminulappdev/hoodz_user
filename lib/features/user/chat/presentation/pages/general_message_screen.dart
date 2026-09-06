@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/chat_shimmer.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/general_message_controller.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_chat_header.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/widgets/custom_input_bar.dart';
@@ -80,7 +81,15 @@ class _GeneralMessageScreenState extends State<GeneralMessageScreen>
         child: Obx(() {
           _queueScrollWhenMessagesChange(controller.messages.length);
           if (controller.isLoading.value && controller.messages.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return Column(
+              children: [
+                const Expanded(child: ChatMessagesShimmer()),
+                CustomInputBar(
+                  hintText: Strings.typeAMessage.tr,
+                  onSend: controller.sendMessage,
+                ),
+              ],
+            );
           }
 
           if (controller.messages.isEmpty) {

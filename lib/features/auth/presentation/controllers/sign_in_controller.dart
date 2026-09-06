@@ -4,6 +4,7 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
+import 'package:hoodz/core/services/others/push_notification_service.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -37,6 +38,7 @@ class SignInController extends GetxController {
     }
 
     Map<String, dynamic>? signInData;
+    final fcmToken = await PushNotificationService().getOrCreateToken();
 
     await showLoadingOverLay(
       msg: Strings.signingIn.tr,
@@ -46,6 +48,7 @@ class SignInController extends GetxController {
           body: {
             'email': emailController.text.trim(),
             'password': passwordController.text,
+            if (fcmToken != null && fcmToken.isNotEmpty) 'fcmToken': fcmToken,
           },
         );
 

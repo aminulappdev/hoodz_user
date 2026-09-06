@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
+import 'package:hoodz/core/widgets/shimmer/shop_screen_shimmer.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/about_row_info.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/shop_details_controller.dart';
 import 'package:hoodz/features/user/shop/presentation/widgets/shop_tag.dart';
@@ -18,7 +19,7 @@ class ShopDetailsScreen extends GetView<ShopDetailsController> {
       backgroundColor: Colors.white,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const ShopDetailsShimmer();
         }
 
         final shop = controller.shopData?.shop;

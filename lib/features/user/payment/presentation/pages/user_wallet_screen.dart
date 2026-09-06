@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
+import 'package:hoodz/core/widgets/shimmer/payment_shimmer.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_transaction_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/wallet_transaction_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/pages/wallet_buttomsheet.dart';
@@ -103,8 +104,8 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
                         _paymentController.isLoading.value &&
                         recentTransactions.isEmpty)
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Center(child: CircularProgressIndicator()),
+                        padding: EdgeInsets.only(top: 12),
+                        child: PaymentTransactionShimmer(),
                       )
                     else if (_selectedTabIndex == 0 &&
                         recentTransactions.isEmpty)
@@ -123,8 +124,8 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
                         _walletController.isLoading.value &&
                         walletHistory.isEmpty)
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Center(child: CircularProgressIndicator()),
+                        padding: EdgeInsets.only(top: 12),
+                        child: PaymentTransactionShimmer(),
                       )
                     else if (_selectedTabIndex == 1 && walletHistory.isEmpty)
                       Padding(

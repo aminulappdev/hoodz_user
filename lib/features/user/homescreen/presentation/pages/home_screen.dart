@@ -177,7 +177,6 @@ class HomeScreen extends GetView<HomeScreenController> {
                 onTapEdit: () {
                   if (!_hasAccessToken()) {
                     showLoginRequiredDialog();
-
                     return;
                   }
 
@@ -195,8 +194,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                   PageNavigationService.to(context, AppRoutes.cart);
                 },
                 onTapSearch: () {
-                  // PageNavigationService.to(context, AppRoutes.searchScreen);
-                  print('Pending Referral Code ${MySharedPref.getPendingReferralCode()}');
+                  PageNavigationService.to(context, AppRoutes.searchScreen);
+                  // print('Pending Referral Code ${MySharedPref.getPendingReferralCode()}');
                 },
               ),
               SizedBox(height: 20.h(context)),

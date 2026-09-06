@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/theme/light_theme_colors.dart';
-import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
+import 'package:hoodz/core/widgets/shimmer/profile_shimmer.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
@@ -20,7 +20,13 @@ class ProfileHeader extends GetView<ProfileController> {
     return Obx(() {
       final user = controller.userData;
       final hasAccessToken = _hasAccessToken();
-      final profileAvatar = hasAccessToken ? user?.profileAvatar : null;
+      if (hasAccessToken && user == null && controller.isLoading.value) {
+        return const ProfileHeaderShimmer();
+      }
+
+      final profileAvatar = hasAccessToken
+          ? user?.profileAvatar?.trim()
+          : null;
       final displayName = !hasAccessToken
           ? 'Guest User'
           : user?.name?.trim().isNotEmpty == true
@@ -97,9 +103,16 @@ class ProfileHeader extends GetView<ProfileController> {
                       child: CircleAvatar(
                         radius: 56.h(context),
                         backgroundColor: Colors.grey.shade200,
-                        backgroundImage: NetworkImage(
-                          profileAvatar ?? AppStrings.demoImageUrl,
-                        ),
+                        backgroundImage: profileAvatar?.isNotEmpty == true
+                            ? NetworkImage(profileAvatar!)
+                            : null,
+                        child: profileAvatar?.isNotEmpty == true
+                            ? null
+                            : Icon(
+                                Icons.person_outline_rounded,
+                                size: 54.h(context),
+                                color: Colors.grey.shade500,
+                              ),
                       ),
                     ),
                     // Positioned(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/order_shimmer.dart';
 import 'package:hoodz/features/user/orders/data/models/save_address_model.dart'
     as saved_address;
 import 'package:hoodz/features/user/orders/presentation/controllers/saved_location_controller.dart';
@@ -83,7 +84,7 @@ class SavedDeliveryLocationScreen extends GetView<SavedLocationController> {
               child: Obx(() {
                 if (controller.isLoading.value &&
                     controller.savedAddresses.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const SavedLocationListShimmer();
                 }
 
                 if (controller.savedAddresses.isEmpty) {

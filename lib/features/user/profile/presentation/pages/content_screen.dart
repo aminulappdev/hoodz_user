@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
+import 'package:hoodz/core/widgets/shimmer/profile_shimmer.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/content_controller.dart';
 
 class ContentScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _ContentScreenState extends State<ContentScreen> {
       body: Obx(() {
         if (_controller.isLoading.value &&
             _controller.htmlContent.value.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const ProfileContentShimmer();
         }
 
         if (_controller.htmlContent.value.isEmpty) {

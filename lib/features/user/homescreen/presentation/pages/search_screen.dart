@@ -4,6 +4,7 @@ import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/homescreen_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/data/models/initial_search_model.dart';
 import 'package:hoodz/features/user/homescreen/data/models/product_search_model.dart'
     as product_search;
@@ -361,10 +362,10 @@ class SearchScreen extends GetView<SearchScreenController> {
   }
 
   Widget _buildLoadingIndicator() {
-    return const LinearProgressIndicator(
-      minHeight: 2,
-      backgroundColor: Color(0xFFF1F1F1),
-      color: Color(0xFFFF7A1A),
+    return const HomeShimmerBox(
+      height: 8,
+      width: double.infinity,
+      radius: 4,
     );
   }
 }

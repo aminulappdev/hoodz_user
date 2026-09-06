@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/homescreen_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -186,8 +187,11 @@ class _MapLocationPickerScreenState extends State<MapLocationPickerScreen> {
                               ? SizedBox(
                                   height: 18.h(context),
                                   width: 18.w(context),
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 2,
+                                  child: const HomeShimmerBox(
+                                    height: 18,
+                                    width: 18,
+                                    radius: 9,
+                                    circle: true,
                                   ),
                                 )
                               : Icon(
@@ -264,13 +268,12 @@ class _MapLocationPickerScreenState extends State<MapLocationPickerScreen> {
                       padding: EdgeInsets.only(bottom: 10.h(context)),
                       child: Row(
                         children: [
-                          SizedBox(
-                            height: 14.h(context),
-                            width: 14.w(context),
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 2,
+                          const HomeShimmerBox(
+                            height: 14,
+                            width: 14,
+                            radius: 7,
+                            circle: true,
                             ),
-                          ),
                           SizedBox(width: 8.w(context)),
                           Text(
                             Strings.updatingSelectedAddress.tr,

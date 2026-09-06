@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:hoodz/core/widgets/shimmer/payment_shimmer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gmap;
 import 'package:hoodz/core/services/socket/user_order_socket_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -467,8 +468,11 @@ class _LiveTrackingMapPanelState extends State<LiveTrackingMapPanel> {
                         SizedBox(
                           width: 12.w(context),
                           height: 12.w(context),
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
+                          child: const PaymentShimmerBox(
+                            height: 12,
+                            width: 12,
+                            radius: 6,
+                            circle: true,
                           ),
                         ),
                         SizedBox(width: 8.w(context)),

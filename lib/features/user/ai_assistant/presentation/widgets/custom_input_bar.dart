@@ -10,6 +10,7 @@ import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/widgets/image_source_picker_sheet.dart';
+import 'package:hoodz/core/widgets/shimmer/chat_shimmer.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -180,8 +181,13 @@ class _CustomInputBarState extends State<CustomInputBar> {
                           color: const Color(0xFFF4F4F4),
                           borderRadius: BorderRadius.circular(12.r(context)),
                         ),
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                        child: Center(
+                          child: ChatShimmerBox(
+                            height: 22.h(context),
+                            width: 22.w(context),
+                            radius: 11.r(context),
+                            circle: true,
+                          ),
                         ),
                       );
                     }

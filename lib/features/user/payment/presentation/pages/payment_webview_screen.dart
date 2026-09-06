@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hoodz/core/widgets/shimmer/payment_shimmer.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -131,11 +132,15 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
         children: [
           WebViewWidget(controller: _controller),
           if (_isLoading)
-            const Positioned(
+            Positioned(
               left: 0,
               right: 0,
               top: 0,
-              child: LinearProgressIndicator(minHeight: 2),
+              child: const PaymentShimmerBox(
+                height: 3,
+                width: double.infinity,
+                radius: 0,
+              ),
             ),
         ],
       ),

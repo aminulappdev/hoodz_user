@@ -6,6 +6,7 @@ import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
+import 'package:hoodz/core/widgets/shimmer/homescreen_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/campaign_controller.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/product_card.dart';
 
@@ -44,7 +45,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
       body: Obx(() {
         if (_controller.isLoading.value &&
             _controller.campaignModel == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const HomeCampaignShimmer();
         }
 
         return RefreshIndicator(

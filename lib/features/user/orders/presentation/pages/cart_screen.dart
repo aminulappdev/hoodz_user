@@ -7,6 +7,7 @@ import 'package:hoodz/core/services/others/app_route_observer.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/circle_icon.dart';
+import 'package:hoodz/core/widgets/shimmer/order_shimmer.dart';
 import 'package:hoodz/features/user/orders/data/models/my_cart_model.dart'
     as cart_model;
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
@@ -172,7 +173,7 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
       ),
       body: Obx(() {
         if (_controller.isLoading.value && _controller.cartItems.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const CartListShimmer();
         }
 
         final cartItems = _controller.cartItems.toList(growable: false);

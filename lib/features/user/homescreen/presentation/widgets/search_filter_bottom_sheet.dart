@@ -5,6 +5,7 @@ import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
+import 'package:hoodz/core/widgets/shimmer/homescreen_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/data/models/search_filter_model.dart'
     as filter_model;
 import 'package:hoodz/features/user/homescreen/presentation/controllers/search_screen_controller.dart';
@@ -73,7 +74,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
             future: _filterFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const HomeFilterShimmer();
               }
 
               final data = snapshot.data?.data;

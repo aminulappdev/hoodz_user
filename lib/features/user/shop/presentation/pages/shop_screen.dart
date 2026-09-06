@@ -6,6 +6,7 @@ import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
+import 'package:hoodz/core/widgets/shimmer/shop_screen_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/banner_card.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_product_card.dart';
 import 'package:hoodz/features/user/shop/presentation/controller/shop_details_controller.dart';
@@ -97,7 +98,7 @@ class _ShopScreenState extends State<ShopScreen> {
         final isWishlisted = shop?.isWishlisted ?? false;
 
         if (_shopDetailsController.isLoading.value && shop == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const ShopScreenShimmer();
         }
 
         if (shop == null) {
@@ -175,7 +176,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     SizedBox(
                       height: 100.h(context),
                       child: isProductsLoading && featuredProducts.isEmpty
-                          ? const Center(child: CircularProgressIndicator())
+                          ? const ShopRecommendationShimmer()
                           : featuredProducts.isEmpty
                           ? Center(child: Text(Strings.noProductFound.tr))
                           : ListView.separated(
@@ -212,7 +213,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     ),
                     SizedBox(height: 20.h(context)),
                     isProductsLoading && allProducts.isEmpty
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const ShopGridShimmer()
                         : allProducts.isEmpty
                         ? Container(
                             height: 90.h(context),

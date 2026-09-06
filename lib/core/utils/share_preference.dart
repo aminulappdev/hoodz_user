@@ -69,6 +69,10 @@ class MySharedPref {
   static Future<void> setFcmToken(String token) =>
       _sharedPreferences.setString(_fcmTokenKey, token);
 
+  /// get saved fcm token
+  static String? getFcmToken() =>
+      _isInitialized ? _sharedPreferences.getString(_fcmTokenKey) : null;
+
   /// get authorization token
   static String? getAccessToken() =>
       _isInitialized ? _sharedPreferences.getString(_accessToken) : null;

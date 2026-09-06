@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
+import 'package:hoodz/core/widgets/shimmer/product_list_shimmer.dart';
 import 'package:hoodz/features/user/product/presentation/controller/all_product_review_controller.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/feedback_card.dart';
 import 'package:hoodz/features/user/product/presentation/widgets/review_dropdown.dart';
@@ -25,7 +26,7 @@ class AllProductReviewScreen extends GetView<AllProductReviewController> {
           () {
             if (controller.isLoading.value &&
                 controller.allReviewModel.value == null) {
-              return const Center(child: CircularProgressIndicator());
+              return const ProductReviewShimmer();
             }
 
             final feedbacks = controller.feedbacks;

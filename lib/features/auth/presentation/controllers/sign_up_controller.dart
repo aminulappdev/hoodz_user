@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
+import 'package:hoodz/core/services/others/push_notification_service.dart';
 import 'package:hoodz/core/services/others/show_loader.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
@@ -34,6 +35,7 @@ class SignUpController extends GetxController {
     final email = emailCtrl.text.trim();
     const role = 'user';
     String? verificationToken;
+    final fcmToken = await PushNotificationService().getOrCreateToken();
 
     try {
       await showLoadingOverLay(
@@ -45,7 +47,7 @@ class SignUpController extends GetxController {
               'email': email,
               'password': passwordCtrl.text,
               'role': role,
-              'fcmToken': 'FCM_TOKEN',
+              if (fcmToken != null && fcmToken.isNotEmpty) 'fcmToken': fcmToken,
               'isLegalTermsAccepted': true,
               if (MySharedPref.getPendingReferralCode() != null)
                 'referralCode': MySharedPref.getPendingReferralCode(),

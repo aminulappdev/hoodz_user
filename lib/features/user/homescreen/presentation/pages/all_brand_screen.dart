@@ -5,6 +5,7 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/constants/app_strings.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/shimmer/homescreen_shimmer.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/all_brand_controller.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/brand_card_list.dart';
 import 'package:hoodz/features/user/homescreen/presentation/widgets/category_list.dart';
@@ -52,7 +53,7 @@ class AllBrandScreen extends GetView<AllBrandController> {
                     SizedBox(
                       height: 120.h(context),
                       child: isCategoriesLoading && categories.isEmpty
-                          ? const Center(child: CircularProgressIndicator())
+                          ? const HomeCategoryShimmer()
                           : categories.isEmpty
                           ? Center(child: Text(Strings.noCategoryFound.tr))
                           : ListView.separated(
@@ -105,7 +106,7 @@ class AllBrandScreen extends GetView<AllBrandController> {
                         child: Text(Strings.selectACategoryToViewShops.tr),
                       )
                     else if (isShopsLoading && shops.isEmpty)
-                      const Center(child: CircularProgressIndicator())
+                      const HomeBrandListShimmer()
                     else if (shops.isEmpty)
                       Container(
                         width: double.infinity,

@@ -47,6 +47,9 @@ class UserDashboardController extends GetxController {
 
     if (wasVisited) {
       _refreshTab(index, hasAccessToken: hasAccessToken);
+    } else if (index == 4) {
+      // Load profile data as soon as the profile tab is opened for the first time.
+      Get.find<ProfileController>().loadUserProfile();
     }
   }
 

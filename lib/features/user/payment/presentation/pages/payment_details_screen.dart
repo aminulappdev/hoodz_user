@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/custom_appbar.dart';
+import 'package:hoodz/core/widgets/shimmer/payment_shimmer.dart';
 import 'package:hoodz/core/widgets/custom_button.dart';
 import 'package:hoodz/core/services/socket/user_order_socket_service.dart';
 import 'package:hoodz/features/user/chat/presentation/controllers/chat_system_controller.dart';
@@ -182,7 +183,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
 
           if (_controller.isLoading.value &&
               _controller.orderDetailsData == null) {
-            return const Center(child: CircularProgressIndicator());
+            return const PaymentDetailsShimmer();
           }
 
           return RefreshIndicator(
