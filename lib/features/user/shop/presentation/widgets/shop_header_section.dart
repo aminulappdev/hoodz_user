@@ -14,7 +14,7 @@ import 'package:hoodz/gen/assets.gen.dart';
 class ShopHeader extends StatelessWidget {
   const ShopHeader({
     super.key,
-    required this.coverImageUrl,
+    required this.coverImageUrl, 
     required this.profileImageUrl,
     required this.shopName,
     required this.distance,
@@ -50,10 +50,10 @@ class ShopHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final previewImages = <String>[
+    final previewImages = <String>{
       if (coverImageUrl.trim().isNotEmpty) coverImageUrl.trim(),
       if (profileImageUrl.trim().isNotEmpty) profileImageUrl.trim(),
-    ].toSet().toList(growable: false);
+    }.toList(growable: false);
 
     int previewIndexFor(String url) {
       final index = previewImages.indexOf(url.trim());

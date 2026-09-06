@@ -436,6 +436,7 @@ class Strings {
   static const String dateOfBirth = 'date_of_birth';
   static const String dateFormatHint = 'date_format_hint';
   static const String address = 'address';
+  static const String setAddress = 'set_address';
   static const String change = 'change';
   static const String selectYourAddress = 'select_your_address';
   static const String profilePicture = 'profile_picture';
@@ -467,6 +468,10 @@ class Strings {
   static const String profileSetupCompleted = 'profile_setup_completed';
   static const String requestPendingMessage = 'request_pending_message';
   static const String sendingOtp = 'sending_otp';
+  static const String resendOtp = 'resend_otp';
+  static const String resendOtpIn = 'resend_otp_in';
+  static const String otpSent = 'otp_sent';
+  static const String otpSentToEmail = 'otp_sent_to_email';
   static const String signingIn = 'signing_in';
   static const String creatingAccount = 'creating_account';
   static const String verifyingOtp = 'verifying_otp';

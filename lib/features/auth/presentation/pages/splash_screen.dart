@@ -1,7 +1,6 @@
 import 'package:crash_safe_image/crash_safe_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
-import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/referral/referral_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -17,10 +16,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Get.find<ReferralService>().start();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<ReferralService>().start();
+    });
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
-      PageNavigationService.replace(context, AppRoutes.userDashboard);
+      Get.offAllNamed(AppRoutes.userDashboard);
     });
   }
 

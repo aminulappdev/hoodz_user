@@ -156,7 +156,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   CustomTextField(
                     controller: controller.nameController,
                     hintText: Strings.enterYourName.tr,
-                    validator: ValidatorService.validateFullName,
+                    validator: ValidatorService.validateSimpleField,
                   ),
                   SizedBox(height: 20.h(context)),
                   LabelText(label: Strings.phoneNumber.tr),

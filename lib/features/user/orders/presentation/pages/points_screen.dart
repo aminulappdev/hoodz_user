@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/core/services/referral/referral_service.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
@@ -11,6 +10,15 @@ import 'package:hoodz/core/widgets/custom_button.dart';
 
 class PointsScreen extends StatelessWidget {
   const PointsScreen({super.key});
+
+  String _formatCoins(dynamic coins) {
+    if (coins is num) {
+      return coins.toInt().toString();
+    }
+
+    final parsedCoins = int.tryParse(coins?.toString() ?? '');
+    return (parsedCoins ?? 0).toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,17 +78,19 @@ class PointsScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                '100 Points',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFFFF6A00),
+                              Obx(
+                                () => Text(
+                                  '${_formatCoins(profileController.userData?.coins)} Points',
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFFF6A00),
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Refer 4 friends & earn up to\n25 points per successful referral.',
+                                '1 Coin = EGP 1.00\nRedeem from 50 coins at checkout.',
                                 style: TextStyle(
                                   fontSize: 12,
                                   height: 1.35,
@@ -130,8 +140,10 @@ class PointsScreen extends StatelessWidget {
                                 ),
                                 alignment: Alignment.centerLeft,
                                 child: Obx(() {
-                                  final code = profileController.userData?.referralCode;
-                                  final link = code == null || code.trim().isEmpty
+                                  final code =
+                                      profileController.userData?.referralCode;
+                                  final link =
+                                      code == null || code.trim().isEmpty
                                       ? 'Referral link unavailable'
                                       : referralService.buildReferralLink(code);
                                   return Text(
@@ -154,13 +166,20 @@ class PointsScreen extends StatelessWidget {
                                 text: 'Share',
                                 height: 48,
                                 onPressed: () async {
-                                  final code = profileController.userData?.referralCode;
+                                  final code =
+                                      profileController.userData?.referralCode;
                                   if (code == null || code.trim().isEmpty) {
-                                    showAppToast(message: 'Referral link is not available', isError: true);
+                                    showAppToast(
+                                      message: 'Referral link is not available',
+                                      isError: true,
+                                    );
                                     return;
                                   }
                                   await SharePlus.instance.share(
-                                    ShareParams(text: referralService.buildReferralLink(code)),
+                                    ShareParams(
+                                      text:
+                                          referralService.buildReferralLink(code),
+                                    ),
                                   );
                                 },
                               ),
@@ -168,21 +187,6 @@ class PointsScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 18),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton.icon(
-                            onPressed: () async {
-                              final code = profileController.userData?.referralCode;
-                              if (code == null || code.trim().isEmpty) return;
-                              await Clipboard.setData(
-                                ClipboardData(text: referralService.buildReferralLink(code)),
-                              );
-                              showAppToast(message: 'Referral link copied');
-                            },
-                            icon: const Icon(Icons.copy_rounded, size: 16),
-                            label: const Text('Copy link'),
-                          ),
-                        ),
                         Text(
                           'How It Works',
                           style: TextStyle(
@@ -209,7 +213,7 @@ class PointsScreen extends StatelessWidget {
                           icon: Icons.savings_outlined,
                           title: 'Earn points',
                           subtitle:
-                              'Both of you get 25 points per referral - up to 100 points for 4 friends.',
+                              'Get 30 coins as inviter after your friend\'s first order. Invitees get 20 coins on a first order over EGP 500.',
                         ),
                         const SizedBox(height: 14),
                         Container(
@@ -221,13 +225,119 @@ class PointsScreen extends StatelessWidget {
                             border: Border.all(color: const Color(0xFFFFD9B8)),
                           ),
                           child: Text(
-                            'Bonus tip:\nRefer 4 friends and unlock the maximum reward of 100 points.\nPoints can be redeemed on checkout. No expiry!',
+                            'Bonus tip:\nComplete your profile for 10 coins, write verified reviews to earn more, and redeem coins at checkout when your balance reaches 50 coins.',
                             style: TextStyle(
                               fontSize: 12,
                               height: 1.45,
                               color: Colors.grey.shade800,
                             ),
                           ),
+                        ),
+                        const SizedBox(height: 18),
+                        const _RulesSection(
+                          title: '1. Earning Scheme',
+                          headers: [
+                            'Trigger Action',
+                            'Coins Earned',
+                            'Maximum Cap',
+                          ],
+                          rows: [
+                            _RuleRow(
+                              values: [
+                                'Standard Purchase',
+                                '1 Coin per EGP 100 spent',
+                                'No limit',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Account Creation',
+                                '20 Coins (Welcome Bonus)',
+                                'Once per user',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Complete Profile',
+                                '10 Coins',
+                                'Once per user',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Verified Product Review',
+                                '5 Coins',
+                                '2 reviews / month',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Photo / Outfit Review',
+                                '15 Coins',
+                                '2 reviews / month',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Referral (Inviter)',
+                                '30 Coins',
+                                "After friend's 1st order",
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Referral (Invitee)',
+                                '20 Coins',
+                                'On 1st order over EGP 500',
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 18),
+                        const _RulesSection(
+                          title: '2. Redemption & Financial Safeguards',
+                          headers: [
+                            'Rule',
+                            'Requirement / Constraint',
+                          ],
+                          rows: [
+                            _RuleRow(
+                              values: [
+                                'Coin Conversion',
+                                '1 Coin = EGP 1.00',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Min. Balance Needed',
+                                '50 Coins (EGP 50 value)',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Min. Basket Size',
+                                'EGP 500 subtotal',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Max. Checkout Cap',
+                                '15% of basket subtotal',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Product Exclusions',
+                                'Discounted / Clearance items',
+                              ],
+                            ),
+                            _RuleRow(
+                              values: [
+                                'Delivery Exclusions',
+                                'Applies to cart only (not shipping fees)',
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -238,6 +348,105 @@ class PointsScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RulesSection extends StatelessWidget {
+  const _RulesSection({
+    required this.title,
+    required this.headers,
+    required this.rows,
+  });
+
+  final String title;
+  final List<String> headers;
+  final List<_RuleRow> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    final columnFlexes = headers.length == 3
+        ? const <int>[11, 11, 11]
+        : const <int>[10, 13];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w800,
+            color: Colors.grey.shade900,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _RuleTableRow(
+          values: headers,
+          flexes: columnFlexes,
+          isHeader: true,
+        ),
+        ...rows.map(
+          (row) => _RuleTableRow(
+            values: row.values,
+            flexes: columnFlexes,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RuleRow {
+  const _RuleRow({required this.values});
+
+  final List<String> values;
+}
+
+class _RuleTableRow extends StatelessWidget {
+  const _RuleTableRow({
+    required this.values,
+    required this.flexes,
+    this.isHeader = false,
+  });
+
+  final List<String> values;
+  final List<int> flexes;
+  final bool isHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: isHeader ? 10 : 12),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFE8E8E8)),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(values.length, (index) {
+          return Expanded(
+            flex: flexes[index],
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: index == values.length - 1 ? 0 : 12,
+              ),
+              child: Text(
+                values[index],
+                style: TextStyle(
+                  fontSize: isHeader ? 12 : 12.5,
+                  height: 1.35,
+                  fontWeight: isHeader ? FontWeight.w600 : FontWeight.w500,
+                  color: isHeader
+                      ? Colors.grey.shade700
+                      : const Color(0xFF242424),
+                ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }

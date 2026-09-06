@@ -10,7 +10,7 @@ class MySharedPref {
 
   // get storage
   static late SharedPreferences _sharedPreferences;
-  static bool _isInitialized = false;
+  static bool _isInitialized = false; 
 
   // STORING KEYS 
   static const String _fcmTokenKey = 'fcm_token'; 

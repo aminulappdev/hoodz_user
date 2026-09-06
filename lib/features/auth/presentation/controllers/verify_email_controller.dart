@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
@@ -12,14 +14,18 @@ class VerifyEmailController extends GetxController {
   final RxString verificationToken = ''.obs;
   final RxString verificationType = 'signup'.obs;
   final RxString screenName = 'signup'.obs;
+  final RxInt resendSeconds = 0.obs;
+  final RxBool isResendingOtp = false.obs;
 
   final NetworkCaller _networkCaller;
+  Timer? _resendTimer;
 
   void initializeFromArguments(Object? arguments) {
     email.value = '';
     verificationToken.value = '';
     verificationType.value = 'signup';
     screenName.value = 'signup';
+    _startResendCooldown();
 
     if (arguments is! Map) {
       return;
@@ -39,6 +45,49 @@ class VerifyEmailController extends GetxController {
     if (routeScreenName is String && routeScreenName.isNotEmpty) {
       screenName.value = routeScreenName;
       verificationType.value = routeScreenName;
+    }
+  }
+
+  bool get canResendOtp => resendSeconds.value == 0 && !isResendingOtp.value;
+
+  Future<void> resendOtp() async {
+    final resolvedEmail = email.value.trim();
+    if (resolvedEmail.isEmpty) {
+      Get.snackbar(Strings.requestFailed.tr, Strings.enterYourEmail.tr);
+      return;
+    }
+
+    if (!canResendOtp) {
+      return;
+    }
+
+    isResendingOtp.value = true;
+    try {
+      await showLoadingOverLay(
+        msg: Strings.sendingOtp.tr,
+        asyncFunction: () async {
+          final response = await _networkCaller.postRequest(
+            Urls.sendOtpInEmailUrl,
+            accessToken: verificationToken.value,
+            body: {'email': resolvedEmail},
+          );
+
+          if (!response.isSuccess) {
+            Get.snackbar(Strings.requestFailed.tr, response.errorMessage);
+            return;
+          }
+
+          final nextToken = _extractVerificationToken(response.responseData);
+          if (nextToken != null && nextToken.isNotEmpty) {
+            verificationToken.value = nextToken;
+          }
+
+          _startResendCooldown();
+          Get.snackbar(Strings.otpSent.tr, Strings.otpSentToEmail.tr);
+        },
+      );
+    } finally {
+      isResendingOtp.value = false;
     }
   }
 
@@ -99,6 +148,47 @@ class VerifyEmailController extends GetxController {
     return verifiedData;
   }
 
+  void _startResendCooldown() {
+    _resendTimer?.cancel();
+    resendSeconds.value = 60;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final nextSeconds = resendSeconds.value - 1;
+      if (nextSeconds <= 0) {
+        resendSeconds.value = 0;
+        timer.cancel();
+        return;
+      }
+
+      resendSeconds.value = nextSeconds;
+    });
+  }
+
+  String? _extractVerificationToken(dynamic responseData) {
+    if (responseData is! Map) {
+      return null;
+    }
+
+    final data = responseData['data'];
+    if (data is! Map) {
+      return null;
+    }
+
+    final otpToken = data['otpToken'];
+    if (otpToken is Map) {
+      final token = otpToken['verificationToken'];
+      if (token is String && token.isNotEmpty) {
+        return token;
+      }
+    }
+
+    final token = data['verificationToken'];
+    if (token is String && token.isNotEmpty) {
+      return token;
+    }
+
+    return null;
+  }
+
   String? _extractAccessToken(dynamic responseData) {
     if (responseData is! Map) {
       return null;
@@ -137,5 +227,11 @@ class VerifyEmailController extends GetxController {
     }
 
     return null;
+  }
+
+  @override
+  void onClose() {
+    _resendTimer?.cancel();
+    super.onClose();
   }
 }

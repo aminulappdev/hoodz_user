@@ -5,6 +5,7 @@ import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
+import 'package:hoodz/core/widgets/shimmer/order_shimmer.dart';
 import 'package:hoodz/features/user/orders/data/models/my_order_model.dart'
     as order_model;
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
@@ -139,7 +140,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                 child: Builder(
                   builder: (context) {
                     if (controller.isLoading && controller.orders.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const OrderListShimmer();
                     }
 
                     final orders = controller.orders;

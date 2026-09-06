@@ -10,7 +10,6 @@ import 'package:hoodz/core/widgets/custom_text_field.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_transaction_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/wallet_top_up_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/wallet_transaction_controller.dart';
-import 'package:hoodz/features/user/payment/presentation/widgets/buttom_sheet_payment_option.dart';
 
 class AddBalanceBottomSheetContent extends StatefulWidget {
   const AddBalanceBottomSheetContent({super.key});
@@ -31,7 +30,6 @@ class _AddBalanceBottomSheetContentState
     super.initState();
     _controller = Get.find<WalletTopUpController>();
     _controller.amountController.clear();
-    _controller.selectMethod(1);
   }
 
   Future<void> _handlePayNow() async {
@@ -168,49 +166,56 @@ class _AddBalanceBottomSheetContentState
                 },
               ),
               SizedBox(height: 16.h(context)),
-              Text(
-                Strings.selectPaymentMethod.tr,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 14.sp(context),
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2F2F2F),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF9F9F9),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFEDEDED)),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Obx(
-                () => BottomSheetPaymentOption(
-                  isSelected: _controller.selectedMethodIndex.value == 0,
-                  title: Strings.savedCard.tr,
-                  subtitle: Strings.savedCard.tr,
-                  leading: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF293DA8),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'VISA',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFFF1EA),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.credit_card_rounded,
+                        color: Color(0xFFFF6200),
+                        size: 20,
                       ),
                     ),
-                  ),
-                  onTap: () => _controller.selectMethod(0),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Obx(
-                () => BottomSheetPaymentOption(
-                  isSelected: _controller.selectedMethodIndex.value == 1,
-                  title: Strings.debitCreditCard.tr,
-                  subtitle: Strings.payViaPaymobGateway.tr,
-                  leading: const SizedBox.shrink(),
-                  onTap: () => _controller.selectMethod(1),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Strings.debitCreditCard.tr,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  fontSize: 14.sp(context),
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF252525),
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            Strings.payViaPaymobGateway.tr,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  fontSize: 12.sp(context),
+                                  color: const Color(0xFF98A2B3),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 14),

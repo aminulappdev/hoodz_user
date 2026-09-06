@@ -45,11 +45,16 @@ class AuthBackground extends StatelessWidget {
                 isBack
                     ? Row(
                         children: [
-                          CrashSafeImage(
-                            Assets.icons.arrow.path,
-                            height: 12,
-                            width: 12,
-                            color: Colors.white,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: CrashSafeImage(
+                              Assets.icons.arrow.path,
+                              height: 12,
+                              width: 12,
+                              color: Colors.white,
+                            ),
                           ),
                           SizedBox(width: 4.w(context)),
                           Text(

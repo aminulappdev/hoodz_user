@@ -22,11 +22,11 @@ class SignInScreen extends GetView<SignInController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AuthBackground( 
-        isBack: true,
+        isBack: false,
         backLabel: Strings.back.tr,
         title: Strings.welcomeBack.tr,
         subtitle: Strings.signInSubtitle.tr,
-        contentColumn: Form(
+        contentColumn: Form( 
           key: controller.formKey,
           child: SingleChildScrollView(
             child: Column(

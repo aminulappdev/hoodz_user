@@ -18,7 +18,7 @@ import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_co
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key}); 
-
+ 
   @override
   State<ShopScreen> createState() => _ShopScreenState();
 }

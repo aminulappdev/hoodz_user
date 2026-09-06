@@ -13,7 +13,7 @@ class ProfileController extends GetxController {
   final RxString selectedLanguage = 'en'.obs;
   final RxBool isLoading = false.obs;
   final RxString currentAddress = ''.obs;
-
+ 
   final NetworkCaller _networkCaller = Get.find<NetworkCaller>();
 
   final Rx<UserProfileModel?> _userProfileModel = Rx<UserProfileModel?>(null);

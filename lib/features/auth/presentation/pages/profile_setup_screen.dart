@@ -19,8 +19,8 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
   Future<void> _showLocationSheet(BuildContext context) async {
     await showModalBottomSheet<void>(
       context: context,
-              backgroundColor: Colors.transparent,
-              builder: (_) => Obx(
+      backgroundColor: Colors.transparent,
+      builder: (_) => Obx(
         () => LocationSelectionSheet(
           isLoadingCurrentLocation: controller.isLoadingCurrentLocation.value,
           onTapCurrentLocation: () async {
@@ -60,7 +60,7 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
       context,
     ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF757575));
     return Scaffold(
-      appBar: CustomAppBar(label: Strings.profileSetup.tr),
+      appBar: CustomAppBar(label: Strings.profileSetup.tr, isShowBackButton: false,),
       body: SizedBox(
         height: height,
         width: width,
@@ -78,7 +78,7 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                   CustomTextField(
                     controller: controller.nameController,
                     hintText: Strings.enterYourName.tr,
-                    validator: ValidatorService.validateFullName,
+                    validator: ValidatorService.validateSimpleField,
                   ),
                   SizedBox(height: 20.h(context)),
                   LabelText(label: Strings.phoneNumber.tr),
@@ -155,34 +155,13 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                     ],
                   ),
                   SizedBox(height: 20.h(context)),
-                  Row(
-                    children: [
-                      LabelText(label: Strings.address.tr),
-                      Spacer(),
-                      GestureDetector(
-                        onTap: () => _showLocationSheet(context),
-                        child: Text(
-                          Strings.change.tr,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: const Color(0xFF757575),
-                                fontFamily: 'Geist',
-                                fontSize: 12.sp(context),
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.underline,
-                                decorationColor: const Color(0xFF757575),
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  LabelText(label: Strings.address.tr),
                   SizedBox(height: 8.h(context)),
-                  CustomTextField(
-                    controller: controller.addressController,
-                    hintText: Strings.selectYourAddress.tr,
-                    readOnly: true,
-                    maxLines: 3,
-                    validator: ValidatorService.validateSimpleField,
+                  Obx(
+                    () => _AddressPickerCard(
+                      address: controller.selectedAddress.value,
+                      onTap: () => _showLocationSheet(context),
+                    ),
                   ),
                   SizedBox(height: 20.h(context)),
                   CustomButton(
@@ -200,6 +179,96 @@ class ProfileSetupScreen extends GetView<ProfileSetupController> {
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AddressPickerCard extends StatelessWidget {
+  const _AddressPickerCard({
+    required this.address,
+    required this.onTap,
+  });
+
+  final String address;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasAddress = address.trim().isNotEmpty;
+    final theme = Theme.of(context).textTheme;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(28),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 96.h(context)),
+          child: Ink(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: 18.w(context),
+              vertical: 18.h(context),
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFAFAFA),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: const Color(0xFFE8ECEB)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A000000),
+                  offset: Offset(0, 8),
+                  blurRadius: 18,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 34.h(context),
+                  width: 34.h(context),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFF1EA),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.location_on_outlined,
+                    color: Color(0xFFFF5A00),
+                    size: 20,
+                  ),
+                ),
+                SizedBox(height: 8.h(context)),
+                Text(
+                  hasAddress ? address.trim() : Strings.setAddress.tr,
+                  textAlign: TextAlign.center,
+                  maxLines: hasAddress ? 2 : 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.bodyMedium?.copyWith(
+                    color: hasAddress
+                        ? const Color(0xFF2F2F2F)
+                        : const Color(0xFF9B9B9B),
+                    fontSize: 15.sp(context),
+                    fontWeight: hasAddress ? FontWeight.w500 : FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 6.h(context)),
+                Text(
+                  Strings.change.tr,
+                  textAlign: TextAlign.center,
+                  style: theme.bodyMedium?.copyWith(
+                    color: const Color(0xFF757575),
+                    fontSize: 12.sp(context),
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.underline,
+                    decorationColor: const Color(0xFF757575),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

@@ -91,7 +91,7 @@ class ProfileScreen extends GetView<ProfileController> {
         height: height,
         width: width,
         child: Column(
-          children: [
+          children: [ 
             ProfileHeader(),
             SizedBox(height: 20.h(context)),
             Expanded(

@@ -17,15 +17,17 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
     required this.onInvalidPointsAttempt,
     required this.onApplyVoucher,
     required this.availablePointsLabel,
+    this.pointDiscountLabel,
   });
 
   final TextEditingController voucherController;
   final bool isPointsEnabled;
   final bool isPointsToggleEnabled;
-  final ValueChanged<bool> onPointsChanged;
+  final Future<void> Function(bool value) onPointsChanged;
   final VoidCallback onInvalidPointsAttempt;
   final VoidCallback onApplyVoucher;
   final String availablePointsLabel;
+  final String? pointDiscountLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -94,16 +96,27 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                     ),
+                    if (pointDiscountLabel?.trim().isNotEmpty == true) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        pointDiscountLabel!,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFE53935),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   if (!isPointsToggleEnabled) {
                     onInvalidPointsAttempt();
                     return;
                   }
-                  onPointsChanged(!isPointsEnabled);
+                  await onPointsChanged(!isPointsEnabled);
                 },
                 child: SizedBox(
                   height: 40,
@@ -123,7 +136,7 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
                 ),
               ),
             ],
-          ), 
+          ),
           const SizedBox(height: 4),
           GestureDetector(
             onTap: () => PageNavigationService.to(

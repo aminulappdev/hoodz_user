@@ -20,14 +20,16 @@ import 'package:hoodz/features/user/orders/presentation/widgets/payment_summary_
 import 'package:hoodz/features/user/orders/presentation/widgets/play_with_card.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_successfull_controller.dart';
+import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 
 const Color kBgGrey = Color(0xFFF6F6F8);
-  class CheckoutScreen extends StatefulWidget {
+
+class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
-  
+
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState(); 
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
@@ -37,6 +39,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       Get.find<ProductOrderController>();
   final PaymentInitiateController _paymentInitiateController =
       Get.find<PaymentInitiateController>();
+  final ProfileController _profileController = Get.find<ProfileController>();
   final PaymentWebViewService _paymentWebViewService =
       const PaymentWebViewService();
   final TextEditingController _voucherController = TextEditingController();
@@ -59,14 +62,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   int get _availableRedeemableCoins {
     final availablePoints = _availablePoints;
-    final maxByAmount = (_totalAmountValue * 0.15).floor();
-    if (availablePoints < 50 || maxByAmount < 50) {
+    final maxCoinsByAmount = (_totalAmountValue * 0.15 * _coinsPerEgp).floor();
+    if (availablePoints < 50 || maxCoinsByAmount < 50) {
       return 0;
     }
 
-    final eligibleCoins = availablePoints < maxByAmount
+    final eligibleCoins = availablePoints < maxCoinsByAmount
         ? availablePoints
-        : maxByAmount;
+        : maxCoinsByAmount;
     return eligibleCoins;
   }
 
@@ -142,6 +145,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     await _submitOrderSummary(showConfirmPopup: true);
   }
 
+  Future<void> _handlePointsChanged(bool value) async {
+    if (value && !_canUsePoints) {
+      await _showCoinRulePopup();
+      return;
+    }
+
+    final previousValue = _usePoints;
+    setState(() {
+      _usePoints = value;
+    });
+
+    final isSuccess = await _submitOrderSummary(showConfirmPopup: false);
+    if (!isSuccess && mounted) {
+      setState(() {
+        _usePoints = previousValue;
+      });
+    }
+  }
+
   Future<void> _handleContinueOrder() async {
     final note = _noteController.text.trim();
     final voucherCode = _voucherController.text.trim();
@@ -180,10 +202,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final paymentData = _paymentInitiateController.cardPaymentData;
       final paymentUrl = paymentData?.paymentUrl;
       if (paymentUrl == null || paymentUrl.trim().isEmpty) {
-      showAppToast(
-        message: Strings.paymentUrlNotFound.tr,
-        isError: true,
-      );
+        showAppToast(
+          message: Strings.paymentUrlNotFound.tr,
+          isError: true,
+        );
         return;
       }
 
@@ -261,8 +283,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return SummaryItem(Strings.totalAmount.tr, _formatCurrency(totalAmount));
   }
 
-  int get _availablePoints =>
-      _orderSummaryController.orderSummaryData?.pointBalance ?? 0;
+  int get _availablePoints => _profileController.userData?.coins ?? 0;
+
+  int get _coinsPerEgp {
+    final coinsPerEgp = _profileController.userData?.coinsPerEgp ?? 1;
+    return coinsPerEgp <= 0 ? 1 : coinsPerEgp;
+  }
+
+  num get _pointDiscountValue => (_redeemCoinsValue ?? 0) / _coinsPerEgp;
 
   num get _walletBalance =>
       _orderSummaryController.orderSummaryData?.walletBalance ?? 0;
@@ -301,6 +329,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   String get _availablePointsLabel =>
       '${Strings.availablePoints.tr} $_availablePoints';
+  String? get _pointDiscountLabel {
+    if (!_usePoints || _redeemCoinsValue == null) {
+      return null;
+    }
+
+    return '${Strings.coinDiscount.tr} -${_formatCurrency(_pointDiscountValue)}';
+  }
+
   String get _walletLabel =>
       '${Strings.wallet.tr} (\$${_walletBalance.toStringAsFixed(2)})';
 
@@ -401,7 +437,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   () => CheckoutOrderDetailsCard(
                     onChangeTap: () async {
                       PageNavigationService.to(
-                        context, 
+                        context,
                         AppRoutes.savedDeliveryLocation,
                       );
                     },
@@ -412,20 +448,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                CheckoutVoucherPointsCard(
-                  voucherController: _voucherController,
-                  isPointsEnabled: _usePoints,
-                  isPointsToggleEnabled: _canUsePoints,
-                  onPointsChanged: (value) {
-                    setState(() {
-                      _usePoints = value && _canUsePoints;
-                    });
-                  },
-                  onInvalidPointsAttempt: _showCoinRulePopup,
-                  onApplyVoucher: _applyVoucherAndPoints,
-                  availablePointsLabel: _availablePointsLabel,
+                Obx(
+                  () => CheckoutVoucherPointsCard(
+                    voucherController: _voucherController,
+                    isPointsEnabled: _usePoints,
+                    isPointsToggleEnabled: _canUsePoints,
+                    onPointsChanged: _handlePointsChanged,
+                    onInvalidPointsAttempt: _showCoinRulePopup,
+                    onApplyVoucher: _applyVoucherAndPoints,
+                    availablePointsLabel: _availablePointsLabel,
+                    pointDiscountLabel: _pointDiscountLabel,
+                  ),
                 ),
-               
+
                 const SizedBox(height: 14),
                 _CheckoutSection(
                   title: Strings.deliveryType.tr,
@@ -435,7 +470,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ? Strings.regularDelivery.tr
                         : Strings.instantDelivery.tr,
                     onChanged: (value) async {
-                      final nextDeliveryType = value == Strings.instantDelivery.tr
+                      final nextDeliveryType = value ==
+                              Strings.instantDelivery.tr
                           ? 'instant'
                           : 'regular';
 
@@ -503,7 +539,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: CustomButton(
               text: Strings.placeOrder.tr,
               onPressed: _handlePlaceOrder,
-              ),
+            ),
           ),
         ],
       ),

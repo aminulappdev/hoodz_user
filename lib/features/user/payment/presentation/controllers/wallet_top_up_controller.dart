@@ -18,7 +18,6 @@ class WalletTopUpController extends GetxController {
   final TextEditingController amountController = TextEditingController();
 
   final RxBool isLoading = false.obs;
-  final RxInt selectedMethodIndex = 1.obs;
 
   void setAmount(int amount) {
     amountController.text = amount.toString();
@@ -26,15 +25,6 @@ class WalletTopUpController extends GetxController {
       offset: amountController.text.length,
     );
   }
-
-  void selectMethod(int index) {
-    selectedMethodIndex.value = index;
-  }
-
-  String get selectedMethodLabel =>
-      selectedMethodIndex.value == 0
-          ? Strings.savedCard.tr
-          : Strings.debitCreditCard.tr;
 
   Future<top_up.WalletTopUpModel?> addWalletMoney() async {
     final amount = int.tryParse(amountController.text.trim());

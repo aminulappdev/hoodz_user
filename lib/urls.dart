@@ -1,11 +1,12 @@
 class Urls {
-  static const String _baseUrl = 'http://72.244.153.29:5029/api/v1';
-  static const String socketUrl = 'http://72.244.153.29:5029';
+  static const String _baseUrl = 'https://api.thehoodz.net/api/v1';
+  static const String socketUrl = 'https://api.thehoodz.net';
 
   static const String signUpWithEmailUrl = '$_baseUrl/auth/signup-with-email';
   static const String loginWithEmailUrl = '$_baseUrl/auth/login-with-email';
   static const String forgotPasswordUrl = '$_baseUrl/auth/forgot-password';
   static const String verifyOtpUrl = '$_baseUrl/otp/verify';
+  static const String sendOtpInEmailUrl = '$_baseUrl/otp/send-otp-in-email';
   static const String resetPasswordUrl = '$_baseUrl/auth/reset-password';
   static const String changePasswordUrl = '$_baseUrl/auth/change-password';
   static const String uploadMultipleUrl = '$_baseUrl/upload/multiple';

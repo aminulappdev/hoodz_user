@@ -15,7 +15,17 @@ class ShopProfileImage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2.w(context)),
+        border: Border.all(
+          color: const Color(0xFFFF6A00),
+          width: 2.w(context),
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x26000000),
+            offset: Offset(0, 8),
+            blurRadius: 18,
+          ),
+        ],
       ),
       child: AppCachedNetworkImage(
         imageUrl: imageUrl,

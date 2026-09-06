@@ -95,11 +95,41 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     );
                   },
                 ),
+                SizedBox(height: 18.h(context)),
+                Center(
+                  child: Obx(() {
+                    final seconds = controller.resendSeconds.value;
+                    final canResend = controller.canResendOtp;
+                    final text = canResend
+                        ? Strings.resendOtp.tr
+                        : '${Strings.resendOtpIn.tr} ${seconds}s';
+
+                    return TextButton(
+                      onPressed: canResend ? controller.resendOtp : null,
+                      child: Text(
+                        text,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 14.sp(context),
+                          fontWeight: FontWeight.w600,
+                          color: canResend
+                              ? const Color(0xFF2F2F2F)
+                              : const Color(0xFF8A8A8A),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _otpCtrl.dispose();
+    super.dispose();
   }
 }

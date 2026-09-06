@@ -11,8 +11,10 @@ import 'translator/localization_service.dart';
 class HoodzApp extends StatelessWidget {
   const HoodzApp({super.key});
 
-  @override 
+  @override
   Widget build(BuildContext context) {
+    final routes = getAppRoutes();
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -26,7 +28,15 @@ class HoodzApp extends StatelessWidget {
             ? ThemeMode.light
             : ThemeMode.dark,
         initialRoute: initialRoute,
-        routes: getAppRoutes(),
+        onGenerateInitialRoutes: (_) {
+          return [
+            MaterialPageRoute(
+              settings: RouteSettings(name: initialRoute),
+              builder: routes[initialRoute]!,
+            ),
+          ];
+        },
+        routes: routes,
         navigatorObservers: [appRouteObserver],
         locale: MySharedPref.getLocale(),
         fallbackLocale: LocalizationService.defaultLanguage,
