@@ -26,14 +26,14 @@ class HomeScreenController extends GetxController {
       'nameKey': Strings.localBrand,
     },
     {
-      'image': Assets.icons.international.keyName,
-      'name': Strings.internationalBrand,
-      'nameKey': Strings.internationalBrand,
-    },
-    {
       'image': Assets.icons.trendingNow.keyName,
       'name': Strings.trendingNow,
       'nameKey': Strings.trendingNow,
+    },
+    {
+      'image': Assets.icons.international.keyName,
+      'name': Strings.internationalBrand,
+      'nameKey': Strings.internationalBrand,
     },
     {
       'image': Assets.icons.egypt.keyName,

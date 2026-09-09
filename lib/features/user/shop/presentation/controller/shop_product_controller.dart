@@ -59,13 +59,6 @@ class ShopProductController extends GetxController {
     );
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    final arguments = Get.arguments;
-    initialize(arguments is Map<String, dynamic> ? arguments : null);
-  }
-
   void initialize(
     Map<String, dynamic>? arguments, {
     bool forceRefresh = false,

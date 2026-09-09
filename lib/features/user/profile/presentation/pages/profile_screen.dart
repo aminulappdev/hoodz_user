@@ -97,181 +97,201 @@ class ProfileScreen extends GetView<ProfileController> {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildSectionCard(
-                        context,
-                        title: Strings.generalSettings.tr,
-                        child: Column(
-                          children: [
-                            ProfileSettingsTile(
-                              onTap: () {
-                                if (!_hasAccessToken()) {
-                                  showLoginRequiredDialog();
-                                  return;
-                                }
+                child: RefreshIndicator(
+                  onRefresh: () => controller.loadUserProfile(force: true),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        _buildSectionCard(
+                          context,
+                          title: Strings.generalSettings.tr,
+                          child: Column(
+                            children: [
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
 
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.editProfile,
-                                );
-                              },
-                              icon: Icons.person_outline,
-                              title: Strings.editProfile.tr,
-                            ),
-                            const ProfileSettingsDivider(),
-                            ProfileSettingsTile(
-                              onTap: () {
-                                if (!_hasAccessToken()) {
-                                  showLoginRequiredDialog();
-                                  return;
-                                }
-
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.changePassword,
-                                );
-                              },
-                              icon: Icons.lock_outline,
-                              title: Strings.changePassword.tr,
-                            ),
-                            const ProfileSettingsDivider(),
-                            ProfileSettingsTile(
-                              icon: Icons.account_balance_wallet_outlined,
-                              title: Strings.wallet.tr,
-                              onTap: () {
-                                if (!_hasAccessToken()) {
-                                  showLoginRequiredDialog();
-                                  return;
-                                }
-
-                                Get.to(UserWalletScreen());
-                              },
-                            ),
-                            const ProfileSettingsDivider(),
-                            ProfileSettingsTile(
-                              onTap: () {
-                                if (!_hasAccessToken()) {
-                                  showLoginRequiredDialog();
-                                  return;
-                                }
-
-                                if (controller.hasCustomerSupport) {
                                   PageNavigationService.to(
                                     context,
-                                    AppRoutes.customerSupportMessage,
+                                    AppRoutes.editProfile,
                                   );
-                                  return;
-                                }
+                                },
+                                icon: Icons.person_outline,
+                                title: Strings.editProfile.tr,
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
 
-                                Get.find<ChatSystemController>()
-                                    .createCustomerSupportChat();
-                              },
-                              icon: Icons.support_agent_outlined,
-                              title: Strings.customerSupport.tr,
-                            ),
-                            const ProfileSettingsDivider(),
-                            ProfileSettingsTile(
-                              onTap: () {
-                                if (!_hasAccessToken()) {
-                                  showLoginRequiredDialog();
-                                  return;
-                                }
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.changePassword,
+                                  );
+                                },
+                                icon: Icons.lock_outline,
+                                title: Strings.changePassword.tr,
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
 
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.points,
-                                );
-                              },
-                              icon: Icons.receipt_long_outlined,
-                              title: Strings.points.tr,
-                            ),
-                            const ProfileSettingsDivider(),
-                            ProfileSettingsTile(
-                              onTap: () {
-                                if (!_hasAccessToken()) {
-                                  showLoginRequiredDialog();
-                                  return;
-                                }
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.notification,
+                                  );
+                                },
+                                icon: Icons.notifications_none_outlined,
+                                title: Strings.notification.tr,
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                icon: Icons.account_balance_wallet_outlined,
+                                title: Strings.wallet.tr,
+                                onTap: () {
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
 
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.wishlist,
-                                  arguments: {'isBack': true},
-                                );
-                              },
-                              icon: Icons.favorite_border,
-                              title: Strings.wishlist.tr,
-                            ),
-                            const ProfileSettingsDivider(),
-                            ProfileSettingsTile(
-                              onTap: () {
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.content,
-                                  arguments: {
-                                    'title': Strings.termsAndConditions.tr,
-                                    'key': 'userTermsAndConditions',
-                                  },
-                                );
-                              },
-                              icon: Icons.description_outlined,
-                              title: Strings.termsAndConditions.tr,
-                            ),
-                            const ProfileSettingsDivider(),
-                            ProfileSettingsTile(
-                              onTap: () {
-                                PageNavigationService.to(
-                                  context,
-                                  AppRoutes.content,
-                                  arguments: {
-                                    'title': Strings.privacyPolicy.tr,
-                                    'key': 'userPrivacyAndPolicy',
-                                  },
-                                );
-                              },
-                              icon: Icons.privacy_tip_outlined,
-                              title: Strings.privacyPolicy.tr,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 14.h(context)),
-                      _buildSectionCard(
-                        context,
-                        title: Strings.languageSettings.tr,
-                        child: Obx(
-                          () => CustomTextField(
-                            hintText: Strings.selectLanguage.tr,
-                            hintStyle: languageTextStyle,
-                            value: controller.selectedLanguage.value,
-                            onChanged: controller.onLanguageChanged,
-                            contentPadding: EdgeInsets.all(16.h(context)),
-                            items: controller.languages
-                                .map(
-                                  (language) => DropdownMenuItem(
-                                    value: language,
-                                    child: Text(
-                                      language == 'en'
-                                          ? Strings.english.tr
-                                          : Strings.arabic.tr,
-                                      style: languageTextStyle,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                                  Get.to(UserWalletScreen());
+                                },
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
+
+                                  if (controller.hasCustomerSupport) {
+                                    PageNavigationService.to(
+                                      context,
+                                      AppRoutes.customerSupportMessage,
+                                    );
+                                    return;
+                                  }
+
+                                  Get.find<ChatSystemController>()
+                                      .createCustomerSupportChat();
+                                },
+                                icon: Icons.support_agent_outlined,
+                                title: Strings.customerSupport.tr,
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
+
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.points,
+                                  );
+                                },
+                                icon: Icons.receipt_long_outlined,
+                                title: Strings.points.tr,
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  if (!_hasAccessToken()) {
+                                    showLoginRequiredDialog();
+                                    return;
+                                  }
+
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.wishlist,
+                                    arguments: {'isBack': true},
+                                  );
+                                },
+                                icon: Icons.favorite_border,
+                                title: Strings.wishlist.tr,
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.content,
+                                    arguments: {
+                                      'title': Strings.termsAndConditions.tr,
+                                      'key': 'userTermsAndConditions',
+                                    },
+                                  );
+                                },
+                                icon: Icons.description_outlined,
+                                title: Strings.termsAndConditions.tr,
+                              ),
+                              const ProfileSettingsDivider(),
+                              ProfileSettingsTile(
+                                onTap: () {
+                                  PageNavigationService.to(
+                                    context,
+                                    AppRoutes.content,
+                                    arguments: {
+                                      'title': Strings.privacyPolicy.tr,
+                                      'key': 'userPrivacyAndPolicy',
+                                    },
+                                  );
+                                },
+                                icon: Icons.privacy_tip_outlined,
+                                title: Strings.privacyPolicy.tr,
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(height: 14.h(context)),
-                      LogoutButton(
-                        canShowDialog: _hasAccessToken,
-                        onBlocked: showLoginRequiredDialog,
-                        onTap: () => _handleLogout(context),
-                      ),
-                      SizedBox(height: 24.h(context)),
-                    ],
+                        SizedBox(height: 14.h(context)),
+                        _buildSectionCard(
+                          context,
+                          title: Strings.languageSettings.tr,
+                          child: Obx(
+                            () => CustomTextField(
+                              hintText: Strings.selectLanguage.tr,
+                              hintStyle: languageTextStyle,
+                              value: controller.selectedLanguage.value,
+                              onChanged: controller.onLanguageChanged,
+                              contentPadding: EdgeInsets.all(16.h(context)),
+                              items: controller.languages
+                                  .map(
+                                    (language) => DropdownMenuItem(
+                                      value: language,
+                                      child: Text(
+                                        language == 'en'
+                                            ? Strings.english.tr
+                                            : Strings.arabic.tr,
+                                        style: languageTextStyle,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 14.h(context)),
+                        LogoutButton(
+                          canShowDialog: _hasAccessToken,
+                          onBlocked: showLoginRequiredDialog,
+                          onTap: () => _handleLogout(context),
+                        ),
+                        SizedBox(height: 24.h(context)),
+                      ],
+                    ),
                   ),
                 ),
               ),

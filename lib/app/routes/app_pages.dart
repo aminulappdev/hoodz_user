@@ -21,6 +21,7 @@ import 'package:hoodz/features/user/homescreen/presentation/pages/search_screen.
 import 'package:hoodz/features/user/orders/presentation/pages/cart_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/saved_delivery_location_screen.dart';
 import 'package:hoodz/features/user/product/presentation/pages/product_details_screen.dart';
+import 'package:hoodz/features/user/profile/presentation/pages/notification_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_details_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_product_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_screen.dart';
@@ -38,7 +39,7 @@ import 'package:hoodz/features/user/wishlist/presentation/pages/wishlist_screen.
 
 import '../../features/auth/presentation/pages/splash_screen.dart';
 import 'app_routes.dart';
-
+ 
 abstract final class AppPages {
   static String get initial => initialRoute;
 
@@ -82,5 +83,7 @@ abstract final class AppPages {
     AppRoutes.orderSupportMessage: (_) => const OrderSupportMessageScreen(),
     AppRoutes.shopDetails: (_) => const ShopDetailsScreen(),
     AppRoutes.points: (_) => const PointsScreen(),
+    AppRoutes.riderNotification: (_) => const NotificationScreen(),
+    AppRoutes.notification: (_) => const NotificationScreen(),
   };
 }

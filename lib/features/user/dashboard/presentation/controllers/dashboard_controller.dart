@@ -63,7 +63,7 @@ class UserDashboardController extends GetxController {
         return AiAssistantScreen(
           isShowBackButton: false,
           title: Strings.aiAssistant.tr,
-          subtitle: Strings.poweredByAI.tr,
+          subtitle: Strings.poweredByAI.tr, 
         );
       case 3:
         return const WishlistScreen();

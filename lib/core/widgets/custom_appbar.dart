@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/circle_icon.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
@@ -28,9 +29,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 20,
       leadingWidth: isShowBackButton ? 56 : 0,
       leading: isShowBackButton
-          ? Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: CircleIcon(iconPath: Assets.icons.arrow.path),
+          ? IconButton(
+            padding: EdgeInsets.only(left: 10.w(context), right: 10.w(context)),
+              onPressed: () => Navigator.pop(context),
+              icon: CircleIcon(
+                iconPath: Assets.icons.arrow.path,
+                size: 16,
+                iconSize: 10,
+              ),
             )
           : null,
       title: Text(

@@ -19,6 +19,7 @@ import 'package:hoodz/features/user/homescreen/presentation/pages/search_screen.
 import 'package:hoodz/features/user/orders/presentation/pages/cart_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/saved_delivery_location_screen.dart';
 import 'package:hoodz/features/user/product/presentation/pages/product_details_screen.dart';
+import 'package:hoodz/features/user/profile/presentation/pages/notification_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_details_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_product_screen.dart';
 import 'package:hoodz/features/user/shop/presentation/pages/shop_screen.dart';
@@ -55,6 +56,7 @@ abstract final class AppRoutes {
   static const riderCompletedDeliveryDetails =
       '/rider-completed-delivery-details';
   static const riderNotification = '/rider-notification';
+  static const notification = '/notification';
   static const homeScreen = '/home-screen';
   static const mapLocationPicker = '/map-location-picker';
   static const searchScreen = '/search-screen';
@@ -125,6 +127,9 @@ Map<String, WidgetBuilder> getAppRoutes() {
     AppRoutes.orderSupportMessage: (_) => const OrderSupportMessageScreen(),
     AppRoutes.shopDetails: (_) => const ShopDetailsScreen(),
     AppRoutes.points: (_) => const PointsScreen(),
+    AppRoutes.riderNotification: (_) => const NotificationScreen(),
+    AppRoutes.notification: (_) => const NotificationScreen(),
+
   };
 }
 

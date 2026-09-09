@@ -41,7 +41,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   const ProductDetailsScreen({super.key});
 
   bool _hasAccessToken() =>
-      MySharedPref.getAccessToken()?.trim().isNotEmpty == true; 
+      MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
 
   Color? _parseColor(dynamic value) { 
     if (value is Color) { 
@@ -584,6 +584,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                   storeCategory:
                       category?.title ?? product?.collectionType ?? '',
                   storeImageUrl: displayStoreImage,
+                  shopId: vendor?.id,
                   isInStock: controller.isCurrentSelectionInStock,
                 ),
 

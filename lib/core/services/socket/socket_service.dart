@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/urls.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:flutter/foundation.dart';
 
 class SocketService extends GetxController {
   late io.Socket _socket;
@@ -40,6 +41,7 @@ class SocketService extends GetxController {
 
     _socket.onConnect((_) {
       isConnected.value = true;
+      debugPrint('Socket connected => ${_socket.id}');
       if (userId != null && userId.isNotEmpty) {
         _socket.emit('connection', userId);
       }
@@ -47,20 +49,22 @@ class SocketService extends GetxController {
 
     _socket.onConnectError((err) {
       isConnected.value = false;
-      print('Socket connect error: $err');
+      debugPrint('Socket connect error: $err');
     });
 
     _socket.onError((err) {
       isConnected.value = false;
-      print('Socket error: $err');
+      debugPrint('Socket error: $err');
     });
 
     _socket.onDisconnect((_) {
       isConnected.value = false;
+      debugPrint('Socket disconnected');
     });
 
     _socket.onReconnect((_) {
       isConnected.value = true;
+      debugPrint('Socket reconnected => ${_socket.id}');
       if (userId != null && userId.isNotEmpty) {
         _socket.emit('connection', userId);
       }

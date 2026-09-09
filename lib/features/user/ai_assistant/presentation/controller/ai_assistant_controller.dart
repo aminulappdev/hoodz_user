@@ -134,6 +134,13 @@ class AiAssistantController extends GetxController {
       debugPrint('AI emit ai:send-message ack => $ack');
       final ackPayload = _payload(ack);
       if (ackPayload.isNotEmpty) {
+        if (_isFailurePayload(ackPayload)) {
+          showAppToast(message: _messageFromPayload(ackPayload), isError: true);
+          isTyping.value = false;
+          isSending.value = false;
+          return;
+        }
+
         final incomingChatId = _chatIdFromPayload(ackPayload);
         if (incomingChatId.isNotEmpty) chatId.value = incomingChatId;
       }
@@ -235,12 +242,36 @@ class AiAssistantController extends GetxController {
   }
 
   Map<String, dynamic> _payload(dynamic data) {
+    if (data is List && data.isNotEmpty) {
+      return _payload(data.first);
+    }
     if (data is Map) {
       final nested = data['data'];
       if (nested is Map) return Map<String, dynamic>.from(nested);
       return Map<String, dynamic>.from(data);
     }
     return <String, dynamic>{};
+  }
+
+  bool _isFailurePayload(Map<String, dynamic> payload) {
+    final success = payload['success'];
+    if (success is bool) return !success;
+    if (success is String) return success.toLowerCase() == 'false';
+
+    final status = payload['status'];
+    if (status is int) return status >= 400;
+    if (status is String) {
+      final code = int.tryParse(status);
+      if (code != null) return code >= 400;
+    }
+
+    return false;
+  }
+
+  String _messageFromPayload(Map<String, dynamic> payload) {
+    final message = payload['message'] ?? payload['error'];
+    final value = message?.toString().trim() ?? '';
+    return value.isNotEmpty ? value : Strings.failedToLoadMessages.tr;
   }
 
   List<dynamic> _findList(dynamic data) {

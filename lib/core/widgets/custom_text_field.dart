@@ -123,33 +123,43 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ? GestureDetector(
               onTap: widget.suffixIconOnPressed,
               child: Padding(
-                padding: const EdgeInsets.only(right: 14),
+                padding: const EdgeInsetsDirectional.only(start: 8, end: 14),
                 child: SizedBox(
                   height: 20,
                   width: 20,
-                  child: Center(child: CrashSafeImage(widget.suffixIcon)),
+                  child: Center(
+                    child: CrashSafeImage(
+                      widget.suffixIcon,
+                      color: widget.suffixIconColor,
+                    ),
+                  ),
                 ),
               ),
             )
           : null,
       suffixIconConstraints: widget.suffixIcon != null
-          ? const BoxConstraints(minHeight: 12, minWidth: 12)
+          ? const BoxConstraints(minHeight: 44, minWidth: 44)
           : null,
       prefixIcon: widget.prefixIcon != null
           ? GestureDetector(
               onTap: widget.prefixIconOnPressed,
               child: Padding(
-                padding: const EdgeInsets.only(left: 14),
+                padding: const EdgeInsetsDirectional.only(start: 14, end: 8),
                 child: SizedBox(
                   height: 20,
                   width: 20,
-                  child: Center(child: CrashSafeImage(widget.prefixIcon)),
+                  child: Center(
+                    child: CrashSafeImage(
+                      widget.prefixIcon,
+                      color: widget.prefixIconColor,
+                    ),
+                  ),
                 ),
               ),
             )
           : null,
       prefixIconConstraints: widget.prefixIcon != null
-          ? const BoxConstraints(minHeight: 12, minWidth: 12)
+          ? const BoxConstraints(minHeight: 44, minWidth: 44)
           : null,
       prefixIconColor: widget.prefixIconColor ?? const Color(0xffACACAC),
       hintText: widget.hintText,

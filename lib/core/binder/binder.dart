@@ -56,6 +56,7 @@ import 'package:hoodz/features/user/payment/presentation/controllers/shipping_in
 import 'package:hoodz/features/user/profile/presentation/controller/change_password_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/content_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/edit_profile_controller.dart';
+import 'package:hoodz/features/user/profile/presentation/controller/notification_controller.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 
@@ -174,6 +175,7 @@ class ControllerBinder extends Bindings {
       fenix: true,
     );
     Get.lazyPut(ChangePasswordController.new, fenix: true);
+    Get.lazyPut(NotificationController.new, fenix: true);
     Get.lazyPut(ContentController.new, fenix: true);
     Get.lazyPut(
       () => AiAssistantController(Get.find<NetworkCaller>()),

@@ -23,7 +23,7 @@ class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  State<CartScreen> createState() => _CartScreenState(); 
 }
 
 class _CartScreenState extends State<CartScreen> with RouteAware {
@@ -135,7 +135,7 @@ class _CartScreenState extends State<CartScreen> with RouteAware {
           // Action
           Obx(
             () => Padding(
-              padding: EdgeInsets.only(right: 22.w(context)),
+              padding: EdgeInsets.only(right: 22.w(context), left: 20.w(context)),
               child: Center(
                 child: Text(
                   _controller.itemLabel,

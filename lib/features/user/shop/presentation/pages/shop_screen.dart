@@ -45,9 +45,8 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   void _loadShopIfNeeded() {
-    final routeArguments = Get.arguments is Map<String, dynamic>
-        ? Get.arguments as Map<String, dynamic>
-        : null;
+    final arguments = ModalRoute.of(context)?.settings.arguments;
+    final routeArguments = arguments is Map<String, dynamic> ? arguments : null;
     final rawShopId = routeArguments?['shopId'] ?? routeArguments?['reference'];
     final shopId = _extractShopId(rawShopId);
 

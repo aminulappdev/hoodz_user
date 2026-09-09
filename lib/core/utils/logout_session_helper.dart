@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
 import 'package:hoodz/core/services/socket/user_order_socket_service.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
@@ -53,6 +54,8 @@ import 'package:hoodz/features/user/shop/presentation/controller/shop_product_co
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 
 Future<void> clearLogoutSession() async {
+  await _clearGoogleSession();
+
   if (Get.isRegistered<UserOrderSocketService>()) {
     Get.find<UserOrderSocketService>().stopTracking();
   }
@@ -127,5 +130,17 @@ Future<void> clearLogoutSession() async {
 void _deleteIfRegistered<T>() {
   if (Get.isRegistered<T>()) {
     Get.delete<T>(force: true);
+  }
+}
+
+Future<void> _clearGoogleSession() async {
+  final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+
+  try {
+    await googleSignIn.disconnect();
+  } catch (_) {
+    try {
+      await googleSignIn.signOut();
+    } catch (_) {}
   }
 }

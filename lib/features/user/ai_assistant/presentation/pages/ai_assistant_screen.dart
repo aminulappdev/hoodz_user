@@ -86,9 +86,24 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
                   return const ChatMessagesShimmer();
                 }
                 if (controller.messages.isEmpty) {
-                  return _EmptyAiConversation(
-                    title: resolvedTitle,
-                    subtitle: resolvedSubtitle,
+                  return ListView(
+                    controller: _scrollController,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: EdgeInsets.fromLTRB(
+                      16.w(context),
+                      20.h(context),
+                      16.w(context),
+                      24.h(context),
+                    ),
+                    children: [
+                      MessageBubble(
+                        message:
+                            "Hi! I'm your AI Fashion Assistant 👋 How can I help you style your look today?",
+                        isMe: false,
+                        timestamp: _formatTime(DateTime.now()),
+                      ),
+                    ],
                   );
                 }
                 return ListView.separated(
@@ -191,61 +206,5 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
       if (value != null && value.toString().isNotEmpty) return value.toString();
     }
     return '';
-  }
-}
-
-class _EmptyAiConversation extends StatelessWidget {
-  const _EmptyAiConversation({required this.title, required this.subtitle});
-
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 28.w(context)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 70.h(context),
-              width: 70.w(context),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF1E8),
-                borderRadius: BorderRadius.circular(20.r(context)),
-              ),
-              child: Icon(
-                Icons.auto_awesome_rounded,
-                color: const Color(0xFFFF6A00),
-                size: 30.r(context),
-              ),
-            ),
-            SizedBox(height: 18.h(context)),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF242424),
-                fontFamily: 'Geist',
-                fontSize: 18.sp(context),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 6.h(context)),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF8B8B8B),
-                fontFamily: 'Poppins',
-                fontSize: 13.sp(context),
-                height: 1.45,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

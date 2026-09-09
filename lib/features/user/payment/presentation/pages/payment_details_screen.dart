@@ -111,6 +111,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
   void _handleSocketEvent(String eventName) {
     const refreshEvents = <String>{
       'job:rider-assigned',
+      'order:updated',
       'job:picked-up',
       'job:on-the-way',
       'job:otp-sent',
@@ -274,7 +275,8 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                         ),
                         SizedBox(height: 20.h(context)), 
                         CustomButton(
-                        text: Strings.customerSupport.tr,
+                          text: Strings.orderSupportChat.tr,
+                          prefixIcon: Icons.support_agent_outlined,
                           onPressed: () {
                             final orderId =
                                 _controller.orderDetailsData?.id ??

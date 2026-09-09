@@ -200,11 +200,14 @@ class HomeScreen extends GetView<HomeScreenController> {
               ),
               SizedBox(height: 20.h(context)),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w(context)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                child: RefreshIndicator(
+                  onRefresh: () => controller.getUserMeta(force: true),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: 20.w(context)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                       categories.isEmpty
                           ? Container(
                               height: 90.h(context),
@@ -577,7 +580,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                               ),
                       ),
                       SizedBox(height: 12.h(context)),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

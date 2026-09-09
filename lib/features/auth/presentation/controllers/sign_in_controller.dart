@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/network_caller/network_caller.dart';
@@ -13,6 +14,7 @@ import 'package:hoodz/urls.dart';
 class SignInController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final NetworkCaller _networkCaller;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
   final RxBool isPasswordHidden = true.obs;
   final RxBool rememberMe = true.obs;
   final TextEditingController emailController = TextEditingController(
@@ -57,41 +59,105 @@ class SignInController extends GetxController {
           return;
         }
 
-        final user = _extractUser(response.responseData);
-        final accessToken = _extractAccessToken(response.responseData);
-
-        if (user == null || accessToken == null) {
-          showAppToast(
-            message: Strings.invalidLoginResponse.tr,
-            isError: true,
-          );
-          return;
-        }
-
-        final status = (user['status'] ?? '').toString().toLowerCase();
-        if (status == 'pending') {
-          signInData = {
-            'isPending': true,
-            'message': Strings.requestPendingMessage.tr,
-          };
-          return;
-        }
-
-        await MySharedPref.setAccessToken(accessToken);
-        await MySharedPref.setUserId(
-          (user['_id'] ?? user['id'] ?? '').toString(),
-        );
-
-        signInData = {
-          'user': user,
-          'accessToken': accessToken,
-          'isProfileSetUp': user['isProfileSetUp'] == true,
-          'targetRoute': AppRoutes.userDashboard,
-        };
+        signInData = await _buildSuccessfulSignInData(response.responseData);
       },
     );
 
     return signInData;
+  }
+
+  Future<Map<String, dynamic>?> signInWithGoogle() async {
+    Map<String, dynamic>? signInData;
+
+    await showLoadingOverLay(
+      msg: Strings.signingIn.tr,
+      asyncFunction: () async {
+        try {
+          await _googleSignIn.signOut();
+          final googleUser = await _googleSignIn.signIn();
+          if (googleUser == null) {
+            return;
+          }
+
+          final googleAuth = await googleUser.authentication;
+          final googleToken = googleAuth.idToken ?? googleAuth.accessToken;
+          if (googleToken == null || googleToken.isEmpty) {
+            showAppToast(
+              message: Strings.invalidLoginResponse.tr,
+              isError: true,
+            );
+            return;
+          }
+
+          final fcmToken = await PushNotificationService().getOrCreateToken();
+          final response = await _networkCaller.postRequest(
+            Urls.googleAuthUrl,
+            body: {
+              'name': _resolveGoogleName(googleUser),
+              'email': googleUser.email,
+              'token': googleToken,
+              'role': 'user',
+              if (fcmToken != null && fcmToken.isNotEmpty) 'fcmToken': fcmToken,
+              'isLegalTermsAccepted': true,
+            },
+          );
+
+          if (!response.isSuccess) {
+            showAppToast(message: response.errorMessage, isError: true);
+            return;
+          }
+
+          signInData = await _buildSuccessfulSignInData(response.responseData);
+        } catch (error) {
+          showAppToast(message: error.toString(), isError: true);
+        }
+      },
+    );
+
+    return signInData;
+  }
+
+  Future<Map<String, dynamic>?> _buildSuccessfulSignInData(
+    dynamic responseData,
+  ) async {
+    final user = _extractUser(responseData);
+    final accessToken = _extractAccessToken(responseData);
+
+    if (user == null || accessToken == null) {
+      showAppToast(
+        message: Strings.invalidLoginResponse.tr,
+        isError: true,
+      );
+      return null;
+    }
+
+    final status = (user['status'] ?? '').toString().toLowerCase();
+    if (status == 'pending') {
+      return {
+        'isPending': true,
+        'message': Strings.requestPendingMessage.tr,
+      };
+    }
+
+    await MySharedPref.setAccessToken(accessToken);
+    await MySharedPref.setUserId((user['_id'] ?? user['id'] ?? '').toString());
+
+    return {
+      'user': user,
+      'accessToken': accessToken,
+      'isProfileSetUp': user['isProfileSetUp'] == true,
+      'targetRoute': AppRoutes.userDashboard,
+    };
+  }
+
+  String _resolveGoogleName(GoogleSignInAccount googleUser) {
+    final displayName = googleUser.displayName?.trim();
+    if (displayName != null && displayName.isNotEmpty) {
+      return displayName;
+    }
+
+    final emailName = googleUser.email.split('@').first.trim();
+    return emailName.isNotEmpty ? emailName : googleUser.email;
   }
 
   Map<String, dynamic>? _extractUser(dynamic responseData) {

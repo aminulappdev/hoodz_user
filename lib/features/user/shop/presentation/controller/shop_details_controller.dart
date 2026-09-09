@@ -20,13 +20,6 @@ class ShopDetailsController extends GetxController {
   ShopDetailsModel? get shopDetailsModel => _shopDetailsModel.value;
   Data? get shopData => _shopDetailsModel.value?.data;
 
-  @override
-  void onInit() {
-    super.onInit();
-    final arguments = Get.arguments;
-    initialize(arguments is Map<String, dynamic> ? arguments : null);
-  }
-
   void initialize(
     Map<String, dynamic>? arguments, {
     bool forceRefresh = false,

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/circle_icon.dart';
 import 'package:hoodz/core/widgets/shimmer/wishlist_shimmer_card.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/cart_controller.dart';
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
@@ -17,38 +18,22 @@ class WishlistScreen extends GetView<WishlistController> {
   Widget build(BuildContext context) {
     final cartController = Get.find<CartController>();
     final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?; 
     final isBack = arguments?['isBack'] == true;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: isBack,
-        leadingWidth: isBack ? 46.w(context) : null,
+       
         leading: isBack
-            ? Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () => PageNavigationService.back(context),
-                  child: SizedBox(
-                    height: 32.h(context),
-                    width: 32.w(context),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: const Color(0xffEDF1F3)),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: CrashSafeImage(
-                          Assets.icons.arrow.path,
-                          height: 16.h(context),
-                          width: 16.w(context),
-                          color: const Color(0xff404040),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
+            ? IconButton(
+            padding: EdgeInsets.only(left: 10.w(context), right: 10.w(context)),
+              onPressed: () => Navigator.pop(context),
+              icon: CircleIcon(
+                iconPath: Assets.icons.arrow.path,
+                size: 16,
+                iconSize: 10,
+              ),
+            )
             : null,
         title: Text(
           Strings.wishlistTitle.tr,

@@ -83,7 +83,7 @@ class SignUpScreen extends GetView<SignUpController> {
                   text: Strings.signUp.tr,
                   onPressed: () async {
                     final signUpData = await controller.signUp();
-                    if (signUpData == null) {
+                    if (signUpData == null) { 
                       return;
                     }
                     Navigator.pushNamed(
@@ -93,8 +93,8 @@ class SignUpScreen extends GetView<SignUpController> {
                     );
                   },
                 ),
-                SizedBox(height: 32.h(context)),
-                OthersAuth(onApplePressed: () {}, onGooglePressed: () {}),
+                // SizedBox(height: 32.h(context)),
+                // OthersAuth(onApplePressed: () {}, onGooglePressed: () {}),
                 SizedBox(height: 32.h(context)),
                 HaveAnAccount(
                   content: Strings.alreadyHaveAccount.tr,

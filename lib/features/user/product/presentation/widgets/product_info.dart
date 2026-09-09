@@ -14,6 +14,7 @@ class ProductInfo extends StatelessWidget {
   final String storeName;
   final String storeCategory;
   final String storeImageUrl;
+  final String? shopId;
   final bool isInStock;
 
   const ProductInfo({
@@ -24,6 +25,7 @@ class ProductInfo extends StatelessWidget {
     required this.storeName,
     required this.storeCategory,
     required this.storeImageUrl,
+    this.shopId,
     required this.isInStock,
   });
 
@@ -77,7 +79,16 @@ class ProductInfo extends StatelessWidget {
         SizedBox(height: 16.h(context)),
         GestureDetector(
           onTap: () {
-            PageNavigationService.to(context, AppRoutes.shop);
+            final id = shopId?.trim();
+            if (id == null || id.isEmpty) {
+              return;
+            }
+
+            PageNavigationService.to(
+              context,
+              AppRoutes.shop,
+              arguments: {'shopId': id},
+            );
           },
           child: Container(
             width: double.infinity,

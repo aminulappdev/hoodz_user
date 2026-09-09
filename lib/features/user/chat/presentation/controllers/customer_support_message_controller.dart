@@ -484,8 +484,9 @@ class CustomerSupportMessageController extends GetxController {
 
     return {
       'id': (payload['_id'] ?? payload['id'] ?? '').toString(),
-      'chatId': (payload['chatId'] ?? payload['chat'] ?? chatId.value)
-          .toString(),
+      'chatId': _extractChatId(payload).isNotEmpty
+          ? _extractChatId(payload)
+          : chatId.value,
       'text': (payload['text'] ?? payload['message'] ?? '').toString(),
       'files': payload['files'] ?? const [],
       'seen': payload['seen'] ?? false,
@@ -505,14 +506,36 @@ class CustomerSupportMessageController extends GetxController {
 
   Map<String, dynamic> _extractPayload(dynamic data) {
     if (data is Map) {
-      final rawData = data['data'];
-      if (rawData is Map) {
-        return Map<String, dynamic>.from(rawData);
+      for (final key in const ['data', 'payload', 'message']) {
+        final rawData = data[key];
+        if (rawData is Map) {
+          return Map<String, dynamic>.from(rawData);
+        }
       }
       return Map<String, dynamic>.from(data);
     }
 
     return <String, dynamic>{};
+  }
+
+  String _extractChatId(dynamic data) {
+    if (data is! Map) {
+      return '';
+    }
+
+    final direct = data['chatId'];
+    if (direct != null && direct.toString().trim().isNotEmpty) {
+      return direct.toString().trim();
+    }
+
+    final chat = data['chat'];
+    if (chat is Map) {
+      final map = Map<String, dynamic>.from(chat);
+      final id = map['_id'] ?? map['id'];
+      return id?.toString().trim() ?? '';
+    }
+
+    return chat?.toString().trim() ?? '';
   }
 
   bool isOwnMessage(Map<String, dynamic> message) {

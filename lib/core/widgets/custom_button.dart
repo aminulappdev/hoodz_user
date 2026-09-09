@@ -11,6 +11,7 @@ class CustomButton extends StatelessWidget {
   final Color? borderColor;
   final VoidCallback? onPressed;
   final bool enabled;
+  final IconData? prefixIcon;
 
   const CustomButton({
     super.key,
@@ -22,6 +23,7 @@ class CustomButton extends StatelessWidget {
     this.textStyle,
     this.backgroundColor,
     this.borderColor,
+    this.prefixIcon,
   });
 
   @override
@@ -49,16 +51,26 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30.r(context)),
           ),
           child: Center(
-            child: Text(
-              text,
-              style:
-                  textStyle?.copyWith(color: effectiveTextColor) ??
-                  Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: effectiveTextColor,
-                    fontFamily: 'Geist',
-                    fontSize: 16.sp(context),
-                    fontWeight: FontWeight.w500,
-                  ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (prefixIcon != null) ...[
+                  Icon(prefixIcon, color: effectiveTextColor, size: 20),
+                  const SizedBox(width: 8),
+                ],
+                Text(
+                  text,
+                  style:
+                      textStyle?.copyWith(color: effectiveTextColor) ??
+                      Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: effectiveTextColor,
+                        fontFamily: 'Geist',
+                        fontSize: 16.sp(context),
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+              ],
             ),
           ),
         ),

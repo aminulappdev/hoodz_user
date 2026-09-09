@@ -112,6 +112,8 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final activeColor = LightThemeColors.primaryColor;
     const inactiveColor = Color(0xFF8F8F8F);
+    final isArabicLabel = RegExp(r'[\u0600-\u06FF]').hasMatch(label);
+    final labelFontSize = label.length > 10 ? 11.0 : 12.0;
 
     return InkWell(
       onTap: onTap,
@@ -159,13 +161,21 @@ class _NavItem extends StatelessWidget {
                       size: 24,
                     ),
                   const SizedBox(height: 5),
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isSelected ? activeColor : inactiveColor,
-                      fontSize: 13,
-                      fontFamily: 'Geist',
-                      fontWeight: FontWeight.w500,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: Text(
+                      label,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: isSelected ? activeColor : inactiveColor,
+                        fontSize: labelFontSize,
+                        height: 1.05,
+                        fontFamily: isArabicLabel ? null : 'Geist',
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -195,6 +205,8 @@ class _CenterNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final activeColor = LightThemeColors.primaryColor;
     const inactiveColor = Color(0xFF8F8F8F);
+    final isArabicLabel = RegExp(r'[\u0600-\u06FF]').hasMatch(label);
+    final labelFontSize = label.length > 10 ? 11.0 : 12.0;
 
     return InkWell(
       onTap: onTap,
@@ -227,13 +239,21 @@ class _CenterNavItem extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: isSelected ? activeColor : inactiveColor,
-              fontSize: 13,
-              fontFamily: 'Geist',
-              fontWeight: FontWeight.w500,
+          SizedBox(
+            width: 86,
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isSelected ? activeColor : inactiveColor,
+                fontSize: labelFontSize,
+                height: 1.05,
+                fontFamily: isArabicLabel ? null : 'Geist',
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],

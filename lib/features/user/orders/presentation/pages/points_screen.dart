@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/services/referral/referral_service.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
@@ -28,7 +29,7 @@ class PointsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FB),
-      appBar: CustomAppBar(label: 'Points'),
+      appBar: CustomAppBar(label: Strings.points.tr),
       body: Stack(
         children: [
           SafeArea(
@@ -80,7 +81,7 @@ class PointsScreen extends StatelessWidget {
                             children: [
                               Obx(
                                 () => Text(
-                                  '${_formatCoins(profileController.userData?.coins)} Points',
+                                  '${_formatCoins(profileController.userData?.coins)} ${Strings.points.tr}',
                                   style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w800,
@@ -90,7 +91,7 @@ class PointsScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '1 Coin = EGP 1.00\nRedeem from 50 coins at checkout.',
+                                Strings.coinRedemptionInfo.tr,
                                 style: TextStyle(
                                   fontSize: 12,
                                   height: 1.35,
@@ -112,7 +113,7 @@ class PointsScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'App Referral Link',
+                              Strings.appReferralLink.tr,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
@@ -138,13 +139,13 @@ class PointsScreen extends StatelessWidget {
                                     color: const Color(0xFFE7E7E7),
                                   ),
                                 ),
-                                alignment: Alignment.centerLeft,
+                                alignment: AlignmentDirectional.centerStart,
                                 child: Obx(() {
                                   final code =
                                       profileController.userData?.referralCode;
                                   final link =
                                       code == null || code.trim().isEmpty
-                                      ? 'Referral link unavailable'
+                                      ? Strings.referralLinkUnavailable.tr
                                       : referralService.buildReferralLink(code);
                                   return Text(
                                     link,
@@ -163,14 +164,15 @@ class PointsScreen extends StatelessWidget {
                               width: 86,
                               height: 48,
                               child: CustomButton(
-                                text: 'Share',
+                                text: Strings.share.tr,
                                 height: 48,
                                 onPressed: () async {
                                   final code =
                                       profileController.userData?.referralCode;
                                   if (code == null || code.trim().isEmpty) {
                                     showAppToast(
-                                      message: 'Referral link is not available',
+                                      message:
+                                          Strings.referralLinkNotAvailable.tr,
                                       isError: true,
                                     );
                                     return;
@@ -188,7 +190,7 @@ class PointsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 18),
                         Text(
-                          'How It Works',
+                          Strings.howItWorks.tr,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
@@ -196,24 +198,23 @@ class PointsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        const _HowItWorksItem(
+                        _HowItWorksItem(
                           icon: Icons.share_outlined,
-                          title: 'Share your link',
-                          subtitle: 'Send your unique app link to friends.',
+                          title: Strings.shareYourLink.tr,
+                          subtitle:
+                              Strings.sendYourUniqueAppLinkToFriends.tr,
                         ),
                         const SizedBox(height: 12),
-                        const _HowItWorksItem(
+                        _HowItWorksItem(
                           icon: Icons.person_add_alt_1_outlined,
-                          title: 'Friend signs up',
-                          subtitle:
-                              'Your friend creates an account using your link.',
+                          title: Strings.friendSignsUp.tr,
+                          subtitle: Strings.friendSignsUpUsingYourLink.tr,
                         ),
                         const SizedBox(height: 12),
-                        const _HowItWorksItem(
+                        _HowItWorksItem(
                           icon: Icons.savings_outlined,
-                          title: 'Earn points',
-                          subtitle:
-                              'Get 30 coins as inviter after your friend\'s first order. Invitees get 20 coins on a first order over EGP 500.',
+                          title: Strings.earnPoints.tr,
+                          subtitle: Strings.earnPointsReferralInfo.tr,
                         ),
                         const SizedBox(height: 14),
                         Container(
@@ -225,7 +226,7 @@ class PointsScreen extends StatelessWidget {
                             border: Border.all(color: const Color(0xFFFFD9B8)),
                           ),
                           child: Text(
-                            'Bonus tip:\nComplete your profile for 10 coins, write verified reviews to earn more, and redeem coins at checkout when your balance reaches 50 coins.',
+                            Strings.bonusTipPoints.tr,
                             style: TextStyle(
                               fontSize: 12,
                               height: 1.45,
@@ -234,107 +235,107 @@ class PointsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 18),
-                        const _RulesSection(
-                          title: '1. Earning Scheme',
+                        _RulesSection(
+                          title: Strings.earningScheme.tr,
                           headers: [
-                            'Trigger Action',
-                            'Coins Earned',
-                            'Maximum Cap',
+                            Strings.triggerAction.tr,
+                            Strings.coinsEarned.tr,
+                            Strings.maximumCap.tr,
                           ],
                           rows: [
                             _RuleRow(
                               values: [
-                                'Standard Purchase',
-                                '1 Coin per EGP 100 spent',
-                                'No limit',
+                                Strings.standardPurchase.tr,
+                                Strings.oneCoinPerEgp100Spent.tr,
+                                Strings.noLimit.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Account Creation',
-                                '20 Coins (Welcome Bonus)',
-                                'Once per user',
+                                Strings.accountCreation.tr,
+                                Strings.welcomeBonus20Coins.tr,
+                                Strings.oncePerUser.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Complete Profile',
-                                '10 Coins',
-                                'Once per user',
+                                Strings.completeProfile.tr,
+                                Strings.tenCoins.tr,
+                                Strings.oncePerUser.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Verified Product Review',
-                                '5 Coins',
-                                '2 reviews / month',
+                                Strings.verifiedProductReview.tr,
+                                Strings.fiveCoins.tr,
+                                Strings.twoReviewsPerMonth.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Photo / Outfit Review',
-                                '15 Coins',
-                                '2 reviews / month',
+                                Strings.photoOutfitReview.tr,
+                                Strings.fifteenCoins.tr,
+                                Strings.twoReviewsPerMonth.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Referral (Inviter)',
-                                '30 Coins',
-                                "After friend's 1st order",
+                                Strings.referralInviter.tr,
+                                Strings.thirtyCoins.tr,
+                                Strings.afterFriendFirstOrder.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Referral (Invitee)',
-                                '20 Coins',
-                                'On 1st order over EGP 500',
+                                Strings.referralInvitee.tr,
+                                Strings.twentyCoins.tr,
+                                Strings.onFirstOrderOverEgp500.tr,
                               ],
                             ),
                           ],
                         ),
                         const SizedBox(height: 18),
-                        const _RulesSection(
-                          title: '2. Redemption & Financial Safeguards',
+                        _RulesSection(
+                          title: Strings.redemptionFinancialSafeguards.tr,
                           headers: [
-                            'Rule',
-                            'Requirement / Constraint',
+                            Strings.rule.tr,
+                            Strings.requirementConstraint.tr,
                           ],
                           rows: [
                             _RuleRow(
                               values: [
-                                'Coin Conversion',
-                                '1 Coin = EGP 1.00',
+                                Strings.coinConversion.tr,
+                                Strings.oneCoinEqualsEgp.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Min. Balance Needed',
-                                '50 Coins (EGP 50 value)',
+                                Strings.minBalanceNeeded.tr,
+                                Strings.fiftyCoinsValue.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Min. Basket Size',
-                                'EGP 500 subtotal',
+                                Strings.minBasketSize.tr,
+                                Strings.egp500Subtotal.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Max. Checkout Cap',
-                                '15% of basket subtotal',
+                                Strings.maxCheckoutCap.tr,
+                                Strings.fifteenPercentBasketSubtotal.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Product Exclusions',
-                                'Discounted / Clearance items',
+                                Strings.productExclusions.tr,
+                                Strings.discountedClearanceItems.tr,
                               ],
                             ),
                             _RuleRow(
                               values: [
-                                'Delivery Exclusions',
-                                'Applies to cart only (not shipping fees)',
+                                Strings.deliveryExclusions.tr,
+                                Strings.appliesToCartOnly.tr,
                               ],
                             ),
                           ],
@@ -430,8 +431,8 @@ class _RuleTableRow extends StatelessWidget {
           return Expanded(
             flex: flexes[index],
             child: Padding(
-              padding: EdgeInsets.only(
-                right: index == values.length - 1 ? 0 : 12,
+              padding: EdgeInsetsDirectional.only(
+                end: index == values.length - 1 ? 0 : 12,
               ),
               child: Text(
                 values[index],

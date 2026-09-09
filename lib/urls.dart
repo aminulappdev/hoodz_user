@@ -1,9 +1,10 @@
 class Urls {
   static const String _baseUrl = 'https://api.thehoodz.net/api/v1';
-  static const String socketUrl = 'https://api.thehoodz.net';
+  static const String socketUrl = 'https://socket.thehoodz.net/'; 
 
   static const String signUpWithEmailUrl = '$_baseUrl/auth/signup-with-email';
   static const String loginWithEmailUrl = '$_baseUrl/auth/login-with-email';
+  static const String googleAuthUrl = '$_baseUrl/auth/google';
   static const String forgotPasswordUrl = '$_baseUrl/auth/forgot-password';
   static const String verifyOtpUrl = '$_baseUrl/otp/verify';
   static const String sendOtpInEmailUrl = '$_baseUrl/otp/send-otp-in-email';
@@ -44,6 +45,7 @@ class Urls {
       '$_baseUrl/messages/ai-assistant';
   static const String walletTopUpUrl = '$_baseUrl/top-up/add-wallet-money';
   static const String walletTransactionsUrl = '$_baseUrl/wallet-transactions';
+  static const String notificationUrl = '$_baseUrl/notification';
   static const String kycUrl = '$_baseUrl/kyc';
   static const String metaUserUrl = '$_baseUrl/meta/user';
   static String metaUserGuestUrl({

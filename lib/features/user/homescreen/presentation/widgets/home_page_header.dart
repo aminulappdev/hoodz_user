@@ -90,7 +90,7 @@ class CustomHomePageAppBar extends StatelessWidget {
                   child: CustomTextField(
                     hintText: Strings.search.tr,
                     prefixIcon: Assets.icons.search02.path,
-                    prefixIconColor: Colors.white,
+                    prefixIconColor: const Color(0xFFACACAC),
                     readOnly: true,
                     onTap: onTapSearch,
                   ),

@@ -228,6 +228,62 @@ class Strings {
   static const String usePoints = 'use_points';
   static const String aboutCoinRules = 'about_coin_rules';
   static const String availablePoints = 'available_points';
+  static const String coinRedemptionInfo = 'coin_redemption_info';
+  static const String appReferralLink = 'app_referral_link';
+  static const String referralLinkUnavailable = 'referral_link_unavailable';
+  static const String referralLinkNotAvailable =
+      'referral_link_not_available';
+  static const String share = 'share';
+  static const String howItWorks = 'how_it_works';
+  static const String shareYourLink = 'share_your_link';
+  static const String sendYourUniqueAppLinkToFriends =
+      'send_your_unique_app_link_to_friends';
+  static const String friendSignsUp = 'friend_signs_up';
+  static const String friendSignsUpUsingYourLink =
+      'friend_signs_up_using_your_link';
+  static const String earnPoints = 'earn_points';
+  static const String earnPointsReferralInfo = 'earn_points_referral_info';
+  static const String bonusTipPoints = 'bonus_tip_points';
+  static const String earningScheme = 'earning_scheme';
+  static const String triggerAction = 'trigger_action';
+  static const String coinsEarned = 'coins_earned';
+  static const String maximumCap = 'maximum_cap';
+  static const String standardPurchase = 'standard_purchase';
+  static const String oneCoinPerEgp100Spent = 'one_coin_per_egp_100_spent';
+  static const String noLimit = 'no_limit';
+  static const String accountCreation = 'account_creation';
+  static const String twentyCoins = 'twenty_coins';
+  static const String welcomeBonus20Coins = 'welcome_bonus_20_coins';
+  static const String oncePerUser = 'once_per_user';
+  static const String completeProfile = 'complete_profile';
+  static const String tenCoins = 'ten_coins';
+  static const String verifiedProductReview = 'verified_product_review';
+  static const String fiveCoins = 'five_coins';
+  static const String twoReviewsPerMonth = 'two_reviews_per_month';
+  static const String photoOutfitReview = 'photo_outfit_review';
+  static const String fifteenCoins = 'fifteen_coins';
+  static const String referralInviter = 'referral_inviter';
+  static const String thirtyCoins = 'thirty_coins';
+  static const String afterFriendFirstOrder = 'after_friend_first_order';
+  static const String referralInvitee = 'referral_invitee';
+  static const String onFirstOrderOverEgp500 = 'on_first_order_over_egp_500';
+  static const String redemptionFinancialSafeguards =
+      'redemption_financial_safeguards';
+  static const String rule = 'rule';
+  static const String requirementConstraint = 'requirement_constraint';
+  static const String coinConversion = 'coin_conversion';
+  static const String oneCoinEqualsEgp = 'one_coin_equals_egp';
+  static const String minBalanceNeeded = 'min_balance_needed';
+  static const String fiftyCoinsValue = 'fifty_coins_value';
+  static const String minBasketSize = 'min_basket_size';
+  static const String egp500Subtotal = 'egp_500_subtotal';
+  static const String maxCheckoutCap = 'max_checkout_cap';
+  static const String fifteenPercentBasketSubtotal =
+      'fifteen_percent_basket_subtotal';
+  static const String productExclusions = 'product_exclusions';
+  static const String discountedClearanceItems = 'discounted_clearance_items';
+  static const String deliveryExclusions = 'delivery_exclusions';
+  static const String appliesToCartOnly = 'applies_to_cart_only';
   static const String noColorAvailable = 'no_color_available';
   static const String applyChanges = 'apply_changes';
   static const String editItem = 'edit_item';
@@ -387,6 +443,9 @@ class Strings {
   static const String selectLanguage = 'select_language';
   static const String english = 'english';
   static const String arabic = 'arabic';
+  static const String notification = 'notification';
+  static const String noNotificationsFound = 'no_notifications_found';
+  static const String markAsDone = 'mark_as_done';
   static const String logout = 'logout';
   static const String logoutConfirmTitle = 'logout_confirm_title';
   static const String logoutConfirmMessage = 'logout_confirm_message';

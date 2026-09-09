@@ -20,6 +20,50 @@ class SignInScreen extends GetView<SignInController> {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> handleSignInResult(
+      Map<String, dynamic>? signInData, {
+      bool shouldOpenProfileSetup = true,
+    }) async {
+      if (signInData == null) {
+        return;
+      }
+
+      if (signInData['isPending'] == true) {
+        await showDialog<void>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: Text(Strings.requestPending.tr),
+            content: Text(
+              (signInData['message'] ?? '').toString(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                },
+                child: Text(Strings.ok.tr),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      if (shouldOpenProfileSetup && signInData['isProfileSetUp'] != true) {
+        PageNavigationService.offAll(
+          context,
+          AppRoutes.profileSetup,
+          arguments: {'verifiedUser': signInData['user']},
+        );
+        return;
+      }
+
+      PageNavigationService.offAll(
+        context,
+        signInData['targetRoute'] as String,
+      );
+    }
+
     return Scaffold(
       body: AuthBackground( 
         isBack: false,
@@ -76,48 +120,20 @@ class SignInScreen extends GetView<SignInController> {
                   text: Strings.signIn.tr,
                   onPressed: () async {
                     final signInData = await controller.signIn();
-                    if (signInData == null) {
-                      return;
-                    }
-
-                    if (signInData['isPending'] == true) {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (dialogContext) => AlertDialog(
-                          title: Text(Strings.requestPending.tr),
-                          content: Text(
-                            (signInData['message'] ?? '').toString(),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () { 
-                                Navigator.of(dialogContext).pop();
-                              },
-                              child: Text(Strings.ok.tr),
-                            ),
-                          ],
-                        ),
-                      );
-                      return;
-                    }
-
-                    if (signInData['isProfileSetUp'] != true) {
-                      PageNavigationService.offAll(
-                        context,
-                        AppRoutes.profileSetup,
-                        arguments: {'verifiedUser': signInData['user']},
-                      );
-                      return;
-                    }
-
-                    PageNavigationService.offAll(
-                      context,
-                      signInData['targetRoute'] as String,
-                    );
+                    await handleSignInResult(signInData);
                   },
                 ),
                 SizedBox(height: 32.h(context)),
-                OthersAuth(onApplePressed: () {}, onGooglePressed: () {}),
+                OthersAuth(
+                  onApplePressed: () {},
+                  onGooglePressed: () async {
+                    final signInData = await controller.signInWithGoogle();
+                    await handleSignInResult(
+                      signInData,
+                      shouldOpenProfileSetup: false,
+                    );
+                  },
+                ),
                 SizedBox(height: 32.h(context)),
                 HaveAnAccount(
                   content: Strings.dontHaveAccount.tr,

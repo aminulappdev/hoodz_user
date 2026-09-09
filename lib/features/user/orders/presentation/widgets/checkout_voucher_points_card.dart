@@ -31,6 +31,8 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasVoucherCode = voucherController.text.trim().isNotEmpty;
+
     return CheckoutSectionCard(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Column(
@@ -47,19 +49,20 @@ class CheckoutVoucherPointsCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              InkWell(
-                onTap: onApplyVoucher,
-                child: Text(
-                  Strings.addVoucher.tr,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: LightThemeColors.primaryColor,
-                    decoration: TextDecoration.underline,
-                    decorationColor: LightThemeColors.primaryColor,
+              if (hasVoucherCode)
+                InkWell(
+                  onTap: onApplyVoucher,
+                  child: Text(
+                    Strings.addVoucher.tr,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: LightThemeColors.primaryColor,
+                      decoration: TextDecoration.underline,
+                      decorationColor: LightThemeColors.primaryColor,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 10),
