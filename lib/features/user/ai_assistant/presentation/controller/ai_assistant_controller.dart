@@ -101,6 +101,7 @@ class AiAssistantController extends GetxController {
     }
 
     isSending.value = true;
+    isTyping.value = true;
     messages.add({
       'id': 'local-ai-${_localMessageCounter++}',
       'chatId': chatId.value,
@@ -115,7 +116,10 @@ class AiAssistantController extends GetxController {
       if (files.isNotEmpty) 'files': files,
     }));
     Future<void>.delayed(const Duration(seconds: 15), () {
-      if (isSending.value) isSending.value = false;
+      if (isSending.value) {
+        isSending.value = false;
+        isTyping.value = false;
+      }
     });
   }
 

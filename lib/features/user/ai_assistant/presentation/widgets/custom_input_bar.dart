@@ -15,10 +15,16 @@ import 'package:hoodz/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CustomInputBar extends StatefulWidget {
-  const CustomInputBar({super.key, this.onSend, this.hintText});
+  const CustomInputBar({
+    super.key,
+    this.onSend,
+    this.hintText,
+    this.isSendDisabled = false,
+  });
 
   final void Function(String text, List<String> files)? onSend;
   final String? hintText;
+  final bool isSendDisabled;
 
   @override
   State<CustomInputBar> createState() => _CustomInputBarState();
@@ -97,7 +103,7 @@ class _CustomInputBarState extends State<CustomInputBar> {
   }
 
   void _handleSend() {
-    if (_isUploadingAttachments) {
+    if (_isUploadingAttachments || widget.isSendDisabled) {
       return;
     }
 
@@ -121,7 +127,7 @@ class _CustomInputBarState extends State<CustomInputBar> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isSendDisabled = _isUploadingAttachments;
+    final bool isSendDisabled = _isUploadingAttachments || widget.isSendDisabled;
     final Color sendColor = isSendDisabled
         ? const Color(0xFFC9C9C9)
         : const Color(0xFFFF6A00);

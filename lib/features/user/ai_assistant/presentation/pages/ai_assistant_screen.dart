@@ -81,7 +81,9 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
           children: [
             Expanded(
               child: Obx(() {
-                _queueScrollWhenMessagesChange(controller.messages.length);
+                _queueScrollWhenMessagesChange(
+                  controller.messages.length + (controller.isTyping.value ? 1 : 0),
+                );
                 if (controller.isLoading.value && controller.messages.isEmpty) {
                   return const ChatMessagesShimmer();
                 }
@@ -116,9 +118,15 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
                     16.w(context),
                     24.h(context),
                   ),
-                  itemCount: controller.messages.length,
+                  itemCount:
+                      controller.messages.length +
+                      (controller.isTyping.value ? 1 : 0),
                   separatorBuilder: (_, __) => SizedBox(height: 12.h(context)),
                   itemBuilder: (context, index) {
+                    if (index == controller.messages.length) {
+                      return const _TypingBubble();
+                    }
+
                     final message = controller.messages[index];
                     final products = (message['products'] as List?)
                             ?.whereType<Map<String, dynamic>>()
@@ -166,7 +174,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
                 );
               }),
             ),
-            CustomInputBar(onSend: controller.sendMessage),
+            Obx(
+              () => CustomInputBar(
+                onSend: controller.sendMessage,
+                isSendDisabled: controller.isSending.value,
+              ),
+            ),
           ],
         ),
       ),
@@ -206,5 +219,77 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
       if (value != null && value.toString().isNotEmpty) return value.toString();
     }
     return '';
+  }
+}
+
+class _TypingBubble extends StatefulWidget {
+  const _TypingBubble();
+
+  @override
+  State<_TypingBubble> createState() => _TypingBubbleState();
+}
+
+class _TypingBubbleState extends State<_TypingBubble>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 14.w(context),
+          vertical: 12.h(context),
+        ),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F3F3),
+          borderRadius: BorderRadius.circular(14.r(context)),
+        ),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(3, (index) {
+                final progress = (_controller.value + (index * 0.22)) % 1;
+                final opacity = progress < 0.5
+                    ? 0.35 + (progress * 1.3)
+                    : 1 - ((progress - 0.5) * 1.3);
+
+                return Container(
+                  width: 7.w(context),
+                  height: 7.w(context),
+                  margin: EdgeInsets.only(
+                    right: index == 2 ? 0 : 5.w(context),
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF8C8C8C).withValues(
+                      alpha: opacity.clamp(0.35, 1),
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                );
+              }),
+            );
+          },
+        ),
+      ),
+    );
   }
 }

@@ -8,7 +8,7 @@ class CustomButton extends StatelessWidget {
   final String text;
   final TextStyle? textStyle;
   final Color? backgroundColor;
-  final Color? borderColor;
+  final Color? borderColor; 
   final VoidCallback? onPressed;
   final bool enabled;
   final IconData? prefixIcon;

@@ -73,7 +73,13 @@ class PushNotificationService {
       return savedToken;
     }
 
-    await _requestPermission();
+    try {
+      await _requestPermission();
+    } catch (error) {
+      debugPrint('Push notification permission request failed: $error');
+      return null;
+    }
+
     final token = await _waitForToken();
     if (token != null && token.trim().isNotEmpty) {
       await MySharedPref.setFcmToken(token);
@@ -103,9 +109,15 @@ class PushNotificationService {
 
   Future<String?> _waitForToken() async {
     for (var attempt = 0; attempt < 3; attempt++) {
-      final token = await _messaging.getToken();
-      if (token != null && token.trim().isNotEmpty) {
-        return token;
+      try {
+        final token = await _messaging.getToken();
+        if (token != null && token.trim().isNotEmpty) {
+          return token;
+        }
+      } catch (error) {
+        debugPrint(
+          'FCM token fetch failed on attempt ${attempt + 1}: $error',
+        );
       }
 
       await Future.delayed(Duration(milliseconds: 500 * (attempt + 1)));
