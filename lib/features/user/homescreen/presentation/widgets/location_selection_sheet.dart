@@ -12,13 +12,13 @@ class LocationSelectionSheet extends StatelessWidget {
     this.isLoadingCurrentLocation = false,
   });
 
-  final VoidCallback onTapCurrentLocation; 
+  final VoidCallback onTapCurrentLocation;
   final VoidCallback onTapDifferentLocation;
   final bool isLoadingCurrentLocation;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea( 
+    return SafeArea(
       top: false,
       child: Container(
         padding: EdgeInsets.fromLTRB(
@@ -31,7 +31,7 @@ class LocationSelectionSheet extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(28.r(context)),
-          ), 
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -45,7 +45,7 @@ class LocationSelectionSheet extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20.h(context)),
-            _LocationOptionTile( 
+            LocationOptionTile(
               icon: Icons.my_location_rounded,
               iconColor: const Color(0xFFFF6A00),
               title: Strings.deliverToCurrentLocation.tr,
@@ -55,7 +55,7 @@ class LocationSelectionSheet extends StatelessWidget {
               onTap: onTapCurrentLocation,
             ),
             SizedBox(height: 12.h(context)),
-            _LocationOptionTile(
+            LocationOptionTile(
               icon: Icons.location_on_outlined,
               iconColor: const Color(0xFF9C9C9C),
               title: Strings.deliverToDifferentLocation.tr,
@@ -70,8 +70,9 @@ class LocationSelectionSheet extends StatelessWidget {
   }
 }
 
-class _LocationOptionTile extends StatelessWidget {
-  const _LocationOptionTile({
+class LocationOptionTile extends StatelessWidget {
+  const LocationOptionTile({
+    super.key,
     required this.icon,
     required this.iconColor,
     required this.title,

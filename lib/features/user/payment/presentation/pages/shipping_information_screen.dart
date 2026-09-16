@@ -16,14 +16,38 @@ import 'package:hoodz/features/user/profile/presentation/controller/profile_cont
 class ShippingInformationScreen extends GetView<ShippingInformationController> {
   const ShippingInformationScreen({super.key});
 
-  Future<void> _showLocationSheet(BuildContext context) async { 
+  static const String locationFlowArgument = 'location_flow';
+  static const String differentLocationFlow = 'different';
+  static const String currentLocationFlow = 'current';
+
+  String? _locationFlow(BuildContext context) {
+    final arguments = ModalRoute.of(context)?.settings.arguments;
+    if (arguments is! Map<String, dynamic>) {
+      return null;
+    }
+
+    return arguments[locationFlowArgument]?.toString();
+  }
+
+  Future<void> _openMapPicker(BuildContext context) async {
+    final result = await Navigator.pushNamed(
+      context,
+      AppRoutes.mapLocationPicker,
+    );
+
+    if (result is LocationAddress) {
+      await controller.applySelectedLocation(result);
+    }
+  }
+
+  Future<void> _showLocationSheet(BuildContext context) async {
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => Obx(
-        () => LocationSelectionSheet( 
+        () => LocationSelectionSheet(
           isLoadingCurrentLocation: controller.isLoadingCurrentLocation.value,
-          onTapCurrentLocation: () async { 
+          onTapCurrentLocation: () async {
             Navigator.pop(context);
             try {
               final success = await controller.useCurrentLocation();
@@ -40,14 +64,7 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
           },
           onTapDifferentLocation: () async {
             Navigator.pop(context);
-            final result = await Navigator.pushNamed(
-              context,
-              AppRoutes.mapLocationPicker,
-            );
-
-            if (result is LocationAddress) {
-              await controller.applySelectedLocation(result);
-            }
+            await _openMapPicker(context);
           },
         ),
       ),
@@ -57,13 +74,17 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.find<ProfileController>();
+    final locationFlow = _locationFlow(context);
+    final isDifferentLocationFlow = locationFlow == differentLocationFlow;
+    final isCurrentLocationFlow = locationFlow == currentLocationFlow;
+
     return Obx(() {
       final user = profileController.userProfileModel.value?.data;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.prefillFromProfile(user);
       });
 
-      return Scaffold( 
+      return Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(label: Strings.shippingInformation.tr),
         // bottomNavigationBar: ShipingButtomBar(
@@ -83,10 +104,10 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // _FieldLabel(Strings.fullName.tr),
-              // SizedBox(height: 8.h(context)), 
+              // SizedBox(height: 8.h(context)),
               // CustomTextField(
               //   enabled: false,
-              //   controller: controller.fullNameController, 
+              //   controller: controller.fullNameController,
               //   hintText: Strings.enterYourName.tr,
               // ),
               // SizedBox(height: 18.h(context)),
@@ -100,7 +121,11 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
               // ),
               _SectionHeader(
                 title: Strings.shippingAddress.tr,
-                onChange: () => _showLocationSheet(context),
+                onChange: isCurrentLocationFlow
+                    ? null
+                    : isDifferentLocationFlow
+                        ? () => _openMapPicker(context)
+                        : () => _showLocationSheet(context),
               ),
               SizedBox(height: 10.h(context)),
 
@@ -193,7 +218,8 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                     await Get.find<HomeScreenController>().getUserMeta(
                       force: true,
                     );
-                    await Get.find<OrderSummaryController>().refreshOrderSummary();
+                    await Get.find<OrderSummaryController>()
+                        .refreshOrderSummary();
                     Navigator.pop(context);
                   }
                 },
@@ -230,19 +256,21 @@ class _SectionHeader extends StatelessWidget {
             color: const Color(0xFF2F2F2F),
           ),
         ),
-        const Spacer(),
-        GestureDetector(
-          onTap: onChange,
-          child: Text(
-            Strings.change.tr,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontSize: 13.sp(context),
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF6F6F6F),
-              decoration: TextDecoration.underline,
+        if (onChange != null) ...[
+          const Spacer(),
+          GestureDetector(
+            onTap: onChange,
+            child: Text(
+              Strings.change.tr,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 13.sp(context),
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF6F6F6F),
+                decoration: TextDecoration.underline,
+              ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }

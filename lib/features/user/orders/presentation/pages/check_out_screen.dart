@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
+import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/services/others/payment_webview_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
@@ -14,12 +15,15 @@ import 'package:hoodz/features/user/orders/data/models/payment_model.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/order_summary_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/controllers/product_order_controller.dart';
 import 'package:hoodz/features/user/orders/presentation/pages/check_out_popup.dart';
+import 'package:hoodz/features/user/orders/presentation/pages/saved_delivery_location_screen.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_order_details_card.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/checkout_voucher_points_card.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/payment_summary_card.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/play_with_card.dart';
+import 'package:hoodz/features/user/payment/presentation/controllers/shipping_information_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_initiate_controller.dart';
 import 'package:hoodz/features/user/payment/presentation/controllers/payment_successfull_controller.dart';
+import 'package:hoodz/features/user/payment/presentation/pages/shipping_information_screen.dart';
 import 'package:hoodz/features/user/profile/presentation/controller/profile_controller.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 
@@ -39,6 +43,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       Get.find<ProductOrderController>();
   final PaymentInitiateController _paymentInitiateController =
       Get.find<PaymentInitiateController>();
+  final ShippingInformationController _shippingInformationController =
+      Get.find<ShippingInformationController>();
   final ProfileController _profileController = Get.find<ProfileController>();
   final PaymentWebViewService _paymentWebViewService =
       const PaymentWebViewService();
@@ -422,6 +428,75 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  Future<void> _showSavedLocationSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Obx(
+          () => SavedDeliveryLocationSheet(
+            isLoadingCurrentLocation:
+                _shippingInformationController.isLoadingCurrentLocation.value,
+            onTapDifferentLocation: () async {
+              Navigator.pop(sheetContext);
+              if (!mounted) {
+                return;
+              }
+              final result = await Navigator.pushNamed(
+                context,
+                AppRoutes.mapLocationPicker,
+              );
+              if (result is! LocationAddress || !mounted) {
+                return;
+              }
+
+              await _shippingInformationController.applySelectedLocation(
+                result,
+              );
+              if (!mounted) {
+                return;
+              }
+
+              PageNavigationService.to(
+                context,
+                AppRoutes.shippingInformation,
+                arguments: {
+                  ShippingInformationScreen.locationFlowArgument:
+                      ShippingInformationScreen.differentLocationFlow,
+                },
+              );
+            },
+            onTapCurrentLocation: () async {
+              try {
+                final success =
+                    await _shippingInformationController.useCurrentLocation();
+                if (!success || !sheetContext.mounted) {
+                  return;
+                }
+
+                Navigator.pop(sheetContext);
+                if (!mounted) {
+                  return;
+                }
+                PageNavigationService.to(
+                  context,
+                  AppRoutes.shippingInformation,
+                  arguments: {
+                    ShippingInformationScreen.locationFlowArgument:
+                        ShippingInformationScreen.currentLocationFlow,
+                  },
+                );
+              } on LocationServiceException catch (error) {
+                showAppToast(message: error.message, isError: true);
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -435,12 +510,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               children: [
                 Obx(
                   () => CheckoutOrderDetailsCard(
-                    onChangeTap: () async {
-                      PageNavigationService.to(
-                        context,
-                        AppRoutes.shippingInformation,
-                      );
-                    },
+                    onChangeTap: _showSavedLocationSheet,
                     name: _orderName,
                     phone: _orderPhone,
                     deliveryType: _orderDeliveryType,
