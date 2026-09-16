@@ -7,7 +7,6 @@ import 'package:hoodz/core/services/others/location_selection_service.dart';
 import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/login_required_dialog.dart';
-import 'package:hoodz/core/utils/safe_get_snackbar.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/profile/data/models/user_profile_model.dart';
 import 'package:hoodz/urls.dart';
@@ -206,24 +205,13 @@ class ShippingInformationController extends GetxController {
 
   Future<bool> applySelectedLocation(LocationAddress location) async {
     final matchedCity = _resolveCity(location);
-    if (matchedCity == null) {
-      showSafeGetSnackbar(
-        'City not found',
-        'Selected location city does not match available cities.',
-      );
-      return false;
+    if (matchedCity != null) {
+      selectedCity.value = matchedCity;
     }
 
-    final selectedCityValue = selectedCity.value.trim();
-    if (selectedCityValue.isNotEmpty &&
-        matchedCity.toLowerCase() != selectedCityValue.toLowerCase()) {
-      showSafeGetSnackbar(
-        'City mismatch',
-        'Picked location city does not match the selected city.',
-      );
-      return false;
-    }
-
+    selectedCountry.value = location.country.trim().isEmpty
+        ? selectedCountry.value
+        : location.country.trim();
     selectedAddress.value = location.fullAddress;
     fullAddressController.text = location.fullAddress;
     selectedLatitude.value = location.latitude;

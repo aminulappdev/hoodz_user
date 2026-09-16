@@ -438,7 +438,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     onChangeTap: () async {
                       PageNavigationService.to(
                         context,
-                        AppRoutes.savedDeliveryLocation,
+                        AppRoutes.shippingInformation,
                       );
                     },
                     name: _orderName,

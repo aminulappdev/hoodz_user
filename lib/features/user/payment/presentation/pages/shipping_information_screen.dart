@@ -57,11 +57,6 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.find<ProfileController>();
-    final dropDownStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-      fontSize: 16.sp(context),
-      fontWeight: FontWeight.w500,
-      color: const Color(0xff7A7A7A),
-    );
     return Obx(() {
       final user = profileController.userProfileModel.value?.data;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -103,24 +98,6 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
               //   hintText: Strings.enterYourPhoneNumber.tr,
               //   keyboardType: TextInputType.phone,
               // ),
-             
-              _FieldLabel(Strings.location.tr),
-              SizedBox(height: 8.h(context)),
-              CustomTextField(
-                hintText: Strings.select.tr,
-                hintStyle: dropDownStyle,
-                value: controller.selectedCity.value,
-                onChanged: controller.changeCity,
-                items: controller.cities
-                    .map(
-                      (city) => DropdownMenuItem<String>(
-                        value: city,
-                        child: Text(city, style: dropDownStyle),
-                      ),
-                    )
-                    .toList(),
-              ), 
-              SizedBox(height: 18.h(context)),
               _SectionHeader(
                 title: Strings.shippingAddress.tr,
                 onChange: () => _showLocationSheet(context),
@@ -156,7 +133,6 @@ class ShippingInformationScreen extends GetView<ShippingInformationController> {
                     //     ),
                     //   ],
                     // ),
-                    SizedBox(height: 18.h(context)),
                     _FieldLabel(Strings.fullAddress.tr),
                     SizedBox(height: 8.h(context)),
                     CustomTextField(
