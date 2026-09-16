@@ -214,17 +214,6 @@ class ProductReviewBottomSheet extends GetView<ProductReviewController> {
                       ),
                     ),
                   ),
-                  if (controller.showValidationErrors.value &&
-                      controller.attachments.isEmpty) ...[
-                    SizedBox(height: 8.h(context)),
-                    Text(
-                      Strings.pleaseUploadAtLeastOneImage.tr,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.red,
-                            fontSize: 12.sp(context),
-                          ),
-                    ),
-                  ],
                   if (controller.attachments.isNotEmpty) ...[
                     SizedBox(height: 14.h(context)),
                     SizedBox(

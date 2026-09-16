@@ -109,14 +109,6 @@ class ProductReviewController extends GetxController {
       return false;
     }
 
-    if (attachments.isEmpty) {
-      showAppToast(
-        message: Strings.pleaseUploadAtLeastOneImage.tr,
-        isError: true,
-      );
-      return false;
-    }
-
     final resolvedReference = reference.trim();
     if (resolvedReference.isEmpty) {
       showAppToast(

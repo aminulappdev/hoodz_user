@@ -11,14 +11,14 @@ class CustomHomePageAppBar extends StatelessWidget {
   const CustomHomePageAppBar({
     super.key,
     required this.address,
-    required this.notificationCount,
+    required this.cartItemsCount,
     required this.onTapEdit,
-    required this.onTapNotification,
+    required this.onTapNotification, 
     required this.onTapSearch,
   });
 
   final String address;
-  final int notificationCount;
+  final int cartItemsCount;
   final VoidCallback onTapEdit;
   final VoidCallback onTapNotification;
   final VoidCallback onTapSearch;
@@ -111,6 +111,41 @@ class CustomHomePageAppBar extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (cartItemsCount > 0)
+                      Positioned(
+                        top: -2.h(context),
+                        right: -2.w(context),
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minWidth: 18.w(context),
+                            minHeight: 18.h(context),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 5.w(context),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(20.r(context)),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 0,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            cartItemsCount > 99 ? '99+' : '$cartItemsCount',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontSize: 10.sp(context),
+                                  fontWeight: FontWeight.w700,
+                                  height: 1,
+                                ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],

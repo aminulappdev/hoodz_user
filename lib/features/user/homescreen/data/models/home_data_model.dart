@@ -39,6 +39,7 @@ class Data {
   Data({
     required this.profile,
     required this.unreadNotification,
+    required this.cartItems,
     required this.firstSectionBanner,
     required this.lastOrder,
     required this.nearbyBrands,
@@ -51,6 +52,7 @@ class Data {
 
   final Profile? profile;
   final dynamic unreadNotification;
+  final dynamic cartItems;
   final List<SectionBanner> firstSectionBanner;
   final LastOrder? lastOrder;
   final List<NearbyBrand> nearbyBrands;
@@ -66,6 +68,7 @@ class Data {
           ? null
           : Profile.fromJson(json["profile"]),
       unreadNotification: json["unreadNotification"],
+      cartItems: json["cartItems"],
       firstSectionBanner: json["firstSectionBanner"] == null
           ? []
           : List<SectionBanner>.from(
@@ -113,6 +116,7 @@ class Data {
   Data copyWith({
     Profile? profile,
     dynamic unreadNotification,
+    dynamic cartItems,
     List<SectionBanner>? firstSectionBanner,
     LastOrder? lastOrder,
     List<NearbyBrand>? nearbyBrands,
@@ -125,6 +129,7 @@ class Data {
     return Data(
       profile: profile ?? this.profile,
       unreadNotification: unreadNotification ?? this.unreadNotification,
+      cartItems: cartItems ?? this.cartItems,
       firstSectionBanner: firstSectionBanner ?? this.firstSectionBanner,
       lastOrder: lastOrder ?? this.lastOrder,
       nearbyBrands: nearbyBrands ?? this.nearbyBrands,
@@ -141,6 +146,7 @@ class Data {
 class LastOrder {
   LastOrder({
     required this.id,
+    required this.orderId,
     required this.items,
     required this.amount,
     required this.status,
@@ -148,6 +154,7 @@ class LastOrder {
   });
 
   final String? id;
+  final String? orderId;
   final List<LastOrderItem> items;
   final dynamic amount;
   final String? status;
@@ -155,13 +162,14 @@ class LastOrder {
 
   factory LastOrder.fromJson(Map<String, dynamic> json) {
     return LastOrder(
-      id: json["_id"]?.toString() ?? json["id"]?.toString(),
+      id: json["_id"]?.toString(),
+      orderId: json["id"]?.toString(),
       items: json["items"] == null
           ? []
           : List<LastOrderItem>.from(
               json["items"]!.map((x) => LastOrderItem.fromJson(x)),
             ),
-      amount: json["amount"],
+      amount: json["amount"] ?? json["totalAmount"] ?? json["grandTotal"],
       status: json["status"]?.toString(),
       createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ""),
     );
@@ -341,17 +349,20 @@ class Product {
 class SectionBanner {
   SectionBanner({
     required this.banner,
+    required this.bannerArabic,
     required this.reference,
     required this.type,
   });
 
   final String? banner;
+  final String? bannerArabic;
   final String? reference;
   final String? type;
 
   factory SectionBanner.fromJson(Map<String, dynamic> json) {
     return SectionBanner(
       banner: json["banner"]?.toString(),
+      bannerArabic: json["bannerArabic"]?.toString(),
       reference: json["reference"]?.toString(),
       type: json["type"]?.toString(),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
+import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class RecommendationCard extends StatelessWidget {
@@ -10,11 +11,15 @@ class RecommendationCard extends StatelessWidget {
     required this.brand,
     required this.name,
     required this.price,
+    this.imageUrl,
+    this.onViewTap,
   });
 
   final String brand;
   final String name;
   final String price;
+  final String? imageUrl;
+  final VoidCallback? onViewTap;
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +38,19 @@ class RecommendationCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8.r(context)),
-              child: Assets.icons.aiChat.image(
-                width: 46.w(context),
-                height: 58.h(context),
-                fit: BoxFit.cover,
-              ),
+              child: imageUrl?.trim().isNotEmpty == true
+                  ? AppCachedNetworkImage(
+                      imageUrl: imageUrl,
+                      imageWidth: 46.w(context),
+                      imageHeight: 58.h(context),
+                      imageFit: BoxFit.cover,
+                      radius: 8.r(context),
+                    )
+                  : Assets.icons.aiChat.image(
+                      width: 46.w(context),
+                      height: 58.h(context),
+                      fit: BoxFit.cover,
+                    ),
             ),
             SizedBox(width: 10.w(context)),
             Expanded(
@@ -80,24 +93,29 @@ class RecommendationCard extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w(context),
-                          vertical: 3.h(context),
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFF6A00),
-                          borderRadius: BorderRadius.circular(999.r(context)),
-                        ),
-                        child: Text(
-                          Strings.view.tr,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                                fontSize: 10.sp(context),
-                                fontWeight: FontWeight.w500,
-                              ),
+                      InkWell(
+                        onTap: onViewTap,
+                        borderRadius: BorderRadius.circular(999.r(context)),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w(context),
+                            vertical: 3.h(context),
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF6A00),
+                            borderRadius:
+                                BorderRadius.circular(999.r(context)),
+                          ),
+                          child: Text(
+                            Strings.view.tr,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 10.sp(context),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                          ),
                         ),
                       ),
                     ],

@@ -37,8 +37,17 @@ import 'package:hoodz/features/user/product/presentation/controller/all_vouchers
 import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_controller.dart';
 import 'package:hoodz/gen/assets.gen.dart'; 
  
-class ProductDetailsScreen extends GetView<ProductDetailsController> {
+class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({super.key});
+
+  @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  final ProductDetailsController controller =
+      Get.find<ProductDetailsController>();
+  bool _showFloatingCartButton = false;
 
   bool _hasAccessToken() =>
       MySharedPref.getAccessToken()?.trim().isNotEmpty == true;
@@ -388,12 +397,15 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
                 color: controller.currentSelectedColorPayload,
               );
 
-              await Get.find<CartController>().addToCart(
+              final isAdded = await Get.find<CartController>().addToCart(
                 productId: productId,
                 size: selection.size,
                 color: selection.color,
                 quantity: 1,
               );
+              if (isAdded && mounted) {
+                setState(() => _showFloatingCartButton = true);
+              }
             },
             onTapBuyNow: () async {
               if (!_hasAccessToken()) {
@@ -441,6 +453,17 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
         );
       }),
 
+      floatingActionButton: _showFloatingCartButton
+          ? FloatingActionButton(
+              heroTag: 'product-details-cart-fab',
+              backgroundColor: const Color(0xFFFF6A00),
+              foregroundColor: Colors.white,
+              onPressed: () {
+                PageNavigationService.to(context, AppRoutes.cart);
+              },
+              child: const Icon(Icons.shopping_cart_outlined),
+            )
+          : null,
       body: Obx(() {
         if (controller.isLoading.value) {
           return const ProductDetailsShimmer();

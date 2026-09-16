@@ -210,8 +210,12 @@ class MyOrdersController extends GetxController {
   }
 
   String orderId(Datum order) {
-    final id = order.id ?? order.datumId ?? '';
-    return id.isEmpty ? '#N/A' : '#$id';
+    final id = order.datumId ?? order.id ?? '';
+    if (id.isEmpty) {
+      return '#N/A';
+    }
+
+    return id.startsWith('#') ? id : '#$id';
   }
 
   String orderRawId(Datum order) {

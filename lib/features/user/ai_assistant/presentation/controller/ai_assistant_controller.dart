@@ -9,6 +9,7 @@ import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/login_required_dialog.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
+import 'package:hoodz/features/user/ai_assistant/data/models/ai_assistant_messages_model.dart';
 import 'package:hoodz/urls.dart';
 
 class AiAssistantController extends GetxController {
@@ -72,11 +73,10 @@ class AiAssistantController extends GetxController {
         showAppToast(message: response.errorMessage, isError: true);
         return;
       }
-      _updateChatIdFromHistory(response.responseData);
-      final list = _findList(response.responseData);
+      final mappedMessages = _mapHistoryMessages(response.responseData);
       messages
         ..clear()
-        ..addAll(list.map(_mapMessage));
+        ..addAll(mappedMessages);
       messages.sort(_compareMessages);
     } catch (e) {
       showAppToast(
@@ -167,9 +167,18 @@ class AiAssistantController extends GetxController {
     final payload = _payload(data);
     final incomingChatId = _chatIdFromPayload(payload);
     if (incomingChatId.isNotEmpty) chatId.value = incomingChatId;
-    final message = _mapMessage(payload, forceAssistant: true);
-    if (message['text'].toString().isNotEmpty ||
-        (message['products'] as List).isNotEmpty) {
+
+    final userPayload = _nestedPayload(payload, 'userMessage');
+    if (userPayload.isNotEmpty) {
+      final userMessage = _mapMessage(userPayload);
+      _replacePendingOrUpsert(userMessage);
+    }
+
+    final aiPayload = _nestedPayload(payload, 'aiMessage');
+    final message = aiPayload.isNotEmpty
+        ? _mapMessage(aiPayload, forceAssistant: true)
+        : _mapMessage(payload, forceAssistant: true);
+    if (_hasRenderableMessage(message)) {
       _upsert(message);
     }
     isTyping.value = false;
@@ -183,6 +192,9 @@ class AiAssistantController extends GetxController {
     final senderType = (payload['senderType'] ?? payload['type'] ?? '')
         .toString()
         .toLowerCase();
+    if ({'ai', 'assistant', 'bot'}.contains(senderType)) {
+      return;
+    }
     if (chatId.value.isEmpty && incomingChatId.isEmpty &&
         !{'ai', 'assistant', 'bot', 'user'}.contains(senderType)) return;
     if (chatId.value.isNotEmpty && incomingChatId.isNotEmpty &&
@@ -257,6 +269,20 @@ class AiAssistantController extends GetxController {
     return <String, dynamic>{};
   }
 
+  Map<String, dynamic> _nestedPayload(
+    Map<String, dynamic> payload,
+    String key,
+  ) {
+    final nested = payload[key];
+    if (nested is Map) return Map<String, dynamic>.from(nested);
+    return <String, dynamic>{};
+  }
+
+  bool _hasRenderableMessage(Map<String, dynamic> message) {
+    return message['text'].toString().isNotEmpty ||
+        (message['products'] as List).isNotEmpty;
+  }
+
   bool _isFailurePayload(Map<String, dynamic> payload) {
     final success = payload['success'];
     if (success is bool) return !success;
@@ -276,6 +302,26 @@ class AiAssistantController extends GetxController {
     final message = payload['message'] ?? payload['error'];
     final value = message?.toString().trim() ?? '';
     return value.isNotEmpty ? value : Strings.failedToLoadMessages.tr;
+  }
+
+  List<Map<String, dynamic>> _mapHistoryMessages(dynamic data) {
+    if (data is Map) {
+      final model = AiAssistantMessagesModel.fromJson(
+        Map<String, dynamic>.from(data),
+      );
+      final modelChatId = model.data?.chat?.id?.trim() ?? '';
+      if (modelChatId.isNotEmpty) chatId.value = modelChatId;
+
+      final modelMessages = model.data?.messages ?? const <AiAssistantMessage>[];
+      if (modelMessages.isNotEmpty) {
+        return modelMessages
+            .map((message) => message.toMessageMap(chatId: chatId.value))
+            .toList(growable: false);
+      }
+    }
+
+    _updateChatIdFromHistory(data);
+    return _findList(data).map(_mapMessage).toList(growable: false);
   }
 
   List<dynamic> _findList(dynamic data) {
@@ -304,8 +350,11 @@ class AiAssistantController extends GetxController {
     if (raw is! List) return const [];
     return raw
         .whereType<Map>()
-        .map((item) => Map<String, dynamic>.from(item))
-        .toList();
+        .map((item) {
+          return AiAssistantProduct.fromJson(Map<String, dynamic>.from(item))
+              .toJson();
+        })
+        .toList(growable: false);
   }
 
   void _updateChatIdFromHistory(dynamic data) {

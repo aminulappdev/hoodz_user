@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/app/translator/strings_enum.dart';
+import 'package:hoodz/core/services/others/page_navigation_service.dart';
+import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/widgets/shimmer/chat_shimmer.dart';
 import 'package:hoodz/features/user/ai_assistant/presentation/controller/ai_assistant_controller.dart';
@@ -156,14 +159,15 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
                                   'brandKey',
                                 ]),
                                 name: _productValue(product, [
+                                  'title',
                                   'name',
                                   'productName',
                                   'nameKey',
                                 ]),
-                                price: _productValue(product, [
-                                  'price',
-                                  'salePrice',
-                                ]),
+                                price: _productPrice(product),
+                                imageUrl: _productValue(product, ['banner']),
+                                onViewTap: () =>
+                                    _openProductDetails(context, product),
                               ),
                             ),
                           ),
@@ -219,6 +223,33 @@ class _AiAssistantScreenState extends State<AiAssistantScreen>
       if (value != null && value.toString().isNotEmpty) return value.toString();
     }
     return '';
+  }
+
+  String _productPrice(Map<String, dynamic> product) {
+    final value =
+        product['discountPrice'] ?? product['salePrice'] ?? product['price'];
+    if (value == null) return '';
+    final amount = num.tryParse(value.toString());
+    if (amount == null) return value.toString();
+    final fractionDigits = amount % 1 == 0 ? 0 : 2;
+    return '\$${amount.toStringAsFixed(fractionDigits)}';
+  }
+
+  void _openProductDetails(
+    BuildContext context,
+    Map<String, dynamic> product,
+  ) {
+    final productId = _productValue(product, ['_id', 'id', 'productId']);
+    if (productId.trim().isEmpty) {
+      showAppToast(message: Strings.productIdNotFound.tr, isError: true);
+      return;
+    }
+
+    PageNavigationService.to(
+      context,
+      AppRoutes.productDetails,
+      arguments: {'productId': productId},
+    );
   }
 }
 

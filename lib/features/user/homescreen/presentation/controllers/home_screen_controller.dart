@@ -107,6 +107,7 @@ class HomeScreenController extends GetxController {
 
   HomeDataModel? get homeDataModel => _homeDataModel.value;
   Data? get homeData => _homeDataModel.value?.data;
+  int get cartItemsCount => _toInt(homeData?.cartItems) ?? 0;
 
   void updateWishlistStatus({
     required String productId,

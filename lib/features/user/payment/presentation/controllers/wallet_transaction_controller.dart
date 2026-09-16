@@ -26,7 +26,7 @@ class WalletTransactionController extends GetxController {
 
   wallet.Data? get walletData => _walletTransactionModel.value?.data;
 
-  int get walletBalance => walletData?.walletBalance ?? 0;
+  dynamic get walletBalance => walletData?.walletBalance ?? 0;
 
   String get walletBalanceText => '\$$walletBalance';
 
@@ -63,7 +63,7 @@ class WalletTransactionController extends GetxController {
 
     await showLoadingOverLay(
       msg: Strings.loadingWalletHistory.tr,
-      asyncFunction: () async {
+      asyncFunction: () async { 
         isLoading.value = true;
 
         try {
@@ -111,7 +111,7 @@ class WalletTransactionController extends GetxController {
     return DateFormat('MMM d, y - h:mm a').format(dateTime.toLocal());
   }
 
-  String _formatAmount(int? amount, String? direction) {
+  String _formatAmount(dynamic amount, String? direction) {
     final value = amount ?? 0;
     final normalizedDirection = direction?.toLowerCase() ?? '';
     final isDebit =

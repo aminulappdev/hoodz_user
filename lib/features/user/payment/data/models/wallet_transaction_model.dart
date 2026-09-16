@@ -8,7 +8,7 @@ class WalletTransactionModel {
     });
 
     final bool? success;
-    final int? statusCode;
+    final dynamic statusCode; 
     final String? message;
     final Meta? meta;
     final Data? data;
@@ -31,7 +31,7 @@ class Data {
         required this.transactions,
     });
 
-    final int? walletBalance;
+    final dynamic walletBalance;
     final List<Transaction> transactions;
 
     factory Data.fromJson(Map<String, dynamic> json){ 
@@ -63,7 +63,7 @@ class Transaction {
     final String? referenceType;
     final String? type;
     final String? reference;
-    final int? amount;
+    final dynamic amount;
     final DateTime? createdAt;
     final String? direction;
     final String? transactionId;
@@ -99,10 +99,10 @@ class Meta {
         required this.totalPage,
     });
 
-    final int? page;
-    final int? limit;
-    final int? total;
-    final int? totalPage;
+    final dynamic page;
+    final dynamic limit;
+    final dynamic total;
+    final dynamic totalPage;
 
     factory Meta.fromJson(Map<String, dynamic> json){ 
         return Meta(
