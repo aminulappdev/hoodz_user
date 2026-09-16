@@ -92,12 +92,12 @@ class ShippingInformationController extends GetxController {
       return false;
     }
 
-    final name = _resolveLocationName();
+    final fullAddress = fullAddressController.text.trim();
+    final name = fullAddress;
     final city = selectedCity.value.trim();
     final country = selectedCountry.value.trim().isEmpty
         ? 'Bangladesh'
         : selectedCountry.value.trim();
-    final fullAddress = fullAddressController.text.trim();
     final buildingNo = int.tryParse(buildingController.text.trim());
     final floorNo = int.tryParse(floorController.text.trim());
     final apartment = int.tryParse(apartmentController.text.trim());

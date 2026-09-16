@@ -7,7 +7,7 @@ class GeneralMessageModel {
     required this.data,
   });
 
-  final bool? success;
+  final bool? success; 
   final int? statusCode;
   final String? message;
   final Meta? meta;
@@ -35,7 +35,7 @@ class Datum {
     required this.isEdited,
     required this.sender,
     required this.senderType,
-    required this.createdAt,
+    required this.createdAt, 
   });
 
   final String? id;

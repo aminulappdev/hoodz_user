@@ -324,13 +324,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   String get _orderAddress {
     final billing = _orderSummaryController.orderSummaryData?.billingDetails;
-    final pieces =
-        <String>[?billing?.address, ?billing?.city, ?billing?.country]
-            .where((part) => part.trim().isNotEmpty)
-            .map((part) => part.trim())
-            .toList();
-
-    return pieces.isEmpty ? Strings.notAvailable.tr : pieces.join(', ');
+    // final pieces =
+    //     <String>[?billing?.address, ?billing?.city, ?billing?.country]
+    //         .where((part) => part.trim().isNotEmpty)
+    //         .map((part) => part.trim())
+    //         .toList();
+    //
+    // return pieces.isEmpty ? Strings.notAvailable.tr : pieces.join(', ');
+    return billing?.address?.trim().isNotEmpty == true
+        ? billing!.address!.trim()
+        : Strings.notAvailable.tr;
   }
 
   String get _availablePointsLabel =>

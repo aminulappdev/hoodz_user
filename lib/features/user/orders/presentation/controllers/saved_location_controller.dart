@@ -144,10 +144,11 @@ class SavedLocationController extends GetxController {
   }
 
   String addressSubtitle(saved_address.Datum address) {
-    return <String>[
-      if (address.name?.trim().isNotEmpty == true) address.name!.trim(),
-      if (address.city?.trim().isNotEmpty == true) address.city!.trim(),
-      if (address.country?.trim().isNotEmpty == true) address.country!.trim(),
-    ].join(', ');
+    // return <String>[
+    //   if (address.name?.trim().isNotEmpty == true) address.name!.trim(),
+    //   if (address.city?.trim().isNotEmpty == true) address.city!.trim(),
+    //   if (address.country?.trim().isNotEmpty == true) address.country!.trim(),
+    // ].join(', ');
+    return address.name?.trim() ?? '';
   }
 }
