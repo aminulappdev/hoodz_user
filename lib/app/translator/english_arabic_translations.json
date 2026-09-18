@@ -1,0 +1,1986 @@
+{
+  "hello": {
+    "english": "Hello!",
+    "arabic": "مرحباً!"
+  },
+  "loading": {
+    "english": "Loading",
+    "arabic": "جاري التحميل"
+  },
+  "change_theme": {
+    "english": "Change theme",
+    "arabic": "تغيير الثيم"
+  },
+  "change_language": {
+    "english": "Change language",
+    "arabic": "تغيير اللغة"
+  },
+  "no internet connection": {
+    "english": "No internet connection!",
+    "arabic": "لا يوجد إتصال بالإنترنت"
+  },
+  "server not responding": {
+    "english": "Server is not responding!",
+    "arabic": "لا يوجد إستجابة من السيرفر!"
+  },
+  "something went wrong": {
+    "english": "Something went wrong",
+    "arabic": "حدث خطأ غير متوقع!"
+  },
+  "api not found": {
+    "english": "Route not found!",
+    "arabic": "الرابط الذي تحاول الوصول اليه غير موجود!"
+  },
+  "Server error": {
+    "english": "Server error",
+    "arabic": "مشكلة من السيرفر"
+  },
+  "Url not found": {
+    "english": "Url not found",
+    "arabic": "مشكلة في الرابط"
+  },
+  "good morning": {
+    "english": "Good morning",
+    "arabic": "صباح الخير"
+  },
+  "Easy way to Track your financial": {
+    "english": "Easy way to Track your financial",
+    "arabic": "طريقة سهلة لتتبع أموالك"
+  },
+  "All your financial activities will be recorded and displayed briefly and clearly": {
+    "english": "All your financial activities will be recorded and displayed briefly and clearly",
+    "arabic": "جميع أنشطتك المالية سيتم تسجيلها وعرضها بإيجاز ووضوح"
+  },
+  "Get Started": {
+    "english": "Get Started",
+    "arabic": "ابدأ الآن"
+  },
+  "Skip": {
+    "english": "Skip",
+    "arabic": "تخطي"
+  },
+  "retry": {
+    "english": "Retry",
+    "arabic": "اعادة المحاولة"
+  },
+  "internet error": {
+    "english": "Error Occurred Check Your Internet Connection! ⚠️",
+    "arabic": "خطأ في الاتصال بالانترنت ⚠️"
+  },
+  "cancel": {
+    "english": "Cancel",
+    "arabic": "إلغاء"
+  },
+  "general_settings": {
+    "english": "General settings",
+    "arabic": "الإعدادات العامة"
+  },
+  "home": {
+    "english": "Home",
+    "arabic": "الرئيسية"
+  },
+  "profile": {
+    "english": "Profile",
+    "arabic": "ملفي"
+  },
+  "ai_assistant": {
+    "english": "AI Assistant",
+    "arabic": "مساعد الذكاء الاصطناعي"
+  },
+  "ai_stylist": {
+    "english": "AI Stylist",
+    "arabic": "ذكي"
+  },
+  "powered_by_ai": {
+    "english": "Powered by AI",
+    "arabic": "مدعوم بالذكاء الاصطناعي"
+  },
+  "online": {
+    "english": "Online",
+    "arabic": "متصل"
+  },
+  "chat": {
+    "english": "Chat",
+    "arabic": "الدردشة"
+  },
+  "customer_support_chat": {
+    "english": "Customer Support",
+    "arabic": "دعم العملاء"
+  },
+  "order_support_chat": {
+    "english": "Order Support",
+    "arabic": "دعم الطلبات"
+  },
+  "no_messages_found": {
+    "english": "No messages found",
+    "arabic": "لم يتم العثور على رسائل"
+  },
+  "type_a_message": {
+    "english": "Type a message...",
+    "arabic": "اكتب رسالة..."
+  },
+  "ask_me_anything_about_fashion": {
+    "english": "Ask me anything about fashion...",
+    "arabic": "اسألني أي شيء عن الموضة..."
+  },
+  "ai_fashion_assistant_greeting": {
+    "english": "Hi! I'm your AI Fashion Assistant. How can I help you style your look today?",
+    "arabic": "مرحباً! أنا مساعد الموضة بالذكاء الاصطناعي. كيف يمكنني مساعدتك اليوم؟"
+  },
+  "show_me_white_shirts": {
+    "english": "Show me white shirts",
+    "arabic": "أرني القمصان البيضاء"
+  },
+  "ai_recommendation_intro": {
+    "english": "I found some perfect white shirts for you! Here are my top picks:",
+    "arabic": "وجدت لك بعض القمصان البيضاء الرائعة! هذه أفضل اختياراتي:"
+  },
+  "view": {
+    "english": "View",
+    "arabic": "عرض"
+  },
+  "urban_style": {
+    "english": "Urban Style",
+    "arabic": "أسلوب حضري"
+  },
+  "classic_white_oxford_shirt": {
+    "english": "Classic White Oxford Shirt",
+    "arabic": "قميص أوكسفورد أبيض كلاسيكي"
+  },
+  "classic_black_t_shirt": {
+    "english": "Classic Black T-Shirt",
+    "arabic": "تيشيرت أسود كلاسيكي"
+  },
+  "nike": {
+    "english": "Nike",
+    "arabic": "نايكي"
+  },
+  "black": {
+    "english": "Black",
+    "arabic": "أسود"
+  },
+  "search": {
+    "english": "Search",
+    "arabic": "بحث"
+  },
+  "all": {
+    "english": "All",
+    "arabic": "الكل"
+  },
+  "men": {
+    "english": "Men",
+    "arabic": "رجال"
+  },
+  "women": {
+    "english": "Women",
+    "arabic": "نساء"
+  },
+  "unisex": {
+    "english": "Unisex",
+    "arabic": "للجميع"
+  },
+  "deliver_to": {
+    "english": "Deliver to",
+    "arabic": "التوصيل إلى"
+  },
+  "no_address_added": {
+    "english": "No address added",
+    "arabic": "لم تتم إضافة عنوان"
+  },
+  "first_section": {
+    "english": "First Section",
+    "arabic": "القسم الأول"
+  },
+  "nearby_brands": {
+    "english": "Nearby Brands",
+    "arabic": "العلامات القريبة"
+  },
+  "recently_viewed": {
+    "english": "Recently Viewed",
+    "arabic": "المشاهدات الأخيرة"
+  },
+  "trending_now": {
+    "english": "Trending Now",
+    "arabic": "الرائج الآن"
+  },
+  "ai_recommended_for_you": {
+    "english": "AI Recommended for you",
+    "arabic": "موصى به لك بالذكاء الاصطناعي"
+  },
+  "no_nearby_brands": {
+    "english": "No nearby brands",
+    "arabic": "لا توجد علامات قريبة"
+  },
+  "no_recently_viewed": {
+    "english": "No recently viewed",
+    "arabic": "لا توجد مشاهدات حديثة"
+  },
+  "no_trending_products": {
+    "english": "No trending products",
+    "arabic": "لا توجد منتجات رائجة"
+  },
+  "no_recommended_products": {
+    "english": "No recommended products",
+    "arabic": "لا توجد منتجات موصى بها"
+  },
+  "products": {
+    "english": "Products",
+    "arabic": "المنتجات"
+  },
+  "search_history": {
+    "english": "Search History",
+    "arabic": "سجل البحث"
+  },
+  "no_recent_searches": {
+    "english": "No recent searches",
+    "arabic": "لا توجد عمليات بحث حديثة"
+  },
+  "no_suggestions_found": {
+    "english": "No suggestions found",
+    "arabic": "لم يتم العثور على اقتراحات"
+  },
+  "featured_vendors": {
+    "english": "Featured vendors",
+    "arabic": "البائعون المميزون"
+  },
+  "all_categories": {
+    "english": "All Categories",
+    "arabic": "كل الفئات"
+  },
+  "brand": {
+    "english": "Brand",
+    "arabic": "العلامة التجارية"
+  },
+  "brands": {
+    "english": "Brands",
+    "arabic": "العلامات التجارية"
+  },
+  "shops": {
+    "english": "Shops",
+    "arabic": "المتاجر"
+  },
+  "select_a_category_to_view_shops": {
+    "english": "Select a category to view shops.",
+    "arabic": "اختر فئة لعرض المتاجر."
+  },
+  "no_shop_found": {
+    "english": "No shop found",
+    "arabic": "لم يتم العثور على متجر"
+  },
+  "no_category_found": {
+    "english": "No category found",
+    "arabic": "لم يتم العثور على فئة"
+  },
+  "price_range": {
+    "english": "Price Range:",
+    "arabic": "نطاق السعر:"
+  },
+  "max_distance": {
+    "english": "Max Distance:",
+    "arabic": "أقصى مسافة:"
+  },
+  "deliver_to_current_location": {
+    "english": "Current Location",
+    "arabic": "الموقع الحالي"
+  },
+  "deliver_to_different_location": {
+    "english": "Different Location",
+    "arabic": "موقع مختلف"
+  },
+  "updating_selected_address": {
+    "english": "Updating selected address...",
+    "arabic": "جارٍ تحديث العنوان المحدد..."
+  },
+  "confirm_pin_location": {
+    "english": "Confirm pin location",
+    "arabic": "تأكيد موقع الدبوس"
+  },
+  "category_load_failed": {
+    "english": "Category Load Failed",
+    "arabic": "فشل تحميل الفئات"
+  },
+  "shop_load_failed": {
+    "english": "Shop Load Failed",
+    "arabic": "فشل تحميل المتجر",
+    "arabic_variants": [
+      "فشل تحميل المتاجر",
+      "فشل تحميل المتجر"
+    ]
+  },
+  "address_update_failed": {
+    "english": "Address Update Failed",
+    "arabic": "فشل تحديث العنوان"
+  },
+  "address_updated_successfully": {
+    "english": "Address updated successfully",
+    "arabic": "تم تحديث العنوان بنجاح"
+  },
+  "local_brand": {
+    "english": "Local Brand",
+    "arabic": "علامة محلية"
+  },
+  "international_brand": {
+    "english": "International Brand",
+    "arabic": "علامة عالمية"
+  },
+  "new_arrivals": {
+    "english": "New Arrivals",
+    "arabic": "وصل حديثًا"
+  },
+  "minute": {
+    "english": "min",
+    "arabic": "د"
+  },
+  "attachments": {
+    "english": "Attachments",
+    "arabic": "المرفقات"
+  },
+  "uploading_attachments": {
+    "english": "Uploading attachments...",
+    "arabic": "جارٍ رفع المرفقات..."
+  },
+  "upload_failed": {
+    "english": "Upload Failed",
+    "arabic": "فشل الرفع"
+  },
+  "opening_customer_support": {
+    "english": "Opening customer support...",
+    "arabic": "جارٍ فتح دعم العملاء..."
+  },
+  "opening_order_support": {
+    "english": "Opening order support...",
+    "arabic": "جارٍ فتح دعم الطلبات..."
+  },
+  "creating_chat": {
+    "english": "Creating chat...",
+    "arabic": "جارٍ إنشاء المحادثة..."
+  },
+  "customer_support_chat_response_invalid": {
+    "english": "Customer support chat response is invalid.",
+    "arabic": "استجابة محادثة دعم العملاء غير صالحة."
+  },
+  "customer_support_chat_not_available": {
+    "english": "Customer support chat not available.",
+    "arabic": "محادثة دعم العملاء غير متاحة."
+  },
+  "failed_to_load_customer_support_chat": {
+    "english": "Failed to load customer support chat: ",
+    "arabic": "فشل تحميل محادثة دعم العملاء: "
+  },
+  "order_support_chat_response_invalid": {
+    "english": "Order support chat response is invalid.",
+    "arabic": "استجابة محادثة دعم الطلبات غير صالحة."
+  },
+  "order_support_chat_not_available": {
+    "english": "Order support chat not available.",
+    "arabic": "محادثة دعم الطلبات غير متاحة."
+  },
+  "failed_to_load_order_support_chat": {
+    "english": "Failed to load order support chat: ",
+    "arabic": "فشل تحميل محادثة دعم الطلبات: "
+  },
+  "failed_to_load_messages": {
+    "english": "Failed to load messages: ",
+    "arabic": "فشل تحميل الرسائل: "
+  },
+  "profile_title": {
+    "english": "My Profile",
+    "arabic": "ملفي الشخصي"
+  },
+  "manage_personal_information": {
+    "english": "Manage your personal information",
+    "arabic": "إدارة معلوماتك الشخصية"
+  },
+  "user": {
+    "english": "User",
+    "arabic": "مستخدم"
+  },
+  "address_not_added": {
+    "english": "Address not added",
+    "arabic": "لم تتم إضافة العنوان"
+  },
+  "edit_profile": {
+    "english": "Edit Profile",
+    "arabic": "تعديل الملف الشخصي"
+  },
+  "change_password": {
+    "english": "Change Password",
+    "arabic": "تغيير كلمة المرور"
+  },
+  "wallet": {
+    "english": "Wallet",
+    "arabic": "المحفظة"
+  },
+  "customer_support": {
+    "english": "Customer Support",
+    "arabic": "دعم العملاء"
+  },
+  "points": {
+    "english": "Points",
+    "arabic": "النقاط"
+  },
+  "wishlist": {
+    "english": "Wishlist",
+    "arabic": "مفضلة"
+  },
+  "wishlist_title": {
+    "english": "Wishlist",
+    "arabic": "المفضلة"
+  },
+  "no_wishlist_items_found": {
+    "english": "No wishlist items found",
+    "arabic": "لم يتم العثور على عناصر في المفضلة"
+  },
+  "unnamed_product": {
+    "english": "Unnamed product",
+    "arabic": "منتج بدون اسم"
+  },
+  "add_to_cart": {
+    "english": "Add to cart",
+    "arabic": "أضف إلى السلة"
+  },
+  "buy_now": {
+    "english": "Buy now",
+    "arabic": "اشتري الآن"
+  },
+  "wishlist_update_failed": {
+    "english": "Wishlist Update Failed",
+    "arabic": "فشل تحديث المفضلة"
+  },
+  "terms_and_conditions": {
+    "english": "Terms & Conditions",
+    "arabic": "الشروط والأحكام"
+  },
+  "privacy_policy": {
+    "english": "Privacy Policy",
+    "arabic": "سياسة الخصوصية"
+  },
+  "shop_id_not_found": {
+    "english": "Shop ID not found.",
+    "arabic": "لم يتم العثور على معرف المتجر."
+  },
+  "no_shop_details_found": {
+    "english": "No shop details found",
+    "arabic": "لم يتم العثور على تفاصيل المتجر"
+  },
+  "no_product_found": {
+    "english": "No product found",
+    "arabic": "لم يتم العثور على منتج"
+  },
+  "no_recommendation_found": {
+    "english": "No recommendation found",
+    "arabic": "لم يتم العثور على توصيات"
+  },
+  "high_recommended": {
+    "english": "Highly recommended",
+    "arabic": "موصى به بشدة"
+  },
+  "recommendation": {
+    "english": "Recommendation",
+    "arabic": "التوصيات"
+  },
+  "all_products": {
+    "english": "All Products",
+    "arabic": "كل المنتجات"
+  },
+  "reviews": {
+    "english": "Reviews",
+    "arabic": "التقييمات"
+  },
+  "view_all": {
+    "english": "View all",
+    "arabic": "عرض الكل"
+  },
+  "in_stock": {
+    "english": "In Stock",
+    "arabic": "متوفر"
+  },
+  "out_of_stock": {
+    "english": "Out of Stock",
+    "arabic": "غير متوفر"
+  },
+  "availability": {
+    "english": "Availability",
+    "arabic": "التوفر"
+  },
+  "opening_time": {
+    "english": "Opening Time",
+    "arabic": "وقت الفتح"
+  },
+  "open_prefix": {
+    "english": "Open",
+    "arabic": "يفتح"
+  },
+  "open_now": {
+    "english": "Open now",
+    "arabic": "مفتوح الآن"
+  },
+  "closed": {
+    "english": "Closed",
+    "arabic": "مغلق"
+  },
+  "product_details_title": {
+    "english": "Product Details",
+    "arabic": "تفاصيل المنتج"
+  },
+  "product_load_failed": {
+    "english": "Product Load Failed",
+    "arabic": "فشل تحميل المنتج"
+  },
+  "product_id_not_found": {
+    "english": "Product ID not found.",
+    "arabic": "لم يتم العثور على معرف المنتج."
+  },
+  "selected_variant_not_available": {
+    "english": "Selected variant is not available.",
+    "arabic": "النسخة المحددة غير متاحة."
+  },
+  "no_image_found": {
+    "english": "No image found",
+    "arabic": "لم يتم العثور على صورة"
+  },
+  "no_description_found": {
+    "english": "No description found",
+    "arabic": "لم يتم العثور على وصف"
+  },
+  "select_size": {
+    "english": "Select Size",
+    "arabic": "اختر المقاس"
+  },
+  "select_color": {
+    "english": "Select color",
+    "arabic": "اختر اللون"
+  },
+  "complete_your_look": {
+    "english": "Complete your look",
+    "arabic": "أكمل إطلالتك"
+  },
+  "ai_suggested": {
+    "english": "AI Suggested",
+    "arabic": "مقترح بالذكاء الاصطناعي"
+  },
+  "vouchers": {
+    "english": "Vouchers",
+    "arabic": "القسائم"
+  },
+  "shop_vouchers": {
+    "english": "Shop Vouchers",
+    "arabic": "قسائم المتجر"
+  },
+  "no_vouchers_available": {
+    "english": "No vouchers available",
+    "arabic": "لا توجد قسائم متاحة"
+  },
+  "orders": {
+    "english": "Orders",
+    "arabic": "طلباتي"
+  },
+  "completed": {
+    "english": "Completed",
+    "arabic": "مكتمل"
+  },
+  "cancelled": {
+    "english": "Cancelled",
+    "arabic": "ملغى"
+  },
+  "processing": {
+    "english": "Processing",
+    "arabic": "قيد المعالجة"
+  },
+  "my_cart": {
+    "english": "My Cart",
+    "arabic": "سلة تسوقي"
+  },
+  "checkout": {
+    "english": "Checkout",
+    "arabic": "إتمام الدفع"
+  },
+  "remove_item": {
+    "english": "Remove item?",
+    "arabic": "إزالة العنصر؟"
+  },
+  "do_you_want_to_remove_from_cart": {
+    "english": "Do you want to remove",
+    "arabic": "هل تريد إزالة"
+  },
+  "from": {
+    "english": "from",
+    "arabic": "من"
+  },
+  "delete": {
+    "english": "Delete",
+    "arabic": "حذف"
+  },
+  "no_cart_items_found": {
+    "english": "No cart items found",
+    "arabic": "لم يتم العثور على عناصر في السلة"
+  },
+  "recommended_for_you": {
+    "english": "Recommended for you",
+    "arabic": "مقترح لك"
+  },
+  "subtotal": {
+    "english": "Subtotal",
+    "arabic": "المجموع الجزئي"
+  },
+  "discount": {
+    "english": "Discount",
+    "arabic": "الخصم"
+  },
+  "delivery_fee": {
+    "english": "Delivery fee",
+    "arabic": "رسوم التوصيل"
+  },
+  "voucher_discount": {
+    "english": "Voucher discount",
+    "arabic": "خصم القسيمة"
+  },
+  "coin_discount": {
+    "english": "Coin discount",
+    "arabic": "خصم النقاط"
+  },
+  "delivery_type": {
+    "english": "Delivery Type",
+    "arabic": "نوع التوصيل"
+  },
+  "regular_delivery": {
+    "english": "Regular Delivery",
+    "arabic": "توصيل عادي"
+  },
+  "instant_delivery": {
+    "english": "Instant Delivery",
+    "arabic": "توصيل فوري"
+  },
+  "write_your_note_here": {
+    "english": "Write your note here...",
+    "arabic": "اكتب ملاحظتك هنا..."
+  },
+  "voucher_already_added_coin_enable_not_allowed": {
+    "english": "Voucher already added. Coin cannot be enabled.",
+    "arabic": "تمت إضافة قسيمة بالفعل. لا يمكن تفعيل النقاط."
+  },
+  "you_are_not_eligible_check_coin_rules": {
+    "english": "You are not eligible. Check coin rules.",
+    "arabic": "أنت غير مؤهل. تحقق من قواعد النقاط."
+  },
+  "already_coin_enabled_voucher_apply_not_allowed": {
+    "english": "Coin is already enabled. Voucher cannot be applied.",
+    "arabic": "تم تفعيل النقاط بالفعل. لا يمكن تطبيق القسيمة."
+  },
+  "order_summary_not_found_please_create_again": {
+    "english": "Order summary not found. Please create summary again.",
+    "arabic": "لم يتم العثور على ملخص الطلب. يرجى إنشاء الملخص مرة أخرى."
+  },
+  "cart_is_empty": {
+    "english": "Cart is empty.",
+    "arabic": "السلة فارغة."
+  },
+  "adding_to_cart": {
+    "english": "Adding to cart...",
+    "arabic": "جارٍ إضافة المنتج إلى السلة..."
+  },
+  "updating_cart": {
+    "english": "Updating cart...",
+    "arabic": "جارٍ تحديث السلة..."
+  },
+  "cart_updated_successfully": {
+    "english": "Cart updated successfully",
+    "arabic": "تم تحديث السلة بنجاح"
+  },
+  "removing_item": {
+    "english": "Removing item...",
+    "arabic": "جارٍ إزالة العنصر..."
+  },
+  "item_removed_from_cart": {
+    "english": "Item removed from cart",
+    "arabic": "تمت إزالة العنصر من السلة"
+  },
+  "creating_order": {
+    "english": "Creating order...",
+    "arabic": "جارٍ إنشاء الطلب..."
+  },
+  "creating_order_summary": {
+    "english": "Please Wait",
+    "arabic": "يرجى الانتظار"
+  },
+  "invalid_order_summary_response": {
+    "english": "Invalid order summary response.",
+    "arabic": "استجابة ملخص الطلب غير صالحة."
+  },
+  "place_order": {
+    "english": "Place Order",
+    "arabic": "إرسال الطلب"
+  },
+  "no_orders_here_yet": {
+    "english": "No orders here yet",
+    "arabic": "لا توجد طلبات بعد"
+  },
+  "reorder_items_not_found_for_this_order": {
+    "english": "Reorder items not found for this order.",
+    "arabic": "لم يتم العثور على عناصر لإعادة الطلب."
+  },
+  "customer_service": {
+    "english": "Order Support",
+    "arabic": "دعم الطلب"
+  },
+  "selected_issue": {
+    "english": "Selected issue",
+    "arabic": "المشكلة المختارة"
+  },
+  "please_select_an_issue_first": {
+    "english": "Please select an issue first.",
+    "arabic": "يرجى اختيار مشكلة أولاً."
+  },
+  "please_write_a_note_first": {
+    "english": "Please write a note first.",
+    "arabic": "يرجى كتابة ملاحظة أولاً."
+  },
+  "submitting": {
+    "english": "Submitting...",
+    "arabic": "جارٍ الإرسال..."
+  },
+  "submitting_grievance": {
+    "english": "Submitting grievance...",
+    "arabic": "جارٍ إرسال الشكوى..."
+  },
+  "confirm_your_order": {
+    "english": "Confirm Your Order",
+    "arabic": "تأكيد طلبك"
+  },
+  "please_review_your_order_before_placing_it": {
+    "english": "Please review your order before placing it.",
+    "arabic": "يرجى مراجعة طلبك قبل إرساله."
+  },
+  "edit_order": {
+    "english": "Edit order",
+    "arabic": "تعديل الطلب"
+  },
+  "name": {
+    "english": "Name:",
+    "arabic": "الاسم:"
+  },
+  "phone": {
+    "english": "Phone:",
+    "arabic": "الهاتف:"
+  },
+  "payment_summary": {
+    "english": "Payment summary",
+    "arabic": "ملخص الدفع"
+  },
+  "view_order": {
+    "english": "View Order",
+    "arabic": "عرض الطلب"
+  },
+  "reorder": {
+    "english": "Reorder",
+    "arabic": "إعادة الطلب"
+  },
+  "order_again": {
+    "english": "Order Again",
+    "arabic": "اطلب مرة أخرى"
+  },
+  "help": {
+    "english": "Help",
+    "arabic": "مساعدة"
+  },
+  "delivery": {
+    "english": "Delivery",
+    "arabic": "التوصيل"
+  },
+  "distance": {
+    "english": "Distance",
+    "arabic": "المسافة"
+  },
+  "arriving_in_approx_20_mins": {
+    "english": "Arriving in approx 20 mins",
+    "arabic": "سيصل خلال حوالي 20 دقيقة"
+  },
+  "kilometer": {
+    "english": "km",
+    "arabic": "كم"
+  },
+  "save_on_your_order": {
+    "english": "Save on your order",
+    "arabic": "وفّر في طلبك"
+  },
+  "add_voucher": {
+    "english": "Apply voucher",
+    "arabic": "تطبيق القسيمة"
+  },
+  "enter_voucher_code": {
+    "english": "Enter voucher code",
+    "arabic": "أدخل رمز القسيمة"
+  },
+  "use_points": {
+    "english": "Use points",
+    "arabic": "استخدام النقاط"
+  },
+  "about_coin_rules": {
+    "english": "About coin rules",
+    "arabic": "حول قواعد النقاط"
+  },
+  "available_points": {
+    "english": "Available points:",
+    "arabic": "النقاط المتاحة:"
+  },
+  "coin_redemption_info": {
+    "english": "1 Coin = EGP 1.00\nRedeem from 50 coins at checkout.",
+    "arabic": "1 نقطة = 1.00 جنيه\nيمكن الاستبدال من 50 نقطة عند الدفع."
+  },
+  "app_referral_link": {
+    "english": "App Referral Link",
+    "arabic": "رابط الإحالة"
+  },
+  "referral_link_unavailable": {
+    "english": "Referral link unavailable",
+    "arabic": "رابط الإحالة غير متاح"
+  },
+  "referral_link_not_available": {
+    "english": "Referral link is not available",
+    "arabic": "رابط الإحالة غير متاح"
+  },
+  "share": {
+    "english": "Share",
+    "arabic": "شارك"
+  },
+  "how_it_works": {
+    "english": "How It Works",
+    "arabic": "طريقة العمل"
+  },
+  "share_your_link": {
+    "english": "Share your link",
+    "arabic": "شارك رابطك"
+  },
+  "send_your_unique_app_link_to_friends": {
+    "english": "Send your unique app link to friends.",
+    "arabic": "أرسل رابط التطبيق الخاص بك إلى الأصدقاء."
+  },
+  "friend_signs_up": {
+    "english": "Friend signs up",
+    "arabic": "تسجيل صديق"
+  },
+  "friend_signs_up_using_your_link": {
+    "english": "Your friend creates an account using your link.",
+    "arabic": "ينشئ صديقك حساباً باستخدام رابطك."
+  },
+  "earn_points": {
+    "english": "Earn points",
+    "arabic": "اكسب نقاط"
+  },
+  "earn_points_referral_info": {
+    "english": "Get 30 coins as inviter after your friend's first order. Invitees get 20 coins on a first order over EGP 500.",
+    "arabic": "احصل على 30 نقطة بعد أول طلب لصديقك. يحصل الصديق على 20 نقطة لأول طلب فوق 500 جنيه."
+  },
+  "bonus_tip_points": {
+    "english": "Bonus tip:\nComplete your profile for 10 coins, write verified reviews to earn more, and redeem coins at checkout when your balance reaches 50 coins.",
+    "arabic": "نصيحة:\nأكمل ملفك لتحصل على 10 نقاط، واكتب مراجعات موثقة لكسب المزيد، واستبدل النقاط عند وصول رصيدك إلى 50 نقطة."
+  },
+  "earning_scheme": {
+    "english": "1. Earning Scheme",
+    "arabic": "1. طرق الكسب"
+  },
+  "trigger_action": {
+    "english": "Trigger Action",
+    "arabic": "الإجراء"
+  },
+  "coins_earned": {
+    "english": "Coins Earned",
+    "arabic": "النقاط"
+  },
+  "maximum_cap": {
+    "english": "Maximum Cap",
+    "arabic": "الحد الأقصى"
+  },
+  "standard_purchase": {
+    "english": "Standard Purchase",
+    "arabic": "شراء عادي"
+  },
+  "one_coin_per_egp_100_spent": {
+    "english": "1 Coin per EGP 100 spent",
+    "arabic": "1 نقطة لكل 100 جنيه"
+  },
+  "no_limit": {
+    "english": "No limit",
+    "arabic": "بدون حد"
+  },
+  "account_creation": {
+    "english": "Account Creation",
+    "arabic": "إنشاء حساب"
+  },
+  "twenty_coins": {
+    "english": "20 Coins",
+    "arabic": "20 نقطة"
+  },
+  "welcome_bonus_20_coins": {
+    "english": "20 Coins (Welcome Bonus)",
+    "arabic": "20 نقطة ترحيبية"
+  },
+  "once_per_user": {
+    "english": "Once per user",
+    "arabic": "مرة لكل مستخدم"
+  },
+  "complete_profile": {
+    "english": "Complete Profile",
+    "arabic": "إكمال الملف"
+  },
+  "ten_coins": {
+    "english": "10 Coins",
+    "arabic": "10 نقاط"
+  },
+  "verified_product_review": {
+    "english": "Verified Product Review",
+    "arabic": "مراجعة موثقة"
+  },
+  "five_coins": {
+    "english": "5 Coins",
+    "arabic": "5 نقاط"
+  },
+  "two_reviews_per_month": {
+    "english": "2 reviews / month",
+    "arabic": "مراجعتان شهرياً"
+  },
+  "photo_outfit_review": {
+    "english": "Photo / Outfit Review",
+    "arabic": "مراجعة بصورة"
+  },
+  "fifteen_coins": {
+    "english": "15 Coins",
+    "arabic": "15 نقطة"
+  },
+  "referral_inviter": {
+    "english": "Referral (Inviter)",
+    "arabic": "إحالة الداعي"
+  },
+  "thirty_coins": {
+    "english": "30 Coins",
+    "arabic": "30 نقطة"
+  },
+  "after_friend_first_order": {
+    "english": "After friend's 1st order",
+    "arabic": "بعد أول طلب للصديق"
+  },
+  "referral_invitee": {
+    "english": "Referral (Invitee)",
+    "arabic": "إحالة الصديق"
+  },
+  "on_first_order_over_egp_500": {
+    "english": "On 1st order over EGP 500",
+    "arabic": "لأول طلب فوق 500 جنيه"
+  },
+  "redemption_financial_safeguards": {
+    "english": "2. Redemption & Financial Safeguards",
+    "arabic": "2. الاستبدال والشروط"
+  },
+  "rule": {
+    "english": "Rule",
+    "arabic": "القاعدة"
+  },
+  "requirement_constraint": {
+    "english": "Requirement / Constraint",
+    "arabic": "المتطلبات / الشروط"
+  },
+  "coin_conversion": {
+    "english": "Coin Conversion",
+    "arabic": "تحويل النقاط"
+  },
+  "one_coin_equals_egp": {
+    "english": "1 Coin = EGP 1.00",
+    "arabic": "1 نقطة = 1.00 جنيه"
+  },
+  "min_balance_needed": {
+    "english": "Min. Balance Needed",
+    "arabic": "أقل رصيد مطلوب"
+  },
+  "fifty_coins_value": {
+    "english": "50 Coins (EGP 50 value)",
+    "arabic": "50 نقطة = 50 جنيه"
+  },
+  "min_basket_size": {
+    "english": "Min. Basket Size",
+    "arabic": "أقل سلة"
+  },
+  "egp_500_subtotal": {
+    "english": "EGP 500 subtotal",
+    "arabic": "إجمالي 500 جنيه"
+  },
+  "max_checkout_cap": {
+    "english": "Max. Checkout Cap",
+    "arabic": "حد الدفع"
+  },
+  "fifteen_percent_basket_subtotal": {
+    "english": "15% of basket subtotal",
+    "arabic": "15% من إجمالي السلة"
+  },
+  "product_exclusions": {
+    "english": "Product Exclusions",
+    "arabic": "استثناءات المنتجات"
+  },
+  "discounted_clearance_items": {
+    "english": "Discounted / Clearance items",
+    "arabic": "الخصومات / التصفية"
+  },
+  "delivery_exclusions": {
+    "english": "Delivery Exclusions",
+    "arabic": "استثناءات التوصيل"
+  },
+  "applies_to_cart_only": {
+    "english": "Applies to cart only (not shipping fees)",
+    "arabic": "ينطبق على السلة فقط وليس رسوم الشحن"
+  },
+  "no_color_available": {
+    "english": "No color available",
+    "arabic": "لا يوجد لون متاح"
+  },
+  "apply_changes": {
+    "english": "Apply Changes",
+    "arabic": "تطبيق التغييرات"
+  },
+  "edit_item": {
+    "english": "Edit Item",
+    "arabic": "تعديل العنصر"
+  },
+  "item": {
+    "english": "item",
+    "arabic": "عنصر"
+  },
+  "quantity": {
+    "english": "Quantity:",
+    "arabic": "الكمية:"
+  },
+  "choose_your_issue": {
+    "english": "Choose your issue",
+    "arabic": "اختر مشكلتك"
+  },
+  "missing_or_wrong_item": {
+    "english": "Missing or wrong item",
+    "arabic": "عنصر مفقود أو خاطئ"
+  },
+  "item_quality_issues": {
+    "english": "Item quality issues",
+    "arabic": "مشاكل في الجودة"
+  },
+  "received_the_wrong_order": {
+    "english": "Received the wrong order",
+    "arabic": "تم استلام طلب خاطئ"
+  },
+  "refunds_and_payments": {
+    "english": "Refunds and payments",
+    "arabic": "الإرجاعات والمدفوعات"
+  },
+  "something_else": {
+    "english": "It's something else",
+    "arabic": "أمر آخر"
+  },
+  "submit": {
+    "english": "Submit",
+    "arabic": "إرسال"
+  },
+  "add_to_cart_success": {
+    "english": "Added to cart successfully",
+    "arabic": "تمت إضافة المنتج إلى السلة بنجاح"
+  },
+  "user_feedbacks": {
+    "english": "User Feedbacks",
+    "arabic": "آراء المستخدمين"
+  },
+  "add_review": {
+    "english": "Add Review",
+    "arabic": "أضف تقييمًا"
+  },
+  "rating_label": {
+    "english": "Rating",
+    "arabic": "التقييم"
+  },
+  "your_review": {
+    "english": "Your review",
+    "arabic": "تقييمك"
+  },
+  "write_your_feedback_here": {
+    "english": "Write your feedback here...",
+    "arabic": "اكتب ملاحظاتك هنا..."
+  },
+  "upload_images": {
+    "english": "Upload images",
+    "arabic": "رفع الصور"
+  },
+  "picking_images": {
+    "english": "Picking images...",
+    "arabic": "جارٍ اختيار الصور..."
+  },
+  "tap_to_add_multiple_photos": {
+    "english": "Tap to add multiple photos",
+    "arabic": "اضغط لإضافة صور متعددة"
+  },
+  "choose_multiple_images": {
+    "english": "You can choose multiple images from gallery",
+    "arabic": "يمكنك اختيار صور متعددة من المعرض"
+  },
+  "please_upload_at_least_one_image": {
+    "english": "Please upload at least one image.",
+    "arabic": "يرجى رفع صورة واحدة على الأقل."
+  },
+  "please_select_a_rating": {
+    "english": "Please select a rating.",
+    "arabic": "يرجى اختيار تقييم."
+  },
+  "please_write_your_review": {
+    "english": "Please write your review.",
+    "arabic": "يرجى كتابة تقييمك."
+  },
+  "reference_not_found": {
+    "english": "Reference not found.",
+    "arabic": "لم يتم العثور على المرجع."
+  },
+  "image_upload_failed": {
+    "english": "Image upload failed. Please try again.",
+    "arabic": "فشل رفع الصور. يرجى المحاولة مرة أخرى."
+  },
+  "submitting_review": {
+    "english": "Submitting review...",
+    "arabic": "جارٍ إرسال التقييم..."
+  },
+  "submit_review": {
+    "english": "Submit Review",
+    "arabic": "إرسال التقييم"
+  },
+  "review_submitted_successfully": {
+    "english": "Review submitted successfully.",
+    "arabic": "تم إرسال التقييم بنجاح."
+  },
+  "no_reviews_yet": {
+    "english": "No reviews yet",
+    "arabic": "لا توجد تقييمات حتى الآن"
+  },
+  "review_title": {
+    "english": "Review",
+    "arabic": "التقييم"
+  },
+  "total_reviews": {
+    "english": "Total Reviews",
+    "arabic": "إجمالي التقييمات"
+  },
+  "stars": {
+    "english": "Stars",
+    "arabic": "نجوم"
+  },
+  "latest": {
+    "english": "Latest",
+    "arabic": "الأحدث"
+  },
+  "highest": {
+    "english": "Highest",
+    "arabic": "الأعلى"
+  },
+  "lowest": {
+    "english": "Lowest",
+    "arabic": "الأقل"
+  },
+  "users_review": {
+    "english": "User's Review",
+    "arabic": "تقييم المستخدم"
+  },
+  "no_reviews_found": {
+    "english": "No reviews found",
+    "arabic": "لم يتم العثور على تقييمات"
+  },
+  "filter_result": {
+    "english": "Filter Result",
+    "arabic": "نتيجة التصفية"
+  },
+  "minimum": {
+    "english": "Minimum",
+    "arabic": "الحد الأدنى"
+  },
+  "maximum": {
+    "english": "Maximum",
+    "arabic": "الحد الأقصى"
+  },
+  "clear_all": {
+    "english": "Clear all",
+    "arabic": "مسح الكل"
+  },
+  "apply_filter": {
+    "english": "Apply filter",
+    "arabic": "تطبيق التصفية"
+  },
+  "no_products_found": {
+    "english": "No products found",
+    "arabic": "لم يتم العثور على منتجات"
+  },
+  "no_similar_products": {
+    "english": "No similar products",
+    "arabic": "لم يتم العثور على منتجات مشابهة"
+  },
+  "product_description": {
+    "english": "Description",
+    "arabic": "الوصف"
+  },
+  "anonymous": {
+    "english": "Anonymous",
+    "arabic": "مجهول"
+  },
+  "color": {
+    "english": "Color",
+    "arabic": "اللون"
+  },
+  "size": {
+    "english": "Size",
+    "arabic": "المقاس"
+  },
+  "secure_payment": {
+    "english": "Secure Payment",
+    "arabic": "دفع آمن"
+  },
+  "business_days": {
+    "english": "2-3 business days",
+    "arabic": "2-3 أيام عمل"
+  },
+  "secure_transactions": {
+    "english": "100% secure transactions",
+    "arabic": "معاملات آمنة 100%"
+  },
+  "return_exchange_policies": {
+    "english": "Return/ Exchange policies",
+    "arabic": "سياسات الإرجاع / الاستبدال"
+  },
+  "payment_method": {
+    "english": "Payment Method",
+    "arabic": "طريقة الدفع"
+  },
+  "payment_transaction": {
+    "english": "Payment transaction",
+    "arabic": "معاملة الدفع"
+  },
+  "wallet_transaction": {
+    "english": "Wallet transaction",
+    "arabic": "معاملة المحفظة"
+  },
+  "add_payment_method_title": {
+    "english": "Add Payment Method",
+    "arabic": "إضافة طريقة دفع"
+  },
+  "add_card": {
+    "english": "Add card",
+    "arabic": "إضافة البطاقة"
+  },
+  "select_your_payment_method": {
+    "english": "Select your payment method",
+    "arabic": "اختر طريقة الدفع"
+  },
+  "card_holder_name": {
+    "english": "Card Holder Name",
+    "arabic": "اسم حامل البطاقة"
+  },
+  "valid_until": {
+    "english": "Valid Until",
+    "arabic": "صالح حتى"
+  },
+  "month_year": {
+    "english": "Month/Year",
+    "arabic": "شهر/سنة"
+  },
+  "cvv": {
+    "english": "CVV",
+    "arabic": "CVV"
+  },
+  "your_name": {
+    "english": "Your name",
+    "arabic": "اسمك"
+  },
+  "card_number": {
+    "english": "Card Number",
+    "arabic": "رقم البطاقة"
+  },
+  "delivery_method": {
+    "english": "Delivery Method",
+    "arabic": "طريقة التوصيل"
+  },
+  "available_balance": {
+    "english": "Available Balance",
+    "arabic": "الرصيد المتاح"
+  },
+  "add_balance": {
+    "english": "Add Balance",
+    "arabic": "إضافة رصيد"
+  },
+  "amount": {
+    "english": "Amount",
+    "arabic": "المبلغ"
+  },
+  "enter_amount": {
+    "english": "Enter amount",
+    "arabic": "أدخل المبلغ"
+  },
+  "quick_add": {
+    "english": "Quick Add:",
+    "arabic": "إضافة سريعة:"
+  },
+  "please_enter_a_valid_amount": {
+    "english": "Please enter a valid amount.",
+    "arabic": "يرجى إدخال مبلغ صالح."
+  },
+  "payment_url_not_found": {
+    "english": "Payment URL not found. Please try again.",
+    "arabic": "لم يتم العثور على رابط الدفع. يرجى المحاولة مرة أخرى."
+  },
+  "loading_recent_transactions": {
+    "english": "Loading recent transactions...",
+    "arabic": "جارٍ تحميل المعاملات الأخيرة..."
+  },
+  "loading_wallet_history": {
+    "english": "Loading wallet history...",
+    "arabic": "جارٍ تحميل سجل المحفظة..."
+  },
+  "invalid_payment_transaction_response": {
+    "english": "Invalid payment transaction response.",
+    "arabic": "استجابة معاملة الدفع غير صالحة."
+  },
+  "invalid_wallet_transaction_response": {
+    "english": "Invalid wallet transaction response.",
+    "arabic": "استجابة معاملة المحفظة غير صالحة."
+  },
+  "recent_transaction": {
+    "english": "Recent Transaction",
+    "arabic": "المعاملات الأخيرة"
+  },
+  "wallet_history": {
+    "english": "Wallet History",
+    "arabic": "سجل المحفظة"
+  },
+  "no_recent_transactions_found": {
+    "english": "No recent transactions found.",
+    "arabic": "لم يتم العثور على معاملات حديثة."
+  },
+  "no_wallet_history_found": {
+    "english": "No wallet history found.",
+    "arabic": "لم يتم العثور على سجل محفظة."
+  },
+  "voucher_thirty_percent_off": {
+    "english": "30% Off",
+    "arabic": "خصم 30%"
+  },
+  "get_thirty_percent_off_your_first_order": {
+    "english": "Get 30% off your first order",
+    "arabic": "احصل على خصم 30% على طلبك الأول"
+  },
+  "used_on_your_last_order": {
+    "english": "Used on your last order",
+    "arabic": "مستخدم في طلبك الأخير"
+  },
+  "seasonal_offer": {
+    "english": "Seasonal offer",
+    "arabic": "عرض موسمي"
+  },
+  "order_timeline": {
+    "english": "Order Timeline",
+    "arabic": "الجدول الزمني للطلب"
+  },
+  "order_details": {
+    "english": "Order Details",
+    "arabic": "تفاصيل الطلب"
+  },
+  "back_to_homepage": {
+    "english": "Back to Homepage",
+    "arabic": "العودة إلى الصفحة الرئيسية"
+  },
+  "order_id_not_found": {
+    "english": "Order id not found.",
+    "arabic": "لم يتم العثور على معرف الطلب."
+  },
+  "order_placed_successfully": {
+    "english": "Order Placed Successfully!",
+    "arabic": "تم تقديم الطلب بنجاح!"
+  },
+  "thank_you_for_your_purchase": {
+    "english": "Thank you for your purchase",
+    "arabic": "شكراً لك على الشراء"
+  },
+  "shipping_information": {
+    "english": "Shipping Information",
+    "arabic": "معلومات الشحن"
+  },
+  "shipping_address": {
+    "english": "Shipping Address",
+    "arabic": "عنوان الشحن"
+  },
+  "full_address": {
+    "english": "Full Address",
+    "arabic": "العنوان الكامل"
+  },
+  "building_no": {
+    "english": "Building no",
+    "arabic": "رقم المبنى"
+  },
+  "floor_no": {
+    "english": "Floor no",
+    "arabic": "رقم الطابق"
+  },
+  "apartment": {
+    "english": "Apartment",
+    "arabic": "الشقة"
+  },
+  "save_changes": {
+    "english": "Save Changes",
+    "arabic": "حفظ التغييرات"
+  },
+  "pay_now": {
+    "english": "Pay Now",
+    "arabic": "ادفع الآن"
+  },
+  "price_label": {
+    "english": "Price:",
+    "arabic": "السعر:"
+  },
+  "delivery_charge_label": {
+    "english": "Delivery charge:",
+    "arabic": "رسوم التوصيل:"
+  },
+  "total_cost": {
+    "english": "Total cost",
+    "arabic": "التكلفة الإجمالية"
+  },
+  "select_payment_method": {
+    "english": "Select Payment Method",
+    "arabic": "اختر طريقة الدفع"
+  },
+  "saved_card": {
+    "english": "Saved Card",
+    "arabic": "بطاقة محفوظة"
+  },
+  "pay_via_paymob_gateway": {
+    "english": "Pay via Paymob Gateway",
+    "arabic": "الدفع عبر بوابة Paymob"
+  },
+  "wallet_balance_updated_instantly": {
+    "english": "Your wallet balance will be updated instantly after successful payment.",
+    "arabic": "سيتم تحديث رصيد محفظتك فوراً بعد الدفع الناجح."
+  },
+  "order_number": {
+    "english": "Order Number",
+    "arabic": "رقم الطلب"
+  },
+  "items": {
+    "english": "Items",
+    "arabic": "العناصر"
+  },
+  "delivery_address": {
+    "english": "Delivery Address",
+    "arabic": "عنوان التوصيل"
+  },
+  "note": {
+    "english": "Note:",
+    "arabic": "ملاحظة:"
+  },
+  "active": {
+    "english": "Active",
+    "arabic": "نشط"
+  },
+  "used": {
+    "english": "Used",
+    "arabic": "مستخدم"
+  },
+  "expired": {
+    "english": "Expired",
+    "arabic": "منتهي الصلاحية"
+  },
+  "not_available": {
+    "english": "N/A",
+    "arabic": "غير متاح"
+  },
+  "order_confirmed": {
+    "english": "Order Confirmed",
+    "arabic": "تم تأكيد الطلب"
+  },
+  "order_prepared": {
+    "english": "Order Prepared",
+    "arabic": "تم تجهيز الطلب"
+  },
+  "rider_assigned": {
+    "english": "Rider Assigned",
+    "arabic": "تم تعيين المندوب"
+  },
+  "on_the_way": {
+    "english": "On the Way",
+    "arabic": "في الطريق"
+  },
+  "nearby": {
+    "english": "Nearby",
+    "arabic": "قريب"
+  },
+  "delivered": {
+    "english": "Delivered",
+    "arabic": "تم التسليم"
+  },
+  "upcoming": {
+    "english": "Upcoming",
+    "arabic": "قادم"
+  },
+  "debit_credit_card": {
+    "english": "Debit/Credit card",
+    "arabic": "بطاقة خصم/ائتمان"
+  },
+  "smart_wallets": {
+    "english": "Smart Wallets",
+    "arabic": "المحافظ الذكية"
+  },
+  "cash_on_delivery": {
+    "english": "Cash on Delivery",
+    "arabic": "الدفع عند الاستلام"
+  },
+  "pay_on_delivery": {
+    "english": "Pay on delivery",
+    "arabic": "الدفع عند التوصيل"
+  },
+  "payment": {
+    "english": "Payment",
+    "arabic": "الدفع"
+  },
+  "total_amount": {
+    "english": "Total Amount",
+    "arabic": "إجمالي المبلغ"
+  },
+  "city_required": {
+    "english": "City is required.",
+    "arabic": "المدينة مطلوبة."
+  },
+  "full_address_required": {
+    "english": "Full address is required.",
+    "arabic": "العنوان الكامل مطلوب."
+  },
+  "building_number_required": {
+    "english": "Building number is required.",
+    "arabic": "رقم المبنى مطلوب."
+  },
+  "floor_number_required": {
+    "english": "Floor number is required.",
+    "arabic": "رقم الطابق مطلوب."
+  },
+  "apartment_number_required": {
+    "english": "Apartment number is required.",
+    "arabic": "رقم الشقة مطلوب."
+  },
+  "saving_delivery_location": {
+    "english": "Saving delivery location...",
+    "arabic": "جارٍ حفظ موقع التوصيل..."
+  },
+  "established": {
+    "english": "Established",
+    "arabic": "تأسس"
+  },
+  "location": {
+    "english": "Location",
+    "arabic": "الموقع"
+  },
+  "rating": {
+    "english": "Rating",
+    "arabic": "التقييم"
+  },
+  "followers_label": {
+    "english": "Followers",
+    "arabic": "المتابعون"
+  },
+  "category": {
+    "english": "Category",
+    "arabic": "الفئة"
+  },
+  "no_categories_available": {
+    "english": "No categories available",
+    "arabic": "لا توجد فئات متاحة"
+  },
+  "store_policies": {
+    "english": "Store policies",
+    "arabic": "سياسات المتجر"
+  },
+  "no_store_policies_available": {
+    "english": "No store policies available",
+    "arabic": "لا توجد سياسات متاحة للمتجر"
+  },
+  "instant_delivery_available": {
+    "english": "Instant delivery available",
+    "arabic": "التوصيل الفوري متاح"
+  },
+  "return_policy": {
+    "english": "Return policy",
+    "arabic": "سياسة الإرجاع"
+  },
+  "weekend": {
+    "english": "Weekend",
+    "arabic": "عطلة نهاية الأسبوع"
+  },
+  "follow": {
+    "english": "Follow",
+    "arabic": "متابعة"
+  },
+  "unfollow": {
+    "english": "Unfollow",
+    "arabic": "إلغاء المتابعة"
+  },
+  "action_failed": {
+    "english": "Action Failed",
+    "arabic": "فشل الإجراء"
+  },
+  "follow_failed": {
+    "english": "Follow action failed",
+    "arabic": "فشل إجراء المتابعة"
+  },
+  "language_settings": {
+    "english": "Language settings",
+    "arabic": "إعدادات اللغة"
+  },
+  "select_language": {
+    "english": "Select Language",
+    "arabic": "اختر اللغة"
+  },
+  "english": {
+    "english": "English",
+    "arabic": "English"
+  },
+  "arabic": {
+    "english": "Arabic",
+    "arabic": "العربية"
+  },
+  "notification": {
+    "english": "Notification",
+    "arabic": "الإشعارات"
+  },
+  "no_notifications_found": {
+    "english": "No notifications found",
+    "arabic": "لا توجد إشعارات"
+  },
+  "mark_as_done": {
+    "english": "Mark as done",
+    "arabic": "تم"
+  },
+  "logout": {
+    "english": "Log out",
+    "arabic": "تسجيل الخروج"
+  },
+  "logout_confirm_title": {
+    "english": "Are You Sure?",
+    "arabic": "هل أنت متأكد؟"
+  },
+  "logout_confirm_message": {
+    "english": "Are you sure you want to Logout from your account",
+    "arabic": "هل أنت متأكد أنك تريد تسجيل الخروج من حسابك"
+  },
+  "content": {
+    "english": "Content",
+    "arabic": "المحتوى"
+  },
+  "content_not_found": {
+    "english": "Content not found",
+    "arabic": "المحتوى غير موجود"
+  },
+  "current_password": {
+    "english": "Current Password",
+    "arabic": "كلمة المرور الحالية"
+  },
+  "update": {
+    "english": "Update",
+    "arabic": "تحديث"
+  },
+  "saving": {
+    "english": "Saving...",
+    "arabic": "جارٍ الحفظ..."
+  },
+  "profile_load_failed": {
+    "english": "Profile Load Failed",
+    "arabic": "فشل تحميل الملف الشخصي"
+  },
+  "access_token_not_found_please_login_again": {
+    "english": "Access token not found. Please login again.",
+    "arabic": "لم يتم العثور على رمز الوصول. يرجى تسجيل الدخول مرة أخرى."
+  },
+  "passwords_do_not_match": {
+    "english": "Password and confirm password do not match.",
+    "arabic": "كلمة المرور وتأكيد كلمة المرور غير متطابقتين."
+  },
+  "password_changed_successfully": {
+    "english": "Password changed successfully.",
+    "arabic": "تم تغيير كلمة المرور بنجاح."
+  },
+  "changing_password": {
+    "english": "Changing password...",
+    "arabic": "جارٍ تغيير كلمة المرور..."
+  },
+  "profile_updated_successfully": {
+    "english": "Profile updated successfully",
+    "arabic": "تم تحديث الملف الشخصي بنجاح"
+  },
+  "back": {
+    "english": "Back",
+    "arabic": "رجوع"
+  },
+  "welcome_back": {
+    "english": "Welcome Back",
+    "arabic": "مرحباً بعودتك"
+  },
+  "sign_in_subtitle": {
+    "english": "It is quick and easy to log in. Enter your email and password below.",
+    "arabic": "تسجيل الدخول سريع وسهل. أدخل بريدك الإلكتروني وكلمة المرور أدناه."
+  },
+  "forgot_password_title": {
+    "english": "Forgot Password",
+    "arabic": "نسيت كلمة المرور"
+  },
+  "forgot_password_subtitle": {
+    "english": "Please enter your email address which was used to create your account.",
+    "arabic": "يرجى إدخال عنوان بريدك الإلكتروني المستخدم لإنشاء حسابك."
+  },
+  "continue_button": {
+    "english": "Continue",
+    "arabic": "متابعة"
+  },
+  "email": {
+    "english": "Email",
+    "arabic": "البريد الإلكتروني"
+  },
+  "email_address": {
+    "english": "Email Address",
+    "arabic": "البريد الإلكتروني"
+  },
+  "enter_your_email": {
+    "english": "Enter your email",
+    "arabic": "أدخل بريدك الإلكتروني"
+  },
+  "password": {
+    "english": "Password",
+    "arabic": "كلمة المرور"
+  },
+  "create_your_account": {
+    "english": "Create your account",
+    "arabic": "أنشئ حسابك"
+  },
+  "sign_up_subtitle": {
+    "english": "Register to continue your journey with us",
+    "arabic": "سجل للمتابعة في رحلتك معنا"
+  },
+  "confirm_password": {
+    "english": "Confirm Password",
+    "arabic": "تأكيد كلمة المرور"
+  },
+  "create_new_password": {
+    "english": "Set new password",
+    "arabic": "تعيين كلمة مرور جديدة"
+  },
+  "create_new_password_subtitle": {
+    "english": "Please create a new password for your account",
+    "arabic": "يرجى إنشاء كلمة مرور جديدة لحسابك"
+  },
+  "new_password": {
+    "english": "New Password",
+    "arabic": "كلمة المرور الجديدة"
+  },
+  "verify_email": {
+    "english": "Verify Email",
+    "arabic": "تأكيد البريد الإلكتروني"
+  },
+  "verify_email_subtitle": {
+    "english": "Enter the OTP sent to your email to continue.",
+    "arabic": "أدخل رمز OTP المرسل إلى بريدك الإلكتروني للمتابعة."
+  },
+  "otp": {
+    "english": "OTP",
+    "arabic": "OTP"
+  },
+  "verify": {
+    "english": "Verify",
+    "arabic": "تحقق"
+  },
+  "profile_setup": {
+    "english": "Profile Setup",
+    "arabic": "إعداد الملف الشخصي"
+  },
+  "full_name": {
+    "english": "Full Name",
+    "arabic": "الاسم الكامل"
+  },
+  "enter_your_name": {
+    "english": "Enter your name",
+    "arabic": "أدخل اسمك"
+  },
+  "phone_number": {
+    "english": "Phone Number",
+    "arabic": "رقم الهاتف"
+  },
+  "enter_your_phone_number": {
+    "english": "Enter your phone number",
+    "arabic": "أدخل رقم هاتفك"
+  },
+  "gender": {
+    "english": "Gender",
+    "arabic": "الجنس"
+  },
+  "select": {
+    "english": "Select",
+    "arabic": "اختر"
+  },
+  "date_of_birth": {
+    "english": "Date of Birth",
+    "arabic": "تاريخ الميلاد"
+  },
+  "date_format_hint": {
+    "english": "DD/MM/YYYY",
+    "arabic": "DD/MM/YYYY"
+  },
+  "address": {
+    "english": "Address",
+    "arabic": "العنوان"
+  },
+  "set_address": {
+    "english": "Set address",
+    "arabic": "تعيين العنوان"
+  },
+  "change": {
+    "english": "change",
+    "arabic": "تغيير"
+  },
+  "select_your_address": {
+    "english": "Select your address",
+    "arabic": "اختر عنوانك"
+  },
+  "profile_picture": {
+    "english": "Profile Picture",
+    "arabic": "صورة الملف الشخصي"
+  },
+  "please_wait": {
+    "english": "Please wait...",
+    "arabic": "يرجى الانتظار..."
+  },
+  "sign_in": {
+    "english": "Sign In",
+    "arabic": "تسجيل الدخول"
+  },
+  "remember_me": {
+    "english": "Remember me",
+    "arabic": "تذكرني"
+  },
+  "forgot_password": {
+    "english": "Forgot Password?",
+    "arabic": "هل نسيت كلمة المرور؟"
+  },
+  "dont_have_account": {
+    "english": "Don't have an account?",
+    "arabic": "ليس لديك حساب؟"
+  },
+  "sign_up": {
+    "english": "Sign Up",
+    "arabic": "إنشاء حساب"
+  },
+  "create_account": {
+    "english": "Create account",
+    "arabic": "إنشاء حساب"
+  },
+  "already_have_account": {
+    "english": "Already have an account?",
+    "arabic": "لديك حساب بالفعل؟"
+  },
+  "request_pending": {
+    "english": "Request Pending",
+    "arabic": "الطلب قيد المراجعة"
+  },
+  "ok": {
+    "english": "OK",
+    "arabic": "حسناً"
+  },
+  "validation": {
+    "english": "Validation",
+    "arabic": "التحقق"
+  },
+  "location_unavailable": {
+    "english": "Location unavailable",
+    "arabic": "الموقع غير متاح"
+  },
+  "please_select_your_address": {
+    "english": "Please select your address",
+    "arabic": "يرجى اختيار عنوانك"
+  },
+  "please_choose_profile_picture_or_tap_skip": {
+    "english": "Please choose a profile picture or tap skip",
+    "arabic": "يرجى اختيار صورة للملف الشخصي أو تخطيها"
+  },
+  "request_failed": {
+    "english": "Request Failed",
+    "arabic": "فشل الطلب"
+  },
+  "login_failed": {
+    "english": "Login Failed",
+    "arabic": "فشل تسجيل الدخول"
+  },
+  "invalid_login_response": {
+    "english": "Invalid login response. Please try again.",
+    "arabic": "استجابة تسجيل دخول غير صالحة. حاول مرة أخرى."
+  },
+  "verification_token_not_found": {
+    "english": "Verification token not found. Please try again.",
+    "arabic": "لم يتم العثور على رمز التحقق. حاول مرة أخرى."
+  },
+  "sign_up_failed": {
+    "english": "Sign Up Failed",
+    "arabic": "فشل إنشاء الحساب"
+  },
+  "reset_failed": {
+    "english": "Reset Failed",
+    "arabic": "فشل إعادة التعيين"
+  },
+  "verification_failed": {
+    "english": "Verification Failed",
+    "arabic": "فشل التحقق"
+  },
+  "access_token_missing": {
+    "english": "Access token missing. Please verify OTP again.",
+    "arabic": "رمز الوصول مفقود. يرجى التحقق من OTP مرة أخرى."
+  },
+  "profile_update_failed": {
+    "english": "Profile Update Failed",
+    "arabic": "فشل تحديث الملف الشخصي"
+  },
+  "profile_setup_completed": {
+    "english": "Profile setup completed successfully",
+    "arabic": "تم إعداد الملف الشخصي بنجاح"
+  },
+  "request_pending_message": {
+    "english": "Your request is pending. Please wait for approval.",
+    "arabic": "طلبك قيد الانتظار. يرجى الانتظار للموافقة."
+  },
+  "sending_otp": {
+    "english": "Sending OTP...",
+    "arabic": "جارٍ إرسال OTP..."
+  },
+  "resend_otp": {
+    "english": "Resend OTP",
+    "arabic": "إعادة إرسال OTP"
+  },
+  "resend_otp_in": {
+    "english": "Resend OTP in",
+    "arabic": "إعادة إرسال OTP خلال"
+  },
+  "otp_sent": {
+    "english": "OTP Sent",
+    "arabic": "تم إرسال OTP"
+  },
+  "otp_sent_to_email": {
+    "english": "A new OTP has been sent to your email.",
+    "arabic": "تم إرسال OTP جديد إلى بريدك الإلكتروني."
+  },
+  "signing_in": {
+    "english": "Signing in...",
+    "arabic": "جارٍ تسجيل الدخول..."
+  },
+  "creating_account": {
+    "english": "Creating account...",
+    "arabic": "جارٍ إنشاء الحساب..."
+  },
+  "verifying_otp": {
+    "english": "Verifying OTP...",
+    "arabic": "جارٍ التحقق من OTP..."
+  },
+  "updating_password": {
+    "english": "Updating password...",
+    "arabic": "جارٍ تحديث كلمة المرور..."
+  },
+  "updating_profile": {
+    "english": "Updating profile...",
+    "arabic": "جارٍ تحديث الملف الشخصي..."
+  }
+}

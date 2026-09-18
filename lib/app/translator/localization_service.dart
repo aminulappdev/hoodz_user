@@ -6,7 +6,7 @@ import 'package:hoodz/core/utils/share_preference.dart';
 import 'ar_AR/ar_ar_translation.dart';
 import 'en_US/en_us_translation.dart';
 
-class LocalizationService extends Translations {
+class LocalizationService extends Translations { 
   // prevent creating instance
   LocalizationService._();
 

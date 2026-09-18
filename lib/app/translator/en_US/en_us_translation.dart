@@ -12,7 +12,7 @@ const Map<String, String> enUs = {
   Strings.someThingWentWorng: 'Something went wrong',
   Strings.apiNotFound: 'Route not found!',
   Strings.serverError: 'Server error',
-  Strings.urlNotFound: 'Url not found', 
+  Strings.urlNotFound: 'Url not found',  
 
   Strings.goodMorning: 'Good morning',
   Strings.onBoardingTitle: 'Easy way to Track your financial',
