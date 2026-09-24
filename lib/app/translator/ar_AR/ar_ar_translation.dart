@@ -10,7 +10,7 @@ final Map<String, String> arAR = {
   Strings.noInternetConnection: 'لا يوجد إتصال بالإنترنت',
   Strings.serverNotResponding: 'لا يوجد إستجابة من السيرفر!',
   Strings.someThingWentWorng: 'حدث خطأ غير متوقع!',
-  Strings.apiNotFound: 'الرابط الذي تحاول الوصول اليه غير موجود!',
+  Strings.apiNotFound: 'الرابط الذي تحاول الوصول اليه غير موجود!', 
   Strings.serverError: 'مشكلة من السيرفر',
   Strings.urlNotFound: 'مشكلة في الرابط',
 
@@ -24,12 +24,12 @@ final Map<String, String> arAR = {
   Strings.retry: 'اعادة المحاولة',
   Strings.internetError: 'خطأ في الاتصال بالانترنت ⚠️',
   Strings.cancel: 'إلغاء',
-
+ 
   Strings.generalSettings: 'الإعدادات العامة',
   Strings.home: 'الرئيسية',
   Strings.profile: 'ملفي',
   Strings.aiAssistant: 'مساعد الذكاء الاصطناعي',
-  Strings.aiStylist: 'ذكي',
+  Strings.aiStylist: 'ذكي', 
   Strings.poweredByAI: 'مدعوم بالذكاء الاصطناعي',
   Strings.online: 'متصل',
   Strings.chat: 'الدردشة',
