@@ -1,3 +1,5 @@
+import 'package:hoodz/app/translator/localization_service.dart';
+
 class ShopProductModel {
   ShopProductModel({
     required this.success,
@@ -77,6 +79,7 @@ class AllProduct {
     required this.id,
     required this.category,
     required this.title,
+    required this.titleArabic,
     required this.inventoryType,
     required this.collectionType,
     required this.brand,
@@ -95,6 +98,7 @@ class AllProduct {
   final String? id;
   final Category? category;
   final String? title;
+  final String? titleArabic;
   final String? inventoryType;
   final String? collectionType;
   final String? brand;
@@ -109,13 +113,19 @@ class AllProduct {
   final bool? inStock;
   final bool? isWishlisted;
 
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
+
   factory AllProduct.fromJson(Map<String, dynamic> json) {
     return AllProduct(
       id: json["_id"],
       category: json["category"] == null
           ? null
           : Category.fromJson(json["category"]),
-      title: json["title"],
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
       inventoryType: json["inventoryType"],
       collectionType: json["collectionType"],
       brand: json["brand"],
@@ -136,6 +146,7 @@ class AllProduct {
     String? id,
     Category? category,
     String? title,
+    String? titleArabic,
     String? inventoryType,
     String? collectionType,
     String? brand,
@@ -154,6 +165,7 @@ class AllProduct {
       id: id ?? this.id,
       category: category ?? this.category,
       title: title ?? this.title,
+      titleArabic: titleArabic ?? this.titleArabic,
       inventoryType: inventoryType ?? this.inventoryType,
       collectionType: collectionType ?? this.collectionType,
       brand: brand ?? this.brand,
@@ -172,13 +184,38 @@ class AllProduct {
 }
 
 class Category {
-  Category({required this.id, required this.title});
+  Category({
+    required this.id,
+    required this.title,
+    required this.titleArabic,
+    required this.icon,
+    required this.iconArabic,
+  });
 
   final String? id;
   final String? title;
+  final String? titleArabic;
+  final String? icon;
+  final String? iconArabic;
+
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
+
+  String get displayIcon => LocalizationService.localizedValue(
+    english: icon,
+    arabic: iconArabic,
+  );
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(id: json["_id"], title: json["title"]);
+    return Category(
+      id: json["_id"]?.toString(),
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
+      icon: json["icon"]?.toString(),
+      iconArabic: json["iconArabic"]?.toString(),
+    );
   }
 }
 

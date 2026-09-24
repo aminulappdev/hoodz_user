@@ -8,6 +8,7 @@ import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/gen/assets.gen.dart';
 
 class ProductInfo extends StatelessWidget {
+  final String productTitle;
   final String price;
   final String rating;
   final String review;
@@ -19,6 +20,7 @@ class ProductInfo extends StatelessWidget {
 
   const ProductInfo({
     super.key,
+    this.productTitle = '',
     required this.price,
     required this.rating,
     required this.review,
@@ -34,6 +36,17 @@ class ProductInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (productTitle.trim().isNotEmpty) ...[
+          Text(
+            productTitle,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: 18.sp(context),
+              fontWeight: FontWeight.w700,
+              color: const Color(0xff4A4A4A),
+            ),
+          ),
+          SizedBox(height: 10.h(context)),
+        ],
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,

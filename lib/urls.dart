@@ -59,6 +59,9 @@ class Urls {
   static const String aiRecommendedProductUrl =
       '$_baseUrl/products/ai-recommended';
   static const String campaignUrl = '$_baseUrl/campain';
+  static String getCampaignBannerUrl(String bannerId) {
+    return '$_baseUrl/campain/banner/$bannerId';
+  }
   static String getBrandTypeCategoriesUrl(String brandType) {
     return '$_baseUrl/category/brand-type?brandType=$brandType';
   }
@@ -73,6 +76,10 @@ class Urls {
 
   static String getProductViewedUrlById(String id) {
     return '$_baseUrl/products/viewed/$id';
+  }
+
+  static String getShopActiveVouchersUrlById(String shopId) {
+    return '$_baseUrl/voucher/shop/$shopId/active';
   }
 
   static String getShopDetailsUrlById(String id) {

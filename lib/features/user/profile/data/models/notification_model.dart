@@ -1,3 +1,5 @@
+import 'package:hoodz/app/translator/localization_service.dart';
+
 class MyNotificationModel {
     MyNotificationModel({
         required this.success,
@@ -31,7 +33,9 @@ class Datum {
         required this.reference,
         required this.modelType,
         required this.message,
+        required this.messageArabic,
         required this.description,
+        required this.descriptionArabic,
         required this.read,
         required this.date,
     });
@@ -40,16 +44,30 @@ class Datum {
     final String? reference;
     final String? modelType;
     final String? message;
+    final String? messageArabic;
     final String? description;
+    final String? descriptionArabic;
     final bool? read;
     final DateTime? date;
+
+    String get displayMessage => LocalizationService.localizedValue(
+      english: message,
+      arabic: messageArabic,
+    );
+
+    String get displayDescription => LocalizationService.localizedValue(
+      english: description,
+      arabic: descriptionArabic,
+    );
 
     Datum copyWith({
         String? id,
         String? reference,
         String? modelType,
         String? message,
+        String? messageArabic,
         String? description,
+        String? descriptionArabic,
         bool? read,
         DateTime? date,
     }) {
@@ -58,7 +76,9 @@ class Datum {
             reference: reference ?? this.reference,
             modelType: modelType ?? this.modelType,
             message: message ?? this.message,
+            messageArabic: messageArabic ?? this.messageArabic,
             description: description ?? this.description,
+            descriptionArabic: descriptionArabic ?? this.descriptionArabic,
             read: read ?? this.read,
             date: date ?? this.date,
         );
@@ -69,8 +89,10 @@ class Datum {
             id: json["_id"],
             reference: json["reference"],
             modelType: json["modelType"],
-            message: json["message"],
-            description: json["description"],
+            message: json["message"]?.toString(),
+            messageArabic: json["messageArabic"]?.toString(),
+            description: json["description"]?.toString(),
+            descriptionArabic: json["descriptionArabic"]?.toString(),
             read: json["read"],
             date: DateTime.tryParse(json["date"] ?? ""),
         );

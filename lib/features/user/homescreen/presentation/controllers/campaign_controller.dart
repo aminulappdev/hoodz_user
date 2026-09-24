@@ -15,6 +15,7 @@ class CampaignController extends GetxController {
 
   final RxBool isLoading = false.obs;
   final RxString reference = ''.obs;
+  final RxString bannerId = ''.obs;
   final RxString title = ''.obs;
   final RxString banner = ''.obs;
   final Rx<campaign_model.AllCampaignProductModel?> _campaignModel =
@@ -25,19 +26,36 @@ class CampaignController extends GetxController {
   campaign_model.AllCampaignProductModel? get campaignModel =>
       _campaignModel.value;
 
-  List<campaign_model.Product> get products => _campaignModel.value?.data
-      .expand((campaign) => campaign.products)
-      .toList(growable: false) ?? const [];
+  List<campaign_model.Product> get products =>
+      _campaignModel.value?.data
+          .expand((campaign) => campaign.products)
+          .toList(growable: false) ??
+      const [];
+
+  String get displayTitle {
+    final campaignTitle = _campaignModel.value?.data.isNotEmpty == true
+        ? _campaignModel.value!.data.first.displayTitle
+        : '';
+    if (campaignTitle.trim().isNotEmpty) {
+      return campaignTitle;
+    }
+    return title.value;
+  }
 
   void initialize(Map<String, dynamic>? arguments) {
     if (_initialized) return;
     _initialized = true;
 
+    bannerId.value = arguments?['bannerId']?.toString().trim() ?? '';
     reference.value = arguments?['reference']?.toString().trim() ?? '';
     title.value = arguments?['title']?.toString().trim() ?? '';
     banner.value = arguments?['banner']?.toString().trim() ?? '';
 
-    if (reference.value.isEmpty) {
+    if (bannerId.value.isEmpty) {
+      bannerId.value = reference.value;
+    }
+
+    if (bannerId.value.isEmpty) {
       showAppToast(message: Strings.noProductsFound.tr, isError: true);
       return;
     }
@@ -46,7 +64,7 @@ class CampaignController extends GetxController {
   }
 
   Future<void> fetchCampaign() async {
-    if (reference.value.isEmpty || isLoading.value) return;
+    if (bannerId.value.isEmpty || isLoading.value) return;
 
     final accessToken = MySharedPref.getAccessToken();
     final hasAccessToken = accessToken?.trim().isNotEmpty == true;
@@ -55,13 +73,11 @@ class CampaignController extends GetxController {
     try {
       final response = hasAccessToken
           ? await _networkCaller.getRequest(
-              Urls.campaignUrl,
+              Urls.getCampaignBannerUrl(bannerId.value),
               accessToken: accessToken,
-              // queryParams: {'reference': reference.value},
             )
           : await _networkCaller.getRequest(
-              Urls.campaignUrl,
-              // queryParams: {'reference': reference.value},
+              Urls.getCampaignBannerUrl(bannerId.value),
             );
 
       if (isLoginRequiredResponse(response)) {
@@ -80,7 +96,7 @@ class CampaignController extends GetxController {
       _campaignModel.value = model;
 
       if (title.value.isEmpty && model.data.isNotEmpty) {
-        title.value = model.data.first.title?.trim() ?? '';
+        title.value = model.data.first.displayTitle;
       }
     } catch (error) {
       showAppToast(message: '${Strings.noProductsFound.tr} $error', isError: true);

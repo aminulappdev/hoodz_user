@@ -4,6 +4,7 @@ import 'package:hoodz/core/services/network_caller/network_caller.dart';
 import 'package:hoodz/core/utils/auth_response_utils.dart';
 import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/order_status_label.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/features/user/orders/data/models/my_order_model.dart';
 import 'package:hoodz/urls.dart';
@@ -174,7 +175,7 @@ class MyOrdersController extends GetxController {
 
   String orderName(Datum order) {
     final productTitle = order.items.isNotEmpty
-        ? order.items.first.product?.title
+        ? order.items.first.product?.displayTitle
         : null;
 
     return productTitle?.isNotEmpty == true
@@ -241,37 +242,7 @@ class MyOrdersController extends GetxController {
   }
 
   String orderStatusLabel(Datum order) {
-    final status = (order.status ?? '').trim();
-    if (status.isEmpty) {
-      return Strings.processing.tr;
-    }
-
-    final normalizedStatus = status.toLowerCase();
-    switch (normalizedStatus) {
-      case 'cancelled':
-      case 'canceled':
-      case 'cancel':
-        return Strings.cancelled.tr;
-      case 'completed':
-      case 'complete':
-      case 'delivered':
-      case 'delivery':
-        return Strings.delivered.tr;
-      case 'processing':
-        return Strings.processing.tr;
-      case 'rider_assigned':
-        return Strings.riderAssigned.tr;
-      default:
-        return status
-            .replaceAll('_', ' ')
-            .split(RegExp(r'\s+'))
-            .where((part) => part.isNotEmpty)
-            .map(
-              (part) => part[0].toUpperCase() +
-                  (part.length > 1 ? part.substring(1).toLowerCase() : ''),
-            )
-            .join(' ');
-    }
+    return OrderStatusLabel.from(order.status);
   }
 
   int orderItemCount(Datum order) {

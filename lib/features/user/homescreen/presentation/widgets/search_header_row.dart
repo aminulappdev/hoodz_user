@@ -49,6 +49,7 @@ class SearchHeaderRow extends StatelessWidget {
             Expanded(
               child: Container(
                 height: fieldHeight,
+                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(borderRadius),
@@ -67,24 +68,26 @@ class SearchHeaderRow extends StatelessWidget {
                             ? (_) => onTapSearch!()
                             : null,
                         textInputAction: TextInputAction.search,
+                        textAlignVertical: TextAlignVertical.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 15.sp(context),
+                          fontSize: 14.sp(context),
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF303030),
+                          height: 1.2,
                         ),
                         decoration: InputDecoration(
                           hintText: hintText,
                           hintStyle: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
-                                fontSize: 15.sp(context),
+                                fontSize: 14.sp(context),
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFFA7A7A7),
+                                height: 1.2,
                               ),
                           border: InputBorder.none,
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(
-                            horizontal: 8.w(context),
-                            vertical: 12.h(context),
+                            horizontal: 12.w(context),
                           ),
                         ),
                       ),
@@ -92,8 +95,12 @@ class SearchHeaderRow extends StatelessWidget {
                     if (hasText)
                       GestureDetector(
                         onTap: onClear,
+                        behavior: HitTestBehavior.opaque,
                         child: Padding(
-                          padding: EdgeInsets.only(right: 8.w(context)),
+                          padding: EdgeInsetsDirectional.only(
+                            start: 4.w(context),
+                            end: 8.w(context),
+                          ),
                           child: const Icon(
                             Icons.close_rounded,
                             color: Color(0xFFB8B8B8),
@@ -105,22 +112,28 @@ class SearchHeaderRow extends StatelessWidget {
                       onTap: onTapSearch,
                       child: Container(
                         height: fieldHeight,
-                        width: 78.w(context),
+                        constraints: BoxConstraints(minWidth: 72.w(context)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w(context),
+                        ),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFF7A1A),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(borderRadius - 2),
-                            bottomRight: Radius.circular(borderRadius - 2),
+                          color: const Color(0xFFFF7A1A),
+                          borderRadius: BorderRadiusDirectional.horizontal(
+                            end: Radius.circular(borderRadius - 1.2),
                           ),
                         ),
                         alignment: Alignment.center,
                         child: Text(
                           Strings.search.tr,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
-                                fontSize: 15.sp(context),
+                                fontSize: 13.sp(context),
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
+                                height: 1,
                               ),
                         ),
                       ),

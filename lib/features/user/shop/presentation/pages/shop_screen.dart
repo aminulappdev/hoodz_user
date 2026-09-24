@@ -187,7 +187,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                 final product = featuredProducts[index];
                                 return ShopCard(
                                   image: product.banner ?? '',
-                                  name: product.title ?? '',
+                                  name: product.displayTitle,
                                   rating: product.avgRating?.toString() ?? '0',
                                   distance: _shopDetailsController.distanceText,
                                   time: _shopDetailsController.deliveryTimeText,
@@ -256,7 +256,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                   : '';
 
                               return BrandProductCard(
-                                name: product.title ?? '',
+                                name: product.displayTitle,
                                 subtitle:
                                     product.collectionType ??
                                     product.brand ??

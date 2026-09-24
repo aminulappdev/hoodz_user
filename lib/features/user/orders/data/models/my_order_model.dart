@@ -1,3 +1,5 @@
+import 'package:hoodz/app/translator/localization_service.dart';
+
 class MyOrderModel {
   MyOrderModel({
     required this.success,
@@ -127,17 +129,29 @@ class Color {
 }
 
 class Product {
-  Product({required this.id, required this.title, required this.banner});
+  Product({
+    required this.id,
+    required this.title,
+    required this.titleArabic,
+    required this.banner,
+  });
 
   final String? id;
   final String? title;
+  final String? titleArabic;
   final String? banner;
+
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json["_id"],
-      title: json["title"],
-      banner: json["banner"],
+      id: json["_id"]?.toString(),
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
+      banner: json["banner"]?.toString(),
     );
   }
 }

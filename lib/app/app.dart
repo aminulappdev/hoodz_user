@@ -19,7 +19,7 @@ class HoodzApp extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: GetMaterialApp(
-        title: 'Hoodz',
+        title: 'The Hoodz',
         debugShowCheckedModeBanner: false,
         initialBinding: ControllerBinder(),
         theme: MyTheme.getThemeData(isLight: true),

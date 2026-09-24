@@ -130,8 +130,8 @@ class _NotificationList extends StatelessWidget {
           (item) => Padding(
             padding: EdgeInsets.only(bottom: 10.h(context)),
             child: RiderNotificationItemCard(
-              title: item.message ?? '',
-              description: item.description ?? '',
+              title: item.displayMessage,
+              description: item.displayDescription,
               time: _formatNotificationTime(item.date),
               isRead: item.read == true,
               highlighted: item.read == false,

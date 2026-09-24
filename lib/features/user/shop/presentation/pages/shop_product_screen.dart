@@ -81,7 +81,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                             final product = recommends[index];
                             final isWishlisted = product.isWishlisted ?? false;
                             return ProductCard(
-                              name: product.title ?? '',
+                              name: product.displayTitle,
                               image: product.banner ?? '',
                               price: _formatPrice(
                                 product.discountPrice ?? product.price,
@@ -164,7 +164,7 @@ class ShopProductScreen extends GetView<AllProductInfoController> {
                           final product = allProducts[index];
                           final isWishlisted = product.isWishlisted ?? false;
                           return BrandProductCard(
-                            name: product.title ?? '',
+                            name: product.displayTitle,
                             subtitle:
                                 product.collectionType ??
                                 product.brand ??

@@ -54,7 +54,26 @@ class LocalizationService extends Translations {
 
   /// check if the language is english
   static bool isItEnglish() =>
-      MySharedPref.getLocale().languageCode.toLowerCase().contains('en');
+      currentLanguageCode.contains('en');
+
+  static bool isItArabic() => currentLanguageCode.contains('ar');
+
+  static String get currentLanguageCode =>
+      (Get.locale ?? getCurrentLocal()).languageCode.toLowerCase();
+
+  /// API bilingual fields: Arabic locale uses [arabic] when present.
+  static String localizedValue({
+    String? english,
+    String? arabic,
+  }) {
+    final fallback = english?.trim() ?? '';
+    if (!isItArabic()) {
+      return fallback;
+    }
+
+    final localized = arabic?.trim() ?? '';
+    return localized.isNotEmpty ? localized : fallback;
+  }
 
   /// get current locale
   static Locale getCurrentLocal() => MySharedPref.getLocale();

@@ -133,11 +133,11 @@ class AllTrendingProductController extends GetxController {
           ? await _networkCaller.getRequest(
               apiPath,
               accessToken: accessToken,
-              queryParams: _buildQueryParams(page),
+              queryParams: buildQueryParams(page),
             )
           : await _networkCaller.getRequest(
               apiPath,
-              queryParams: _buildQueryParams(page),
+              queryParams: buildQueryParams(page),
             );
 
       if (isLoginRequiredResponse(response)) {
@@ -180,12 +180,15 @@ class AllTrendingProductController extends GetxController {
     _productModel.value = null;
   }
 
-  Map<String, dynamic> _buildQueryParams(int page) {
+  Map<String, dynamic> buildQueryParams(int page) {
     final queryParams = <String, dynamic>{
       'page': page,
-      'minPrice': selectedPriceRange.value.start.round(),
-      'maxPrice': selectedPriceRange.value.end.round(),
     };
+
+    if (includePriceFilter) {
+      queryParams['minPrice'] = selectedPriceRange.value.start.round();
+      queryParams['maxPrice'] = selectedPriceRange.value.end.round();
+    }
 
     if (selectedColors.isNotEmpty) {
       queryParams['colors'] = selectedColors.join(',');
@@ -197,4 +200,6 @@ class AllTrendingProductController extends GetxController {
 
     return queryParams;
   }
+
+  bool get includePriceFilter => true;
 }

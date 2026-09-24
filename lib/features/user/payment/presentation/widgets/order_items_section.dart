@@ -18,7 +18,7 @@ class OrderItemsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailsSectionCard(
-      title: 'Order Items',
+      title: Strings.orderItems.tr,
       child: Column(
         children: List.generate(items.length, (index) {
           final item = items[index];
@@ -34,7 +34,9 @@ class OrderItemsSection extends StatelessWidget {
             ),
             child: _OrderItemTile(
               imageUrl: product?.banner,
-              title: product?.title ?? 'Unnamed product',
+              title: (product?.displayTitle.trim().isNotEmpty == true)
+                  ? product!.displayTitle
+                  : Strings.unnamedProduct.tr,
               quantity: quantity,
               sizeText: sizeText,
               colorText: colorText,
@@ -125,7 +127,7 @@ class _OrderItemTile extends StatelessWidget {
                 ),
                 SizedBox(height: 6.h(context)),
                 Text(
-                  'Size: $sizeText   Color: $colorText',
+                  '${Strings.size.tr}: $sizeText   ${Strings.color.tr}: $colorText',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 12.sp(context),
                         fontWeight: FontWeight.w500,
@@ -136,7 +138,7 @@ class _OrderItemTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Qty: ${quantity.toString().padLeft(2, '0')}',
+                      '${Strings.qty.tr}: ${quantity.toString().padLeft(2, '0')}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontSize: 12.sp(context),
                             fontWeight: FontWeight.w600,

@@ -1,3 +1,5 @@
+import 'package:hoodz/app/translator/localization_service.dart';
+
 class HomeDataModel {
   HomeDataModel({
     required this.success,
@@ -228,6 +230,7 @@ class LastOrderProduct {
   LastOrderProduct({
     required this.id,
     required this.title,
+    required this.titleArabic,
     required this.banner,
     required this.price,
     required this.discountPrice,
@@ -235,14 +238,21 @@ class LastOrderProduct {
 
   final String? id;
   final String? title;
+  final String? titleArabic;
   final String? banner;
   final dynamic price;
   final dynamic discountPrice;
+
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
 
   factory LastOrderProduct.fromJson(Map<String, dynamic> json) {
     return LastOrderProduct(
       id: json["_id"]?.toString(),
       title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
       banner: json["banner"]?.toString(),
       price: json["price"],
       discountPrice: json["discountPrice"],
@@ -274,6 +284,7 @@ class Product {
   Product({
     required this.id,
     required this.title,
+    required this.titleArabic,
     required this.image,
     required this.banner,
     required this.collectionType,
@@ -287,6 +298,7 @@ class Product {
 
   final String? id;
   final String? title;
+  final String? titleArabic;
   final String? image;
   final String? banner;
   final String? collectionType;
@@ -297,11 +309,17 @@ class Product {
   final bool? isWishlisted;
   final bool? inStock;
 
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
+
   factory Product.fromJson(Map<String, dynamic> json) {
     final banner = json["banner"]?.toString();
     return Product(
       id: json["_id"],
-      title: json["title"],
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
       image: json["image"] ??
           banner ??
           json["thumbnail"] ??
@@ -320,6 +338,7 @@ class Product {
   Product copyWith({
     String? id,
     String? title,
+    String? titleArabic,
     String? image,
     String? banner,
     String? collectionType,
@@ -333,6 +352,7 @@ class Product {
     return Product(
       id: id ?? this.id,
       title: title ?? this.title,
+      titleArabic: titleArabic ?? this.titleArabic,
       image: image ?? this.image,
       banner: banner ?? this.banner,
       collectionType: collectionType ?? this.collectionType,
@@ -348,12 +368,14 @@ class Product {
 
 class SectionBanner {
   SectionBanner({
+    required this.id,
     required this.banner,
     required this.bannerArabic,
     required this.reference,
     required this.type,
   });
 
+  final String? id;
   final String? banner;
   final String? bannerArabic;
   final String? reference;
@@ -361,12 +383,18 @@ class SectionBanner {
 
   factory SectionBanner.fromJson(Map<String, dynamic> json) {
     return SectionBanner(
+      id: json["_id"]?.toString(),
       banner: json["banner"]?.toString(),
       bannerArabic: json["bannerArabic"]?.toString(),
       reference: json["reference"]?.toString(),
       type: json["type"]?.toString(),
     );
   }
+
+  String get displayBanner => LocalizationService.localizedValue(
+    english: banner,
+    arabic: bannerArabic,
+  );
 }
 
 class NearbyBrand {

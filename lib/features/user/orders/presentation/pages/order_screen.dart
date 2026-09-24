@@ -171,6 +171,7 @@ class OrderScreen extends GetView<MyOrdersController> {
                             orderID: controller.orderId(order),
                             price: controller.orderPrice(order),
                             type: controller.orderType(order),
+                            statusKey: order.status ?? '',
                             statusText: controller.orderStatusLabel(order),
                             item: controller.orderItemCount(order),
                             onTap: () {

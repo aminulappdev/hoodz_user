@@ -1,3 +1,5 @@
+import 'package:hoodz/app/translator/localization_service.dart';
+
 class CategoryBrandModel {
   CategoryBrandModel({
     required this.success,
@@ -29,7 +31,9 @@ class CategoryBrandItemModel {
   CategoryBrandItemModel({
     required this.id,
     required this.title,
+    required this.titleArabic,
     required this.icon,
+    required this.iconArabic,
     required this.name,
     required this.profileAvatar,
     required this.avgRating,
@@ -41,7 +45,9 @@ class CategoryBrandItemModel {
 
   final String? id;
   final String? title;
+  final String? titleArabic;
   final String? icon;
+  final String? iconArabic;
   final String? name;
   final String? profileAvatar;
   final double? avgRating;
@@ -50,15 +56,23 @@ class CategoryBrandItemModel {
   final double? distance;
   final int? eta;
 
-  String get displayTitle => (title ?? name ?? '').trim();
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title ?? name,
+    arabic: titleArabic,
+  );
 
-  String get displayImage => (icon ?? profileAvatar ?? '').trim();
+  String get displayImage => LocalizationService.localizedValue(
+    english: icon ?? profileAvatar,
+    arabic: iconArabic,
+  );
 
   factory CategoryBrandItemModel.fromJson(Map<String, dynamic> json) {
     return CategoryBrandItemModel(
       id: json['_id']?.toString(),
       title: json['title']?.toString(),
+      titleArabic: json['titleArabic']?.toString(),
       icon: json['icon']?.toString(),
+      iconArabic: json['iconArabic']?.toString(),
       name: json['name']?.toString(),
       profileAvatar: json['profileAvatar']?.toString(),
       avgRating: _toDouble(json['avgRating']),

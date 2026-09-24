@@ -18,7 +18,7 @@ import 'package:hoodz/gen/assets.gen.dart';
 class SignInScreen extends GetView<SignInController> {
   const SignInScreen({super.key});
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     Future<void> handleSignInResult(
       Map<String, dynamic>? signInData, {

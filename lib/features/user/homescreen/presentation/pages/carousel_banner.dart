@@ -38,7 +38,7 @@ class _CarouselBannerState extends State<CarouselBanner> {
                   borderRadius: BorderRadius.circular(12.r(context)),
                 ),
                 child: AppCachedNetworkImage(
-                  imageUrl: widget.bannerList[index].banner,
+                  imageUrl: widget.bannerList[index].displayBanner,
                   imageHeight: 170.h(context),
                   imageFit: BoxFit.cover,
                   radius: 12.r(context),

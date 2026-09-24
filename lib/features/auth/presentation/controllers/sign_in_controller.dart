@@ -17,12 +17,9 @@ class SignInController extends GetxController {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
   final RxBool isPasswordHidden = true.obs;
   final RxBool rememberMe = true.obs;
-  final TextEditingController emailController = TextEditingController(
-    text: "pewader553@hutdot.com",
-  );
-  final TextEditingController passwordController = TextEditingController(
-    text: "Aminul@2000",
-  );
+  final TextEditingController emailController = TextEditingController();
+  // pewader553@hutdot.com // Aminul@2000
+  final TextEditingController passwordController = TextEditingController();
 
   SignInController(this._networkCaller);
 
@@ -124,19 +121,13 @@ class SignInController extends GetxController {
     final accessToken = _extractAccessToken(responseData);
 
     if (user == null || accessToken == null) {
-      showAppToast(
-        message: Strings.invalidLoginResponse.tr,
-        isError: true,
-      );
+      showAppToast(message: Strings.invalidLoginResponse.tr, isError: true);
       return null;
     }
 
     final status = (user['status'] ?? '').toString().toLowerCase();
     if (status == 'pending') {
-      return {
-        'isPending': true,
-        'message': Strings.requestPendingMessage.tr,
-      };
+      return {'isPending': true, 'message': Strings.requestPendingMessage.tr};
     }
 
     await MySharedPref.setAccessToken(accessToken);

@@ -16,6 +16,7 @@ class OrderCard extends StatelessWidget {
   final String price;
   final int item;
   final String type;
+  final String statusKey;
   final String statusText;
   final VoidCallback onTap;
   final VoidCallback optionalOnTap;
@@ -29,6 +30,7 @@ class OrderCard extends StatelessWidget {
     required this.orderID,
     required this.price,
     required this.type,
+    this.statusKey = '',
     required this.statusText,
     required this.onTap,
     required this.optionalOnTap,
@@ -83,7 +85,10 @@ class OrderCard extends StatelessWidget {
                             ),
                           ),
                           SizedBox(width: 8.w(context)),
-                          _StatusLabel(type: type, statusText: statusText),
+                          _StatusLabel(
+                            statusKey: statusKey,
+                            statusText: statusText,
+                          ),
                         ],
                       ),
                       Text(
@@ -182,14 +187,17 @@ class OrderCard extends StatelessWidget {
 }
 
 class _StatusLabel extends StatelessWidget {
-  const _StatusLabel({required this.type, required this.statusText});
+  const _StatusLabel({
+    required this.statusKey,
+    required this.statusText,
+  });
 
-  final String type;
+  final String statusKey;
   final String statusText;
 
   @override
   Widget build(BuildContext context) {
-    final normalizedStatus = statusText.trim().toLowerCase();
+    final normalizedStatus = statusKey.trim().toLowerCase().replaceAll(' ', '_');
 
     if (normalizedStatus == 'rider_assigned') {
       return LabelContainer(
@@ -200,16 +208,9 @@ class _StatusLabel extends StatelessWidget {
       );
     }
 
-    if (normalizedStatus == 'processing') {
-      return LabelContainer(
-        icon: Assets.icons.box01.path,
-        name: statusText,
-        contentColor: const Color(0xFFF97316),
-        backgroundColor: const Color(0xFFF97316),
-      );
-    }
-
-    if (normalizedStatus == 'completed' || normalizedStatus == 'delivered') {
+    if (normalizedStatus == 'completed' ||
+        normalizedStatus == 'delivered' ||
+        normalizedStatus == 'delivery') {
       return LabelContainer(
         icon: Assets.icons.checkMark.path,
         name: statusText,
@@ -230,10 +231,10 @@ class _StatusLabel extends StatelessWidget {
     }
 
     return LabelContainer(
-      icon: null,
+      icon: Assets.icons.box01.path,
       name: statusText,
-      contentColor: const Color(0xFF6B7280),
-      backgroundColor: const Color(0xFF6B7280),
+      contentColor: const Color(0xFFF97316),
+      backgroundColor: const Color(0xFFF97316),
     );
   }
 }

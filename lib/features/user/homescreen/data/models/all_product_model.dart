@@ -1,3 +1,5 @@
+import 'package:hoodz/app/translator/localization_service.dart';
+
 class AllProductModel {
   AllProductModel({
     required this.success,
@@ -65,6 +67,7 @@ class AllProductItemModel {
     required this.id,
     required this.category,
     required this.title,
+    required this.titleArabic,
     required this.inventoryType,
     required this.collectionType,
     required this.brand,
@@ -83,6 +86,7 @@ class AllProductItemModel {
   final String? id;
   final Category? category;
   final String? title;
+  final String? titleArabic;
   final String? inventoryType;
   final String? collectionType;
   final String? brand;
@@ -97,13 +101,19 @@ class AllProductItemModel {
   final bool? inStock;
   final bool? isWishlisted;
 
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
+
   factory AllProductItemModel.fromJson(Map<String, dynamic> json) {
     return AllProductItemModel(
       id: json["_id"],
       category: json["category"] == null
           ? null
           : Category.fromJson(json["category"]),
-      title: json["title"],
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
       inventoryType: json["inventoryType"],
       collectionType: json["collectionType"],
       brand: json["brand"],
@@ -122,13 +132,38 @@ class AllProductItemModel {
 }
 
 class Category {
-  Category({required this.id, required this.title});
+  Category({
+    required this.id,
+    required this.title,
+    required this.titleArabic,
+    required this.icon,
+    required this.iconArabic,
+  });
 
   final String? id;
   final String? title;
+  final String? titleArabic;
+  final String? icon;
+  final String? iconArabic;
+
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
+
+  String get displayIcon => LocalizationService.localizedValue(
+    english: icon,
+    arabic: iconArabic,
+  );
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(id: json["_id"], title: json["title"]);
+    return Category(
+      id: json["_id"]?.toString(),
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
+      icon: json["icon"]?.toString(),
+      iconArabic: json["iconArabic"]?.toString(),
+    );
   }
 }
 

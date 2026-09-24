@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 
 class RiderInfoCard extends StatelessWidget {
@@ -27,11 +29,13 @@ class RiderInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = riderName.trim().isEmpty ? 'Rider' : riderName.trim();
+    final displayName =
+        riderName.trim().isEmpty ? Strings.rider.tr : riderName.trim();
     final displayRating = rating.trim().isEmpty ? '0' : rating.trim();
-    final displayVehicle = vehicleId.trim().isEmpty ? 'N/A' : vehicleId.trim();
+    final displayVehicle =
+        vehicleId.trim().isEmpty ? Strings.notAvailable.tr : vehicleId.trim();
     final displayPhone =
-        phoneNumber.trim().isEmpty ? 'N/A' : phoneNumber.trim();
+        phoneNumber.trim().isEmpty ? Strings.notAvailable.tr : phoneNumber.trim();
 
     return Container(
       width: double.infinity,
@@ -138,7 +142,7 @@ class RiderInfoCard extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w(context)),
                   Text(
-                    'Live Tracking',
+                    Strings.liveTracking.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 14.sp(context),
                           fontWeight: FontWeight.w600,

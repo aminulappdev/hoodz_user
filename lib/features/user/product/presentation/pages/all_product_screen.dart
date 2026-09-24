@@ -78,7 +78,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                       itemBuilder: (context, index) {
                         final product = controller.products[index];
                         return ProductCard(
-                          name: product.title ?? '',
+                          name: product.displayTitle,
                           image: product.banner ?? '',
                           price: (product.discountPrice ?? product.price ?? 0)
                               .toString(),

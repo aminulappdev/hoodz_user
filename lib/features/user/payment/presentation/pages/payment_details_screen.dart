@@ -333,8 +333,12 @@ class _OrderTimelineProgressCard extends StatelessWidget {
     final shopName = orderDetails?.author?.name?.trim();
     final bottomTitle = _bottomTitle(steps, activeIndex);
     final bottomSubtitle = _isDelivered(steps)
-        ? 'Your order has been delivered'
-        : '${shopName?.isNotEmpty == true ? shopName! : 'Style Hut'} is on it! They\'re getting things ready';
+        ? Strings.orderHasBeenDelivered.tr
+        : Strings.shopPreparingOrder.trParams({
+            'shop': shopName?.isNotEmpty == true
+                ? shopName!
+                : Strings.defaultShopName.tr,
+          });
 
     return Container(
       width: double.infinity,
@@ -359,11 +363,11 @@ class _OrderTimelineProgressCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Row( 
             children: [
               Expanded(
                 child: Text(
-                  'Order Timeline',
+                  Strings.orderTimeline.tr,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -385,7 +389,7 @@ class _OrderTimelineProgressCard extends StatelessWidget {
                   border: Border.all(color: const Color(0xFFC8EEDC)),
                 ),
                 child: Text(
-                  _isDelivered(steps) ? 'Done' : 'On time',
+                  _isDelivered(steps) ? Strings.done.tr : Strings.onTime.tr,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 12.sp(context),
                         fontWeight: FontWeight.w800,
@@ -532,37 +536,50 @@ class _OrderTimelineProgressCard extends StatelessWidget {
     return 0;
   }
 
+  bool _labelMatches(String title, String translated) {
+    return title.trim().toLowerCase() == translated.trim().toLowerCase();
+  }
+
   bool _isDelivered(List<_ProgressStep> steps) {
     return steps.any((step) {
-      return step.label.toLowerCase().contains('deliver') && step.isCompleted;
+      final matchesDelivered =
+          _labelMatches(step.label, Strings.delivered.tr) ||
+          step.label.toLowerCase().contains('deliver');
+      return matchesDelivered && step.isCompleted;
     });
   }
 
   String _bottomTitle(List<_ProgressStep> steps, int activeIndex) {
     if (steps.isEmpty || activeIndex < 0 || activeIndex >= steps.length) {
-      return 'Preparing your order';
+      return Strings.preparingYourOrder.tr;
     }
 
     return steps[activeIndex].isPending
-        ? 'Preparing your order'
+        ? Strings.preparingYourOrder.tr
         : steps[activeIndex].label;
   }
 
   IconData _iconForTitle(String title) {
     final normalized = title.toLowerCase();
-    if (normalized.contains('deliver') || normalized.contains('confirm')) {
+    if (_labelMatches(title, Strings.delivered.tr) ||
+        _labelMatches(title, Strings.orderConfirmed.tr) ||
+        normalized.contains('deliver') ||
+        normalized.contains('confirm')) {
       return Icons.check_rounded;
     }
-    if (normalized.contains('rider')) {
+    if (_labelMatches(title, Strings.riderAssigned.tr) ||
+        normalized.contains('rider')) {
       return Icons.person_outline_rounded;
     }
-    if (normalized.contains('way')) {
+    if (_labelMatches(title, Strings.onTheWay.tr) ||
+        normalized.contains('way')) {
       return Icons.near_me_outlined;
     }
     if (normalized.contains('pick')) {
       return Icons.inventory_2_outlined;
     }
-    if (normalized.contains('cancel')) {
+    if (_labelMatches(title, Strings.cancelled.tr) ||
+        normalized.contains('cancel')) {
       return Icons.close_rounded;
     }
     return Icons.inventory_2_outlined;

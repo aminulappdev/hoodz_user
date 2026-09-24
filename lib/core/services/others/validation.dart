@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 
 class ValidatorService {
   static bool validateAndSave(globalFormKey) {
@@ -12,8 +14,8 @@ class ValidatorService {
 
   //<============================================= Full Name Validator
   static String? validateFullName(String? fullName) {
-    if (fullName == null) {
-      return 'Field Required';
+    if (fullName == null || fullName.trim().isEmpty) {
+      return Strings.fieldRequired.tr;
     }
 
     // Remove leading and trailing whitespace
@@ -23,12 +25,12 @@ class ValidatorService {
     final words = trimmedName.split(' ');
 
     if (words.length < 2) {
-      return 'First should contain at least two words';
+      return Strings.fullNameAtLeastTwoWords.tr;
     }
 
     // Check if the name contains only letters and spaces
     if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(trimmedName)) {
-      return 'First name can only contain letters and spaces';
+      return Strings.fullNameLettersAndSpaces.tr;
     }
 
     // Validation passed, return null (no error)
@@ -37,9 +39,8 @@ class ValidatorService {
 
   //<<================= bangladeshi phone number validator
   static String? validateEmailAddress(String? email) {
-    // Check if email is null
-    if (email == null) {
-      return 'E-mail Address is required';
+    if (email == null || email.trim().isEmpty) {
+      return Strings.emailAddressRequired.tr;
     }
 
     String p =
@@ -47,8 +48,8 @@ class ValidatorService {
 
     RegExp regExp = RegExp(p);
 
-    if (!regExp.hasMatch(email)) {
-      return 'Invalid e-mail address';
+    if (!regExp.hasMatch(email.trim())) {
+      return Strings.invalidEmailAddress.tr;
     }
 
     // Validation passed, return null (no error)
@@ -58,26 +59,26 @@ class ValidatorService {
   //<======= Password validator
   static String? validatePassword(String? password) {
     if (password == null || password.isEmpty) {
-      return 'Password is required';
+      return Strings.passwordIsRequired.tr;
     }
 
     if (password.length < 7) {
-      return 'Password must be at least 7 characters long';
+      return Strings.passwordMinLength.tr;
     }
 
     // At least 1 uppercase letter
     if (!RegExp(r'[A-Z]').hasMatch(password)) {
-      return 'Password must contain at least 1 capital letter';
+      return Strings.passwordCapitalLetter.tr;
     }
 
     // At least 1 number
     if (!RegExp(r'[0-9]').hasMatch(password)) {
-      return 'Password must contain at least 1 number';
+      return Strings.passwordMustContainNumber.tr;
     }
 
     // At least 1 special character
     if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(password)) {
-      return 'Password must contain at least 1 special character';
+      return Strings.passwordSpecialCharacter.tr;
     }
 
     // All validations passed
@@ -90,11 +91,11 @@ class ValidatorService {
     String originalPassword,
   ) {
     if (confirmPassword == null || confirmPassword.isEmpty) {
-      return 'Confirm password is required';
+      return Strings.confirmPasswordRequired.tr;
     }
 
     if (confirmPassword != originalPassword) {
-      return 'Passwords do not match';
+      return Strings.passwordsDoNotMatch.tr;
     }
 
     // Validation passed, return null (no error)
@@ -102,14 +103,8 @@ class ValidatorService {
   }
 
   static String? validateSimpleField(String? value) {
-    if (value == null) {
-      return 'Field Required';
-    }
-    // Remove leading and trailing whitespace
-    final words = value.trim();
-
-    if (words.isEmpty) {
-      return 'Field Required';
+    if (value == null || value.trim().isEmpty) {
+      return Strings.fieldRequired.tr;
     }
     return null;
   }

@@ -35,20 +35,18 @@ class _CampaignScreenState extends State<CampaignScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        label: _controller.title.value.isEmpty
-            ? 'Campaign'
-            : _controller.title.value,
-      ),
-      body: Obx(() {
-        if (_controller.isLoading.value &&
-            _controller.campaignModel == null) {
-          return const HomeCampaignShimmer();
-        }
-
-        return RefreshIndicator(
+    return Obx(() {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          label: _controller.displayTitle.isEmpty
+              ? 'Campaign'
+              : _controller.displayTitle,
+        ),
+        body: _controller.isLoading.value &&
+                _controller.campaignModel == null
+            ? const HomeCampaignShimmer()
+            : RefreshIndicator(
           onRefresh: _controller.fetchCampaign,
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -69,10 +67,10 @@ class _CampaignScreenState extends State<CampaignScreen> {
                     radius: 14.r(context),
                   ),
                 ),
-              if (_controller.title.value.isNotEmpty) ...[
+              if (_controller.displayTitle.isNotEmpty) ...[
                 SizedBox(height: 18.h(context)),
                 Text(
-                  _controller.title.value,
+                  _controller.displayTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -98,7 +96,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
                   itemBuilder: (context, index) {
                     final product = _controller.products[index];
                     return ProductCard(
-                      name: product.title ?? '',
+                      name: product.displayTitle,
                       image: product.banner ?? '',
                       price: (product.discountPrice ?? product.price ?? 0)
                           .toString(),
@@ -117,8 +115,8 @@ class _CampaignScreenState extends State<CampaignScreen> {
                 ),
             ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }

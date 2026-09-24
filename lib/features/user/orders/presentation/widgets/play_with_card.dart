@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hoodz/app/translator/strings_enum.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/delivery_card_container.dart';
 import 'package:hoodz/features/user/orders/presentation/widgets/payment_tile.dart';
-import 'package:hoodz/features/user/orders/presentation/widgets/payment_title.dart';
 
 class PayWithSection extends StatelessWidget {
   final int selectedIndex;
@@ -14,13 +15,16 @@ class PayWithSection extends StatelessWidget {
     required this.onSelect,
     required this.walletLabel,
   });
-
+ 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Pay with', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+        Text(
+          Strings.payWith.tr,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: 10),
         DeliveryCardContainer(
           padding: EdgeInsets.zero,
@@ -28,7 +32,7 @@ class PayWithSection extends StatelessWidget {
             children: [
               PaymentActionTile(
                 icon: Icons.credit_card_outlined,
-                label: 'My Card',
+                label: Strings.myCard.tr,
                 isLast: false,
                 showRadio: true,
                 isSelected: selectedIndex == 0,
@@ -44,7 +48,7 @@ class PayWithSection extends StatelessWidget {
               ),
               PaymentActionTile(
                 icon: Icons.payments_outlined,
-                label: 'Cash',
+                label: Strings.cash.tr,
                 isLast: true,
                 showRadio: true,
                 isSelected: selectedIndex == 2,

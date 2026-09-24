@@ -115,27 +115,35 @@ class VoucherCardDesign extends StatelessWidget {
                   vertical: isCompact ? 8.h(context) : 10,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(
-                      voucher.code,
-                      style: TextStyle(
-                        fontSize: (isCompact ? 13 : 14).sp(context),
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1,
-                        decoration: textDecoration,
+                    Expanded(
+                      child: Text(
+                        voucher.code,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: (isCompact ? 13 : 14).sp(context),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: isCompact ? 0.2 : 1,
+                          decoration: textDecoration,
+                        ),
                       ),
                     ),
-                    SizedBox(width: 12.w(context)),
+                    SizedBox(width: 8.w(context)),
                     Container(width: 1, height: 16, color: Colors.grey.shade300),
-                    SizedBox(width: 12.w(context)),
-                    Text(
-                      footerText,
-                      style: TextStyle(
-                        fontSize: (isCompact ? 12 : 13).sp(context),
-                        fontWeight: FontWeight.w500,
-                        color: isActionable ? kOrange : Colors.grey.shade500,
-                        decoration: textDecoration,
+                    SizedBox(width: 8.w(context)),
+                    Flexible(
+                      child: Text(
+                        footerText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: (isCompact ? 12 : 13).sp(context),
+                          fontWeight: FontWeight.w500,
+                          color: isActionable ? kOrange : Colors.grey.shade500,
+                          decoration: textDecoration,
+                        ),
                       ),
                     ),
                   ],

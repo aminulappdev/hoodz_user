@@ -174,7 +174,7 @@ class AllBrandController extends AllTrendingProductController {
     _loadedCategoryId = categoryId;
     await loadCategoryShops(
       categoryId: categoryId,
-      categoryTitle: category.displayTitle,
+      categoryTitle: (category.title ?? category.displayTitle).trim(),
       force: true,
     );
   }

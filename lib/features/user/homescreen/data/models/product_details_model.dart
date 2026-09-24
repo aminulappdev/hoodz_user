@@ -1,3 +1,5 @@
+import 'package:hoodz/app/translator/localization_service.dart';
+
 class ProductDetailsModel {
   ProductDetailsModel({
     required this.success,
@@ -138,7 +140,9 @@ class Product {
     required this.collectionType,
     required this.brandType,
     required this.title,
+    required this.titleArabic,
     required this.description,
+    required this.descriptionArabic,
     required this.banner,
     required this.images,
     required this.price,
@@ -164,7 +168,19 @@ class Product {
   final String? collectionType;
   final String? brandType;
   final String? title;
+  final String? titleArabic;
   final String? description;
+  final String? descriptionArabic;
+
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
+
+  String get displayDescription => LocalizationService.localizedValue(
+    english: description,
+    arabic: descriptionArabic,
+  );
   final String? banner;
   final List<String> images;
   final dynamic price;
@@ -190,8 +206,10 @@ class Product {
       brand: json["brand"],
       collectionType: json["collectionType"],
       brandType: json["brandType"],
-      title: json["title"],
-      description: json["description"],
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
+      description: json["description"]?.toString(),
+      descriptionArabic: json["descriptionArabic"]?.toString(),
       banner: json["banner"],
       images: json["images"] == null
           ? []
@@ -361,6 +379,7 @@ class SimilarProduct {
     required this.id,
     required this.category,
     required this.title,
+    required this.titleArabic,
     required this.inventoryType,
     required this.collectionType,
     required this.brand,
@@ -379,7 +398,13 @@ class SimilarProduct {
   final String? id;
   final Category? category;
   final String? title;
+  final String? titleArabic;
   final String? inventoryType;
+
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
   final String? collectionType;
   final String? brand;
   final String? brandType;
@@ -399,7 +424,8 @@ class SimilarProduct {
       category: json["category"] == null
           ? null
           : Category.fromJson(json["category"]),
-      title: json["title"],
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
       inventoryType: json["inventoryType"],
       collectionType: json["collectionType"],
       brand: json["brand"],
@@ -420,6 +446,7 @@ class SimilarProduct {
     String? id,
     Category? category,
     String? title,
+    String? titleArabic,
     String? inventoryType,
     String? collectionType,
     String? brand,
@@ -438,6 +465,7 @@ class SimilarProduct {
       id: id ?? this.id,
       category: category ?? this.category,
       title: title ?? this.title,
+      titleArabic: titleArabic ?? this.titleArabic,
       inventoryType: inventoryType ?? this.inventoryType,
       collectionType: collectionType ?? this.collectionType,
       brand: brand ?? this.brand,
@@ -460,6 +488,9 @@ class Voucher {
     required this.id,
     required this.code,
     required this.title,
+    required this.titleArabic,
+    required this.description,
+    required this.descriptionArabic,
     required this.voucherType,
     required this.discountType,
     required this.discountValue,
@@ -475,6 +506,9 @@ class Voucher {
   final String? id;
   final String? code;
   final String? title;
+  final String? titleArabic;
+  final String? description;
+  final String? descriptionArabic;
   final String? voucherType;
   final String? discountType;
   final dynamic discountValue;
@@ -486,13 +520,26 @@ class Voucher {
   final bool? hasUsed;
   final DateTime? useAt;
 
+  String get displayTitle => LocalizationService.localizedValue(
+    english: title,
+    arabic: titleArabic,
+  );
+
+  String get displayDescription => LocalizationService.localizedValue(
+    english: description,
+    arabic: descriptionArabic,
+  );
+
   factory Voucher.fromJson(Map<String, dynamic> json) {
     return Voucher(
-      id: json["_id"],
-      code: json["code"],
-      title: json["title"],
-      voucherType: json["voucherType"],
-      discountType: json["discountType"],
+      id: json["_id"]?.toString(),
+      code: json["code"]?.toString(),
+      title: json["title"]?.toString(),
+      titleArabic: json["titleArabic"]?.toString(),
+      description: json["description"]?.toString(),
+      descriptionArabic: json["descriptionArabic"]?.toString(),
+      voucherType: json["voucherType"]?.toString(),
+      discountType: json["discountType"]?.toString(),
       discountValue: json["discountValue"],
       giftDetails: json["giftDetails"] == null
           ? null
@@ -512,21 +559,37 @@ class Voucher {
 class VoucherGiftDetails {
   VoucherGiftDetails({
     required this.name,
+    required this.nameArabic,
     required this.bannerImage,
     required this.description,
+    required this.descriptionArabic,
   });
 
   final String? name;
+  final String? nameArabic;
   final List<String> bannerImage;
   final String? description;
+  final String? descriptionArabic;
+
+  String get displayName => LocalizationService.localizedValue(
+    english: name,
+    arabic: nameArabic,
+  );
+
+  String get displayDescription => LocalizationService.localizedValue(
+    english: description,
+    arabic: descriptionArabic,
+  );
 
   factory VoucherGiftDetails.fromJson(Map<String, dynamic> json) {
     return VoucherGiftDetails(
       name: json["name"]?.toString(),
+      nameArabic: json["nameArabic"]?.toString(),
       bannerImage: json["bannerImage"] == null
           ? []
           : List<String>.from(json["bannerImage"]!.map((x) => x.toString())),
       description: json["description"]?.toString(),
+      descriptionArabic: json["descriptionArabic"]?.toString(),
     );
   }
 }

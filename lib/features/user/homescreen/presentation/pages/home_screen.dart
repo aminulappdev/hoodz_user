@@ -5,6 +5,7 @@ import 'package:hoodz/app/routes/app_routes.dart';
 import 'package:hoodz/core/services/others/page_navigation_service.dart';
 import 'package:hoodz/core/utils/app_responsive.dart';
 import 'package:hoodz/core/utils/login_required_dialog.dart';
+import 'package:hoodz/core/utils/order_status_label.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/widgets/app_cached_network_image.dart';
 import 'package:hoodz/features/user/homescreen/presentation/controllers/home_screen_controller.dart';
@@ -38,9 +39,9 @@ class HomeScreen extends GetView<HomeScreenController> {
         ? localDate.hour - 12
         : localDate.hour;
     final minute = localDate.minute.toString().padLeft(2, '0');
-    final period = localDate.hour >= 12 ? 'PM' : 'AM';
+    final period = localDate.hour >= 12 ? Strings.pm.tr : Strings.am.tr;
     final dateLabel = isToday
-        ? 'Today'
+        ? Strings.today.tr
         : '${localDate.day}/${localDate.month}/${localDate.year}';
 
     return '$dateLabel, $hour:$minute $period';
@@ -60,15 +61,13 @@ class HomeScreen extends GetView<HomeScreenController> {
   Widget _buildLastOrderCard(BuildContext context, LastOrder order) {
     final firstItem = order.items.isNotEmpty ? order.items.first : null;
     final product = firstItem?.product;
-    final title = product?.title?.trim().isNotEmpty == true
-        ? product!.title!
+    final title = product?.displayTitle.trim().isNotEmpty == true
+        ? product!.displayTitle
         : Strings.orderDetails.tr;
     final orderId = order.orderId?.trim().isNotEmpty == true
         ? order.orderId!
         : order.id ?? '';
-    final status = order.status?.trim().isNotEmpty == true
-        ? order.status!
-        : 'Processing';
+    final status = order.status?.trim() ?? '';
     final rawOrderId = order.id?.trim() ?? '';
 
     return InkWell(
@@ -325,6 +324,8 @@ class HomeScreen extends GetView<HomeScreenController> {
       final showInitialLoaders = controller.isLoading.value && homeData == null;
       final showRecentlyViewedSection =
           showInitialLoaders || recentlyViewed.isNotEmpty;
+      final showTrendingSection =
+          showInitialLoaders || trendingProducts.isNotEmpty;
 
       return Scaffold(
         body: SizedBox(
@@ -434,7 +435,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                       ],
                       if (!showInitialLoaders && homeData?.lastOrder != null) ...[
                         Text(
-                          'Your Last Order',
+                          Strings.yourLastOrder.tr,
                           style: Theme.of(context).textTheme.bodyMedium!
                               .copyWith(
                                 fontSize: 16.sp(context),
@@ -530,7 +531,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (context, index) {
                                     final product = recentlyViewed[index];
-                                    final name = product.title ?? "";
+                                    final name = product.displayTitle;
                                     final image =
                                         product.banner ?? product.image ?? "";
                                     final price = "${product.price ?? ''}";
@@ -574,6 +575,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 ),
                               ),
                       ],
+                      if (showTrendingSection) ...[
                       SizedBox(height: 12.h(context)),
                       showInitialLoaders
                           ? _buildSectionTitleSkeleton(context)
@@ -603,8 +605,6 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   return _buildProductSkeleton(context);
                                 },
                               )
-                            : trendingProducts.isEmpty
-                            ? Center(child: Text(Strings.noTrendingProducts.tr))
                             : ListView.separated(
                                 itemCount: trendingProducts.length,
                                 separatorBuilder: (context, index) =>
@@ -612,7 +612,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   final product = trendingProducts[index];
-                                  final name = product.title ?? '';
+                                  final name = product.displayTitle;
                                   final image = product.image ?? '';
                                   final price = product.price.toString();
                                   final rating = product.avgRating.toString();
@@ -653,6 +653,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 },
                               ),
                       ),
+                      ],
                       SizedBox(height: 12.h(context)),
                       // Text(
                       //   'Redeem and save',
@@ -714,7 +715,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   final product = aiRecommendedProducts[index];
-                                  final name = product.title ?? '';
+                                  final name = product.displayTitle;
                                   final image = product.image ?? '';
                                   final price = product.price.toString();
                                   final rating = product.avgRating.toString();
@@ -812,7 +813,11 @@ class HomeScreen extends GetView<HomeScreenController> {
         PageNavigationService.to(
           context,
           AppRoutes.campaign,
-          arguments: {'reference': reference, 'banner': banner.banner ?? ''},
+          arguments: {
+            'bannerId': banner.id,
+            'reference': reference,
+            'banner': banner.displayBanner,
+          },
         );
         break;
       default:
@@ -842,18 +847,7 @@ class _LastOrderStatusBadge extends StatelessWidget {
     return const Color(0xFFF97316);
   }
 
-  String get _label {
-    final normalized = status.trim().replaceAll('_', ' ');
-    if (normalized.isEmpty) {
-      return 'Processing';
-    }
-
-    return normalized
-        .split(' ')
-        .where((part) => part.isNotEmpty)
-        .map((part) => part[0].toUpperCase() + part.substring(1))
-        .join(' ');
-  }
+  String get _label => OrderStatusLabel.from(status);
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:hoodz/app/translator/localization_service.dart';
 import 'package:hoodz/core/services/network_caller/error_message_model.dart';
 import 'package:hoodz/core/services/network_caller/network_response.dart';
 import 'package:http/http.dart' as http;
@@ -182,8 +183,21 @@ class NetworkCaller {
     );
   }
 
+  String _acceptLanguage() {
+    try {
+      return LocalizationService.isItArabic() ? 'ar' : 'en';
+    } catch (_) {
+      return 'en';
+    }
+  }
+
   void _logRequest(String url, Map<String, String> headers, [dynamic body]) {
-    _logger.i('URL => $url\nHeaders => $headers\nBody => $body');
+    _logger.i(
+      'URL => $url\nAccept-Language => ${headers['Accept-Language']}\nHeaders => $headers\nBody => $body',
+    );
+    print(
+      'REQUEST => $url | Accept-Language => ${headers['Accept-Language']} | Headers => $headers | Body => $body',
+    );
   }
 
   void _logResponse(
@@ -228,6 +242,7 @@ class NetworkCaller {
       Map<String, String> defaultHeaders = {
         'Accept': 'application/json',
         ...?headers,
+        'Accept-Language': _acceptLanguage(),
       };
 
       if (accessToken != null && accessToken.isNotEmpty) {

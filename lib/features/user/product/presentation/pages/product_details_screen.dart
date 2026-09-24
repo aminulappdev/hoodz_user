@@ -312,10 +312,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ? 'No expiry date'
         : 'Expires on ${expiryDate.toLocal().toString().split(" ").first}';
     final status = _resolveVoucherStatus(voucherData);
+    final localizedTitle = _normalizeString(voucherData?.displayTitle);
+    final localizedDescription = _normalizeString(
+      voucherData?.displayDescription,
+    );
     final title =
-        _normalizeString(voucherData?.title) ??
-        '$discountValue $discountType Off';
-    final subtitle = 'Purchase $minSpend or more and save $discountValue';
+        (localizedTitle != null && localizedTitle.isNotEmpty)
+        ? localizedTitle
+        : '$discountValue $discountType Off';
+    final subtitle =
+        (localizedDescription != null && localizedDescription.isNotEmpty)
+        ? localizedDescription
+        : 'Purchase $minSpend or more and save $discountValue';
     final usedAtDate = useAt is DateTime
         ? useAt
         : DateTime.tryParse(useAt?.toString() ?? '');
@@ -600,6 +608,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
                 // ================= PRODUCT INFO =================
                 ProductInfo(
+                  productTitle: product?.displayTitle ?? '',
                   price: displayPrice,
                   rating: displayRating,
                   review: displayReviewCount,
@@ -722,7 +731,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 SizedBox(
                   width: width,
                   child: Html(
-                    data: product?.description ?? Strings.noDescriptionFound.tr,
+                    data: (product?.displayDescription.isNotEmpty == true)
+                        ? product!.displayDescription
+                        : Strings.noDescriptionFound.tr,
                   ),
                 ),
 
@@ -784,7 +795,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
                             final similarProduct = similarProducts[index];
-                            final name = similarProduct.title ?? '';
+                            final name = similarProduct.displayTitle;
                             final image = similarProduct.banner ?? '';
                             final price =
                                 (similarProduct.discountPrice ??
@@ -848,7 +859,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   title: Strings.vouchers.tr,
                   onTap: () {
                     final productTitle =
-                        _normalizeString(product?.title) ??
+                        _normalizeString(product?.displayTitle) ??
                         Strings.unnamedProduct.tr;
                     final voucherViewData = vouchers
                         .map((voucher) => _toVoucherViewData(voucher))
