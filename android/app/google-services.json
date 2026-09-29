@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:234939405246:android:2f439e84c54c51e3009fef",
+        "mobilesdk_app_id": "1:234939405246:android:be1b73f834b4acd5009fef",
         "android_client_info": {
-          "package_name": "com.hoodz.user"
+          "package_name": "com.hoodz.rider"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "234939405246-cbqd171gaeilc0ohno8i5t2dqn85oeas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA-1LyYQXjCAuXWJ2FAXcBY4aC8SSogyR0"
@@ -20,7 +25,63 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234939405246-cbqd171gaeilc0ohno8i5t2dqn85oeas.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "234939405246-0g7n5bgmrb2itgshe6afeaa44f4rsalv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hoodz.rider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234939405246:android:2f439e84c54c51e3009fef",
+        "android_client_info": {
+          "package_name": "com.hoodz.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234939405246-kkae8r8eog2c9e35l5m62bnono5giuln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hoodz.user",
+            "certificate_hash": "7c29e2a4b87be0d92083ce8374597f93e6a5918f"
+          }
+        },
+        {
+          "client_id": "234939405246-cbqd171gaeilc0ohno8i5t2dqn85oeas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-1LyYQXjCAuXWJ2FAXcBY4aC8SSogyR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234939405246-cbqd171gaeilc0ohno8i5t2dqn85oeas.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "234939405246-0g7n5bgmrb2itgshe6afeaa44f4rsalv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hoodz.rider"
+              }
+            }
+          ]
         }
       }
     }
