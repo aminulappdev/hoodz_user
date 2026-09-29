@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hoodz/core/services/socket/socket_service.dart';
 import 'package:hoodz/core/services/socket/user_order_socket_service.dart';
@@ -55,6 +56,8 @@ import 'package:hoodz/features/user/wishlist/presentation/controller/wishlist_co
 
 Future<void> clearLogoutSession() async {
   await _clearGoogleSession();
+  await _clearAppleSession();
+  await _clearFirebaseMessagingToken();
 
   if (Get.isRegistered<UserOrderSocketService>()) {
     Get.find<UserOrderSocketService>().stopTracking();
@@ -143,4 +146,15 @@ Future<void> _clearGoogleSession() async {
       await googleSignIn.signOut();
     } catch (_) {}
   }
+}
+
+Future<void> _clearAppleSession() async {
+  // Sign in with Apple does not expose a local sign-out API.
+  // Clearing app tokens/preferences below removes the app-side Apple session.
+}
+
+Future<void> _clearFirebaseMessagingToken() async {
+  try {
+    await FirebaseMessaging.instance.deleteToken();
+  } catch (_) {}
 }
