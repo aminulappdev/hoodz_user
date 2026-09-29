@@ -5,6 +5,7 @@ class Urls {
   static const String signUpWithEmailUrl = '$_baseUrl/auth/signup-with-email';
   static const String loginWithEmailUrl = '$_baseUrl/auth/login-with-email';
   static const String googleAuthUrl = '$_baseUrl/auth/google';
+  static const String appleAuthUrl = '$_baseUrl/auth/apple';
   static const String forgotPasswordUrl = '$_baseUrl/auth/forgot-password';
   static const String verifyOtpUrl = '$_baseUrl/otp/verify';
   static const String sendOtpInEmailUrl = '$_baseUrl/otp/send-otp-in-email';

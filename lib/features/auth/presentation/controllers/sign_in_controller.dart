@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -10,6 +11,7 @@ import 'package:hoodz/core/utils/flutter_toast.dart';
 import 'package:hoodz/core/utils/share_preference.dart';
 import 'package:hoodz/core/utils/validator_services.dart';
 import 'package:hoodz/urls.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class SignInController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -114,6 +116,67 @@ class SignInController extends GetxController {
     return signInData;
   }
 
+  Future<Map<String, dynamic>?> signInWithApple() async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      showAppToast(message: Strings.invalidLoginResponse.tr, isError: true);
+      return null;
+    }
+
+    Map<String, dynamic>? signInData;
+
+    await showLoadingOverLay(
+      msg: Strings.signingIn.tr,
+      asyncFunction: () async {
+        try {
+          final appleCredential = await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+          );
+
+          final appleToken = appleCredential.identityToken;
+          if (appleToken == null || appleToken.isEmpty) {
+            showAppToast(
+              message: Strings.invalidLoginResponse.tr,
+              isError: true,
+            );
+            return;
+          }
+
+          final fcmToken = await PushNotificationService().getOrCreateToken();
+          final response = await _networkCaller.postRequest(
+            Urls.appleAuthUrl,
+            body: {
+              'name': _resolveAppleName(appleCredential),
+              'email': appleCredential.email ?? '',
+              'token': appleToken,
+              'role': 'user',
+              if (fcmToken != null && fcmToken.isNotEmpty) 'fcmToken': fcmToken,
+              'isLegalTermsAccepted': true,
+            },
+          );
+
+          if (!response.isSuccess) {
+            showAppToast(message: response.errorMessage, isError: true);
+            return;
+          }
+
+          signInData = await _buildSuccessfulSignInData(response.responseData);
+        } on SignInWithAppleAuthorizationException catch (error) {
+          if (error.code == AuthorizationErrorCode.canceled) {
+            return;
+          }
+          showAppToast(message: error.message, isError: true);
+        } catch (error) {
+          showAppToast(message: error.toString(), isError: true);
+        }
+      },
+    );
+
+    return signInData;
+  }
+
   Future<Map<String, dynamic>?> _buildSuccessfulSignInData(
     dynamic responseData,
   ) async {
@@ -149,6 +212,25 @@ class SignInController extends GetxController {
 
     final emailName = googleUser.email.split('@').first.trim();
     return emailName.isNotEmpty ? emailName : googleUser.email;
+  }
+
+  String _resolveAppleName(AuthorizationCredentialAppleID appleCredential) {
+    final nameParts = [
+      appleCredential.givenName?.trim(),
+      appleCredential.familyName?.trim(),
+    ].where((part) => part != null && part.isNotEmpty).cast<String>();
+
+    final displayName = nameParts.join(' ').trim();
+    if (displayName.isNotEmpty) {
+      return displayName;
+    }
+
+    final email = appleCredential.email?.trim();
+    if (email != null && email.isNotEmpty) {
+      return email.split('@').first;
+    }
+
+    return 'Apple User';
   }
 
   Map<String, dynamic>? _extractUser(dynamic responseData) {

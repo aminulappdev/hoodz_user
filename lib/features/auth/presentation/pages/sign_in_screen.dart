@@ -125,7 +125,13 @@ class SignInScreen extends GetView<SignInController> {
                 ),
                 SizedBox(height: 32.h(context)),
                 OthersAuth(
-                  onApplePressed: () {},
+                  onApplePressed: () async {
+                    final signInData = await controller.signInWithApple();
+                    await handleSignInResult(
+                      signInData,
+                      shouldOpenProfileSetup: false,
+                    );
+                  },
                   onGooglePressed: () async {
                     final signInData = await controller.signInWithGoogle();
                     await handleSignInResult(
