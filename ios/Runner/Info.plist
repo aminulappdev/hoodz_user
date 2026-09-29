@@ -26,14 +26,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>The Hoodz uses the camera when you choose to take a photo for your profile, a product review or support request, or the AI style assistant.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We use your location to help set the delivery address.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to help set the delivery address.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The Hoodz uses photos you select to update your profile, add images to product reviews or support requests, and share images with the AI style assistant.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>The Hoodz uses the camera when you choose to take a photo for your profile, a product review or support request, or the AI style assistant.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
