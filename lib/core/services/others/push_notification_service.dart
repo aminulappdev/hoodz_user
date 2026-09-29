@@ -108,6 +108,13 @@ class PushNotificationService {
   }
 
   Future<String?> _waitForToken() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      final apnsToken = await _waitForApnsToken();
+      if (apnsToken == null || apnsToken.trim().isEmpty) {
+        return null;
+      }
+    }
+
     for (var attempt = 0; attempt < 3; attempt++) {
       try {
         final token = await _messaging.getToken();
@@ -118,6 +125,23 @@ class PushNotificationService {
         debugPrint(
           'FCM token fetch failed on attempt ${attempt + 1}: $error',
         );
+      }
+
+      await Future.delayed(Duration(milliseconds: 500 * (attempt + 1)));
+    }
+
+    return null;
+  }
+
+  Future<String?> _waitForApnsToken() async {
+    for (var attempt = 0; attempt < 6; attempt++) {
+      try {
+        final token = await _messaging.getAPNSToken();
+        if (token != null && token.trim().isNotEmpty) {
+          return token;
+        }
+      } catch (error) {
+        debugPrint('APNs token fetch failed on attempt ${attempt + 1}: $error');
       }
 
       await Future.delayed(Duration(milliseconds: 500 * (attempt + 1)));
